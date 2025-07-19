@@ -8,21 +8,24 @@ export {
     buildToken, 
     createNewToken, 
     updateTokenImage,
+} from './okito/token/launch-token';
+
+
+export {
     createNFT,
     createNFTBatch,
-} from './okito/token/launch-token';
+} from './okito/NFT/create';
 
 // NFT types
 export type {
     NFTData,
     NFTConfig
-} from './okito/token/launch-token';
+} from './types/NFT/create';
 
 // Token transfer functionality
 export {
     transferTokens,
-    estimateTokenTransferFee,
-    legacyTransferTokens
+    estimateTokenTransferFee
 } from './okito/token/transfer-token';
 
 // Token burn functionality
@@ -30,6 +33,25 @@ export {
     burnToken,
     estimateBurnFee
 } from './okito/token/burn-token';
+
+// SOL wrapping functionality
+export {
+    wrapSol
+} from './okito/SOL/wrap';
+
+// Airdrop functionality
+export {
+    airdropTokensToMultiple,  
+    airdropTokenToAddress,
+    airdropTokensBatch,
+
+} from './okito/airdrop/airdrop';
+
+export {
+    estimateAirdropFee,
+    validateAirdropParams,
+} from './okito/airdrop/helper';
+
 
 // Helper functions
 export {
@@ -67,6 +89,21 @@ export type {
     BurnTokenConfig,
     BurnTokenResult
 } from './types/token/burn-token';
+
+// Airdrop types
+export type {
+    AirdropConfig,
+    AirdropRecipient,
+    AirdropResult,
+    AirdropFeeEstimation
+} from './types/airdrop/drop';
+
+// SOL wrapping types
+export type {
+    WrapSolConfig,
+    WrapSolResult,
+    WrapSolFeeEstimation
+} from './types/SOL/wrap';
 
 export { 
     TokenLaunchError,
