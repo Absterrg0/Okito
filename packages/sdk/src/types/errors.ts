@@ -1,0 +1,28 @@
+export enum TokenLaunchErrorCode {
+    WALLET_NOT_CONNECTED = 'WALLET_NOT_CONNECTED',
+    INVALID_TOKEN_DATA = 'INVALID_TOKEN_DATA',
+    INSUFFICIENT_FUNDS = 'INSUFFICIENT_FUNDS',
+    NETWORK_ERROR = 'NETWORK_ERROR',
+    TRANSACTION_FAILED = 'TRANSACTION_FAILED',
+    TIMEOUT = 'TIMEOUT',
+    INVALID_URL = 'INVALID_URL',
+    INVALID_MINT_ADDRESS = 'INVALID_MINT_ADDRESS',
+    AUTHORITY_VALIDATION_FAILED = 'AUTHORITY_VALIDATION_FAILED',
+    RATE_LIMITED = 'RATE_LIMITED',
+    INVALID_DESTINATION = 'INVALID_DESTINATION',
+    INSUFFICIENT_TOKEN_BALANCE = 'INSUFFICIENT_TOKEN_BALANCE',
+    INVALID_AMOUNT = 'INVALID_AMOUNT',
+    TOKEN_ACCOUNT_NOT_FOUND = 'TOKEN_ACCOUNT_NOT_FOUND'
+}
+
+export class TokenLaunchError extends Error {
+    constructor(
+        public code: TokenLaunchErrorCode,
+        message: string,
+        public details?: any
+    ) {
+        super(message);
+        this.name = 'TokenLaunchError';
+    }
+}
+
