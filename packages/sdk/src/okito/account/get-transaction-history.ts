@@ -43,7 +43,9 @@ export async function getTransactionHistory(
     try {
         const address = wallet.publicKey;
 
-        console.log(`Fetching ${limit} transactions for ${address.toString()}`);
+        if (process.env.NODE_ENV !== 'test') {
+            console.log(`Fetching ${limit} transactions for ${address.toString()}`);
+        }
 
         // Fetch recent confirmed signatures for the address
         const signatures = await connection.getSignaturesForAddress(address, {
@@ -65,7 +67,9 @@ export async function getTransactionHistory(
         const hasMore = signatures.length > limit;
         const signaturesToFetch = hasMore ? signatures.slice(0, limit) : signatures;
 
-        console.log(`Found ${signaturesToFetch.length} signatures, fetching parsed transactions...`);
+        if (process.env.NODE_ENV !== 'test') {
+            console.log(`Found ${signaturesToFetch.length} signatures, fetching parsed transactions...`);
+        }
 
         // Fetch parsed transactions for each signature
         const parsedTxs: (ParsedTransactionWithMeta | null)[] = await connection.getParsedTransactions(
@@ -79,13 +83,17 @@ export async function getTransactionHistory(
         // Filter out nulls and log any failed fetches
         const transactions = parsedTxs.filter((tx, index): tx is ParsedTransactionWithMeta => {
             if (!tx) {
-                console.warn(`Failed to fetch transaction: ${signaturesToFetch[index].signature}`);
+                if (process.env.NODE_ENV !== 'test') {
+                    console.warn(`Failed to fetch transaction: ${signaturesToFetch[index].signature}`);
+                }
                 return false;
             }
             return true;
         });
 
-        console.log(`Successfully fetched ${transactions.length}/${signaturesToFetch.length} transactions`);
+        if (process.env.NODE_ENV !== 'test') {
+            console.log(`Successfully fetched ${transactions.length}/${signaturesToFetch.length} transactions`);
+        }
 
         return {
             success: true,
@@ -95,7 +103,9 @@ export async function getTransactionHistory(
         };
 
     } catch (error: any) {
-        console.error('Transaction history fetch failed:', error);
+        if (process.env.NODE_ENV !== 'test') {
+            console.error('Transaction history fetch failed:', error);
+        }
         
         // Handle specific error types
         if (error.message?.includes('429') || error.message?.includes('rate limit')) {

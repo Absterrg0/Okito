@@ -10,7 +10,7 @@ import {
     getAccount,
 } from '@solana/spl-token';
 import { BaseTokenOperation, ValidationResult, FeeEstimation } from '../core/BaseTokenOperation';
-import type { WrapSolConfig, WrapSolResult } from '../../types/SOL/wrap';
+import type { WrapSolConfig, WrapSolResult, WrapSolParams } from '../../types/SOL/wrap';
 
 interface WrapOperationData {
     WSOL_MINT: PublicKey;
@@ -25,14 +25,9 @@ interface WrapOperationData {
 export class WrapSolOperation extends BaseTokenOperation<WrapSolConfig, WrapSolResult> {
     private amountSol: number;
 
-    constructor(
-        connection: any,
-        wallet: any,
-        amountSol: number,
-        config: WrapSolConfig = {}
-    ) {
-        super(connection, wallet, config);
-        this.amountSol = amountSol;
+    constructor(params: WrapSolParams) {
+        super(params.connection, params.wallet, params.config || {});
+        this.amountSol = params.amountSol;
     }
 
     protected getOperationName(): string {
@@ -188,11 +183,8 @@ export class WrapSolOperation extends BaseTokenOperation<WrapSolConfig, WrapSolR
  * Factory function to maintain the original API
  */
 export async function wrapSol(
-    connection: any,
-    wallet: any,
-    amountSol: number,
-    config: WrapSolConfig = {}
+    params: WrapSolParams
 ): Promise<WrapSolResult> {
-    const operation = new WrapSolOperation(connection, wallet, amountSol, config);
+    const operation = new WrapSolOperation(params);
     return await operation.execute();
 } 

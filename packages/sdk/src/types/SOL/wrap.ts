@@ -27,3 +27,11 @@ export interface WrapSolFeeEstimation {
         priorityFee: number;
     };
 }
+
+
+export interface WrapSolParams {
+    connection: any;
+    wallet: any;
+    amountSol: number;
+    config: WrapSolConfig;
+}

@@ -46,10 +46,7 @@ export async function airdropTokensBatch(
                 });
             }
 
-            const result = await airdropTokensToMultiple(connection, wallet, mint, batch, {
-                ...airdropConfig,
-                enableLogging: false // Disable individual logging to reduce noise
-            });
+            const result = await airdropTokensToMultiple({connection, wallet, mint, batch, ...airdropConfig, enableLogging: false });
             
             results.push(result);
 

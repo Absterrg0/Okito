@@ -35,3 +35,12 @@ export interface AirdropFeeEstimation {
         priorityFee: number;
     };
 }
+
+
+export interface AirdropParams {
+    connection: any;
+    wallet: any;
+    mint: string;
+    recipients: AirdropRecipient[];
+    config: AirdropConfig;
+}

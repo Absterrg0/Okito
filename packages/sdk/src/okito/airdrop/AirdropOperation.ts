@@ -6,7 +6,7 @@ import {
 } from '@solana/spl-token';
 import { PublicKey, TransactionMessage } from '@solana/web3.js';
 import { BaseTokenOperation, ValidationResult, FeeEstimation } from '../core/BaseTokenOperation';
-import type { AirdropConfig, AirdropRecipient, AirdropResult } from '../../types/airdrop/drop';
+import type { AirdropConfig, AirdropRecipient, AirdropResult, AirdropParams } from '../../types/airdrop/drop';
 
 interface RecipientData {
     address: PublicKey;
@@ -30,22 +30,16 @@ export class AirdropOperation extends BaseTokenOperation<AirdropConfig, AirdropR
     private mint: string;
     private recipients: AirdropRecipient[];
 
-    constructor(
-        connection: any,
-        wallet: any,
-        mint: string,
-        recipients: AirdropRecipient[],
-        config: AirdropConfig = {}
-    ) {
+    constructor(params: AirdropParams) {
         const airdropConfig = {
             timeoutMs: 120000, // Longer timeout for multiple recipients
             enableLogging: true, // Enable by default for airdrops (important operations)
             createRecipientAccount: true,
-            ...config
+            ...params.config
         };
-        super(connection, wallet, airdropConfig);
-        this.mint = mint;
-        this.recipients = recipients;
+        super(params.connection, params.wallet, airdropConfig);
+        this.mint = params.mint;
+        this.recipients = params.recipients;
     }
 
     protected getOperationName(): string {
@@ -263,13 +257,9 @@ export class AirdropOperation extends BaseTokenOperation<AirdropConfig, AirdropR
  * Factory function to maintain the original API
  */
 export async function airdropTokensToMultiple(
-    connection: any,
-    wallet: any,
-    mint: string,
-    recipients: AirdropRecipient[],
-    config: AirdropConfig = {}
+    params: AirdropParams
 ): Promise<AirdropResult> {
-    const operation = new AirdropOperation(connection, wallet, mint, recipients, config);
+    const operation = new AirdropOperation(params);
     return await operation.execute();
 }
 
@@ -277,12 +267,7 @@ export async function airdropTokensToMultiple(
  * Convenience function for single recipient airdrop
  */
 export async function airdropTokenToAddress(
-    connection: any,
-    wallet: any,
-    mint: string,
-    recipientAddress: string,
-    amount: number,
-    config: AirdropConfig = {}
+    params: AirdropParams
 ): Promise<AirdropResult> {
-    return airdropTokensToMultiple(connection, wallet, mint, [{ address: recipientAddress, amount }], config);
+    return airdropTokensToMultiple(params);
 } 

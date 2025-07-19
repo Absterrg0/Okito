@@ -19,3 +19,13 @@ export interface BurnTokenResult{
     estimatedFee?: number;
     confirmationTime?: number;
 }
+
+
+
+export interface BurnTokenParams {
+    connection: any;
+    wallet: any;
+    mint: string;
+    amount: number;
+    config: BurnTokenConfig;
+}

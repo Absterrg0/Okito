@@ -171,7 +171,6 @@ export class TransferTokenOperation extends BaseTokenOperation<any, TransferResu
             success: true,
             transactionId: txId,
             estimatedFee: feeEstimation.estimatedFee,
-            actualFee: feeEstimation.estimatedFee,
             confirmationTime: Date.now() - this.startTime,
             createdDestinationATA: operationData.needsDestinationATA
         };

@@ -1,6 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getMint } from "@solana/spl-token";
-
+import { getMintAddress } from "../get-mint-address";
 /**
  * Gets the total supply of a token
  * @param connection - Solana connection instance
@@ -46,8 +46,7 @@ export async function getTokenSupplyBySymbol(
     network: string
 ) {
     try {
-        const { getMintAddress } = await import("../get-mint-address");
-        const mintAddress = getMintAddress(token as any, network as any);
+        const mintAddress = getMintAddress(token as string, network as 'mainnet-beta' | 'devnet' | 'custom');
         return await getTokenSupply(connection, mintAddress.toString());
     } catch (error: any) {
         return {
