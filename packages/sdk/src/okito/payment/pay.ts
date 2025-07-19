@@ -8,18 +8,15 @@ import type { SignerWallet } from "../../types/custom-wallet-adapter";
 /**
  * Executes a token payment to the configured merchant.
  * 
- * Automatically uses:
- * - The RPC URL from okito.config.ts (custom or standard)
- * - The destination public key
- * - The token mint (USDC/USDT)
- * 
- * @param wallet Custom WalletContextState interface
- * @param amount Number of tokens to pay (e.g., 2.5)
- * @param token Optional override (USDC/USDT)
- * @param config The OkitoResolvedConfig
+ * @param connection - Solana connection instance
+ * @param wallet - Custom WalletContextState interface
+ * @param amount - Number of tokens to pay (e.g., 2.5)
+ * @param token - Token type (USDC/USDT)
+ * @param config - The OkitoResolvedConfig containing destination and token info
  * @returns The transaction signature string
  */
 export async function pay(
+  connection: Connection,
   wallet: SignerWallet,
   amount: number,
   token: "USDC" | "USDT",
@@ -29,8 +26,6 @@ export async function pay(
     throw new Error("Wallet not connected");
   }
 
-  const connection = new Connection(config.rpcUrl, "confirmed");
-  
   const selectedToken = token || config.tokens[0];
   const mint = getMintAddress(selectedToken, config.network);
   
@@ -57,4 +52,18 @@ export async function pay(
   }
 
   return result.transactionId!;
+}
+
+/**
+ * Legacy function that creates connection from config
+ * @deprecated Use pay with connection object instead
+ */
+export async function payWithConfig(
+  wallet: SignerWallet,
+  amount: number,
+  token: "USDC" | "USDT",
+  config: OkitoResolvedConfig
+): Promise<string> {
+  const connection = new Connection(config.rpcUrl, "confirmed");
+  return await pay(connection, wallet, amount, token, config);
 }

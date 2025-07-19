@@ -1,15 +1,18 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { getAssociatedTokenAddress, getMint } from "@solana/spl-token";
 import { SignerWallet } from "../../types/custom-wallet-adapter";
-import { OkitoNetwork } from "../../types/config";
-import { getMintAddress } from "../get-mint-address";
 
-
-// Alternative version with better error handling
-export async function getBalanceForTokenSafe(
-    wallet: SignerWallet, 
-    token: string, 
-    network: OkitoNetwork
+/**
+ * Gets the token balance for a specific wallet and mint address
+ * @param connection - Solana connection instance
+ * @param wallet - SignerWallet instance
+ * @param mintAddress - Token mint address as string
+ * @returns Promise resolving to balance information
+ */
+export async function getTokenBalance(
+    connection: Connection,
+    wallet: SignerWallet,
+    mintAddress: string
 ) {
     if (!wallet.publicKey) {
         return {
@@ -20,8 +23,6 @@ export async function getBalanceForTokenSafe(
     }
 
     try {
-        const connection = new Connection(network, "confirmed");
-        const mintAddress = getMintAddress(token, network);
         const mintPubkey = new PublicKey(mintAddress);
         
         // Get the Associated Token Account address
@@ -35,12 +36,14 @@ export async function getBalanceForTokenSafe(
         
         if (!accountInfo) {
             // Token account doesn't exist, balance is 0
+            // Get mint info to provide correct decimals
+            const mintInfo = await getMint(connection, mintPubkey);
             return {
                 success: true,
                 balance: {
                     value: {
                         amount: "0",
-                        decimals: 0,
+                        decimals: mintInfo.decimals,
                         uiAmount: 0,
                         uiAmountString: "0"
                     }
@@ -64,3 +67,33 @@ export async function getBalanceForTokenSafe(
         };
     }
 }
+
+/**
+ * Gets token balance using token symbol and network (convenience function)
+ * @param connection - Solana connection instance  
+ * @param wallet - SignerWallet instance
+ * @param token - Token symbol (e.g., "USDC", "USDT")
+ * @param network - Network type for getting mint address
+ * @returns Promise resolving to balance information
+ */
+export async function getTokenBalanceBySymbol(
+    connection: Connection,
+    wallet: SignerWallet, 
+    token: string, 
+    network: string
+) {
+    try {
+        const { getMintAddress } = await import("../get-mint-address");
+        const mintAddress = getMintAddress(token as any, network as any);
+        return await getTokenBalance(connection, wallet, mintAddress.toString());
+    } catch (error: any) {
+        return {
+            success: false,
+            error: error.message || 'Failed to fetch token balance',
+            balance: null
+        };
+    }
+}
+
+// Legacy function for backward compatibility
+export const getBalanceForTokenSafe = getTokenBalanceBySymbol;

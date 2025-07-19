@@ -1,16 +1,19 @@
-import { Connection, ParsedTransactionWithMeta, ConfirmedSignatureInfo } from "@solana/web3.js";
-import { OkitoNetwork } from "../../types/config";
+import { Connection, ParsedTransactionWithMeta, ConfirmedSignatureInfo, Commitment } from "@solana/web3.js";
 import { SignerWallet } from "../../types/custom-wallet-adapter";
 import { TransactionHistoryOptions, TransactionHistoryResult } from "../../types/account/transaction-history";
-
 
 /**
  * Fetches the transaction history for a given wallet address.
  * Enhanced version with pagination support and better error handling.
+ * 
+ * @param connection - Solana connection instance
+ * @param wallet - SignerWallet instance
+ * @param options - Configuration options for fetching transaction history
+ * @returns Promise resolving to transaction history result
  */
 export async function getTransactionHistory(
+    connection: Connection,
     wallet: SignerWallet,
-    network: OkitoNetwork,
     options: TransactionHistoryOptions = {}
 ): Promise<TransactionHistoryResult> {
     const { 
@@ -38,7 +41,6 @@ export async function getTransactionHistory(
     }
 
     try {
-        const connection = new Connection(network, commitment);
         const address = wallet.publicKey;
 
         console.log(`Fetching ${limit} transactions for ${address.toString()}`);
@@ -120,20 +122,48 @@ export async function getTransactionHistory(
     }
 }
 
-// Convenience function for simple usage (maintains backward compatibility)
+/**
+ * Convenience function for simple usage (maintains backward compatibility)
+ * @param connection - Solana connection instance
+ * @param wallet - SignerWallet instance
+ * @param limit - Number of transactions to fetch (default: 20)
+ * @returns Promise resolving to simplified transaction history result
+ */
 export async function getSimpleTransactionHistory(
+    connection: Connection,
     wallet: SignerWallet,
-    network: OkitoNetwork,
     limit: number = 20
 ): Promise<{
     success: boolean;
     transactions: ParsedTransactionWithMeta[] | null;
     error?: string;
 }> {
-    const result = await getTransactionHistory(wallet, network, { limit });
+    const result = await getTransactionHistory(connection, wallet, { limit });
     return {
         success: result.success,
         transactions: result.transactions,
         error: result.error
     };
+}
+
+/**
+ * Legacy function that creates connection from network parameter
+ * @deprecated Use getTransactionHistory with connection object instead
+ */
+export async function getTransactionHistoryByNetwork(
+    wallet: SignerWallet,
+    network: string,
+    options: TransactionHistoryOptions = {}
+): Promise<TransactionHistoryResult> {
+    try {
+        const { Connection } = await import("@solana/web3.js");
+        const connection = new Connection(network, options.commitment || 'confirmed');
+        return await getTransactionHistory(connection, wallet, options);
+    } catch (error: any) {
+        return {
+            success: false,
+            transactions: null,
+            error: error.message || "Failed to create connection"
+        };
+    }
 }
