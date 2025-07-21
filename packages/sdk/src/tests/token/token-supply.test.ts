@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach, jest } from '@jest/globals';
 import { PublicKey } from '@solana/web3.js';
-import { getTokenSupply, getTokenSupplyBySymbol } from '../../okito/token/getTokenSupply';
+import { getTokenSupplyByMint, getTokenSupplyBySymbol } from '../../okito/token/getTokenSupply';
 import { 
     createTestConnection, 
     TEST_CONFIG, 
@@ -19,7 +19,7 @@ describe('Token Supply Functions', () => {
     describe('getTokenSupply', () => {
         test('should return token supply for valid mint address', async () => {
             const result = await withTimeout(
-                getTokenSupply(connection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT)
             );
             console.log(result);
 
@@ -36,7 +36,7 @@ describe('Token Supply Functions', () => {
             const invalidMint = 'invalid-mint-address';
             
             const result = await withTimeout(
-                getTokenSupply(connection, invalidMint)
+                getTokenSupplyByMint(connection, invalidMint)
             );
 
             expect(result.success).toBe(false);
@@ -47,7 +47,7 @@ describe('Token Supply Functions', () => {
 
         test('should handle empty mint address', async () => {
             const result = await withTimeout(
-                getTokenSupply(connection, '')
+                getTokenSupplyByMint(connection, '')
             );
 
             expect(result.success).toBe(false);
@@ -63,7 +63,7 @@ describe('Token Supply Functions', () => {
             );
 
             const result = await withTimeout(
-                getTokenSupply(errorConnection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(errorConnection, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
@@ -73,7 +73,7 @@ describe('Token Supply Functions', () => {
 
         test('should calculate UI amount correctly', async () => {
             const result = await withTimeout(
-                getTokenSupply(connection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -163,7 +163,7 @@ describe('Token Supply Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenSupply(largeSupplyConnection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(largeSupplyConnection, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -192,7 +192,7 @@ describe('Token Supply Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenSupply(zeroSupplyConnection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(zeroSupplyConnection, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -222,7 +222,7 @@ describe('Token Supply Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenSupply(customDecimalConnection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(customDecimalConnection, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -236,7 +236,7 @@ describe('Token Supply Functions', () => {
             const startTime = Date.now();
             
             await withTimeout(
-                getTokenSupply(connection, TEST_CONFIG.USDC_MINT),
+                getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT),
                 5000
             );
             
@@ -248,7 +248,7 @@ describe('Token Supply Functions', () => {
 
         test('should handle concurrent requests', async () => {
             const promises = Array.from({ length: 5 }, () =>
-                getTokenSupply(connection, TEST_CONFIG.USDC_MINT)
+                getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);

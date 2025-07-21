@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddress, getMint } from "@solana/spl-token";
 import { SignerWallet } from "../../types/custom-wallet-adapter";
-
+import { getMintAddress } from "../get-mint-address";
 /**
  * Gets the token balance for a specific wallet and mint address
  * @param connection - Solana connection instance
@@ -9,7 +9,7 @@ import { SignerWallet } from "../../types/custom-wallet-adapter";
  * @param mintAddress - Token mint address as string
  * @returns Promise resolving to balance information
  */
-export async function getTokenBalance(
+export async function getTokenBalanceByMint(
     connection: Connection,
     wallet: SignerWallet,
     mintAddress: string
@@ -83,10 +83,10 @@ export async function getTokenBalanceBySymbol(
     network: string
 ) {
     try {
-        const { getMintAddress } = await import("../get-mint-address");
-        const mintAddress = getMintAddress(token as any, network as any);
-        return await getTokenBalance(connection, wallet, mintAddress.toString());
-    } catch (error: any) {
+
+        const mintAddress = getMintAddress(token as string, network as 'mainnet-beta' | 'devnet' | 'custom');
+        return await getTokenBalanceByMint(connection, wallet, mintAddress.toString());
+    } catch (error:any) {
         return {
             success: false,
             error: error.message || 'Failed to fetch token balance',
@@ -95,5 +95,3 @@ export async function getTokenBalanceBySymbol(
     }
 }
 
-// Legacy function for backward compatibility
-export const getBalanceForTokenSafe = getTokenBalanceBySymbol;

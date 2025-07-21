@@ -155,25 +155,3 @@ export async function getSimpleTransactionHistory(
         error: result.error
     };
 }
-
-/**
- * Legacy function that creates connection from network parameter
- * @deprecated Use getTransactionHistory with connection object instead
- */
-export async function getTransactionHistoryByNetwork(
-    wallet: SignerWallet,
-    network: string,
-    options: TransactionHistoryOptions = {}
-): Promise<TransactionHistoryResult> {
-    try {
-        const { Connection } = await import("@solana/web3.js");
-        const connection = new Connection(network, options.commitment || 'confirmed');
-        return await getTransactionHistory(connection, wallet, options);
-    } catch (error: any) {
-        return {
-            success: false,
-            transactions: null,
-            error: error.message || "Failed to create connection"
-        };
-    }
-}

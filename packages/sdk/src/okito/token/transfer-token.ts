@@ -1,3 +1,5 @@
+import { TransactionMessage } from '@solana/web3.js';
+
 // Re-export from the new class-based implementation
 export { transferTokens, TransferTokenOperation } from './TransferTokenOperation';
 export type { TransferTokensParams, TransferResult, TransferFeeEstimation } from '../../types/token/transfer';
@@ -26,16 +28,20 @@ export async function estimateTokenTransferFee(
             needsDestinationATA = true;
         }
         
-        // Base transfer instruction fee
-        const transferFee = 5000; // ~0.000005 SOL
-        
+    const hash = await connection.getLatestBlockhash();
+        const dummyMessage = new TransactionMessage({
+            payerKey: PublicKey.default,
+            recentBlockhash: hash.blockhash,
+            instructions: []
+        }).compileToV0Message();
+        const feeCalculator = await connection.getFeeForMessage(dummyMessage);
         let accountCreationFee = 0;
         if (needsDestinationATA) {
             accountCreationFee = await connection.getMinimumBalanceForRentExemption(165);
         }
 
         const breakdown = {
-            transfer: transferFee,
+            transfer: feeCalculator,
             accountCreation: accountCreationFee,
             priorityFee: priorityFee
         };

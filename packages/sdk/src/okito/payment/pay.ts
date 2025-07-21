@@ -53,17 +53,3 @@ export async function pay(
 
   return result.transactionId!;
 }
-
-/**
- * Legacy function that creates connection from config
- * @deprecated Use pay with connection object instead
- */
-export async function payWithConfig(
-  wallet: SignerWallet,
-  amount: number,
-  token: "USDC" | "USDT",
-  config: OkitoResolvedConfig
-): Promise<string> {
-  const connection = new Connection(config.rpcUrl, "confirmed");
-  return await pay(connection, wallet, amount, token, config);
-}

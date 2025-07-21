@@ -1,8 +1,7 @@
 import { describe, expect, test, beforeEach, jest } from '@jest/globals';
 import { 
     getTransactionHistory, 
-    getSimpleTransactionHistory,
-    getTransactionHistoryByNetwork 
+    getSimpleTransactionHistory, 
 } from '../../okito/account/get-transaction-history';
 import { 
     createTestConnection, 
@@ -258,37 +257,6 @@ describe('Transaction History Functions', () => {
         });
     });
 
-    describe('getTransactionHistoryByNetwork (Legacy)', () => {
-        test('should work with network parameter', async () => {
-            const result = await withTimeout(
-                getTransactionHistoryByNetwork(wallet, TEST_CONFIG.RPC_URL)
-            );
-
-            expect(result.success).toBe(true);
-            expect(result.transactions).toBeDefined();
-        });
-
-        test('should handle invalid network', async () => {
-            const result = await withTimeout(
-                getTransactionHistoryByNetwork(wallet, 'invalid-network')
-            );
-
-            expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
-            expect(result.error).toContain('Endpoint URL must start with');
-        });
-
-        test('should pass through options correctly', async () => {
-            const options = { limit: 10, commitment: 'finalized' as const };
-            
-            const result = await withTimeout(
-                getTransactionHistoryByNetwork(wallet, TEST_CONFIG.RPC_URL, options)
-            );
-
-            expect(result.success).toBe(true);
-            expect(result.transactions).toBeDefined();
-        });
-    });
 
     describe('Edge Cases', () => {
         test('should handle mixed successful and failed transaction parsing', async () => {

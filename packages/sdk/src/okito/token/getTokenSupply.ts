@@ -7,7 +7,7 @@ import { getMintAddress } from "../get-mint-address";
  * @param mintAddress - Token mint address as string
  * @returns Promise resolving to token supply information
  */
-export async function getTokenSupply(
+export async function getTokenSupplyByMint(
     connection: Connection,
     mintAddress: string
 ) {
@@ -47,7 +47,7 @@ export async function getTokenSupplyBySymbol(
 ) {
     try {
         const mintAddress = getMintAddress(token as string, network as 'mainnet-beta' | 'devnet' | 'custom');
-        return await getTokenSupply(connection, mintAddress.toString());
+        return await getTokenSupplyByMint(connection, mintAddress.toString());
     } catch (error: any) {
         return {
             success: false,
@@ -56,6 +56,3 @@ export async function getTokenSupplyBySymbol(
         };
     }
 }
-
-// Legacy function for backward compatibility
-export default getTokenSupply;

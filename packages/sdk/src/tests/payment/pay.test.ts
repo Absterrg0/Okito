@@ -1,6 +1,6 @@
 
 import { jest,expect,test,beforeEach } from '@jest/globals';
-import { pay, payWithConfig } from '../../okito/payment/pay';
+import { pay } from '../../okito/payment/pay';
 import { 
     createTestConnection, 
     createTestWallet,
@@ -208,44 +208,6 @@ describe('Payment Functions', () => {
             await expect(
                 pay(connection, wallet, 10, 'USDC', config)
             ).rejects.toThrow('Network error');
-        });
-    });
-
-    describe('payWithConfig (Legacy)', () => {
-        test('should create connection and call pay', async () => {
-            mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
-
-            const result = await withTimeout(
-                payWithConfig(wallet, 10, 'USDC', config)
-            );
-
-            expect(result).toBe(mockTransactionSuccess.transactionId);
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    connection: expect.any(Object),
-                    wallet,
-                    amount: BigInt(10000000)
-                })
-            );
-        });
-
-        test('should handle invalid config RPC URL', async () => {
-            const invalidConfig = {
-                ...config,
-                rpcUrl: 'invalid-url'
-            };
-
-            await expect(
-                payWithConfig(wallet, 10, 'USDC', invalidConfig)
-            ).rejects.toThrow('Endpoint URL must start with');
-        });
-
-        test('should pass through payment errors', async () => {
-            mockTransferTokens.mockResolvedValue(mockTransactionError);
-
-            await expect(
-                payWithConfig(wallet, 10, 'USDC', config)
-            ).rejects.toThrow('Mock transaction failed');
         });
     });
 

@@ -1,11 +1,9 @@
 // Core SDK exports
-export { validateAndResolveOkitoConfig } from './okito/config';
 export { getMintAddress } from './okito/get-mint-address';
-export { pay, payWithConfig } from './okito/payment/pay';
+export { pay } from './okito/payment/pay';
 
 // Token launch functionality
 export { 
-    buildToken, 
     createNewToken, 
     updateTokenImage,
 } from './okito/token/launch-token';
@@ -47,57 +45,32 @@ export {
 } from './okito/airdrop/airdrop';
 
 export {
-    estimateAirdropFee,
-    validateAirdropParams,
+    estimateAirdropFee
 } from './okito/airdrop/helper';
 
 // Account and balance functions
 export {
-    getTokenBalance,
-    getTokenBalanceBySymbol,
-    getBalanceForTokenSafe // Legacy export
+    getTokenBalanceByMint,
+    getTokenBalanceBySymbol
 } from './okito/account/get-balance-for-token';
 
 export {
     getTransactionHistory,
-    getSimpleTransactionHistory,
-    getTransactionHistoryByNetwork // Legacy export
+    getSimpleTransactionHistory
 } from './okito/account/get-transaction-history';
 
 // Token utility functions
 export {
-    getTokenSupply,
+    getTokenSupplyByMint,
     getTokenSupplyBySymbol
 } from './okito/token/getTokenSupply';
 
 // Helper functions
 export {
-    validateTokenData,
-    validateProductionTokenData,
     estimateTokenCreationFee,
     estimateTransferFee
 } from './okito/token/helpers';
 
-// Operation classes for advanced usage
-export {
-    BurnTokenOperation
-} from './okito/token/BurnTokenOperation';
-
-export {
-    TransferTokenOperation  
-} from './okito/token/TransferTokenOperation';
-
-export {
-    WrapSolOperation
-} from './okito/SOL/WrapSolOperation';
-
-export {
-    AirdropOperation
-} from './okito/airdrop/AirdropOperation';
-
-export {
-    BaseTokenOperation
-} from './okito/core/BaseTokenOperation';
 
 // Type exports
 export type { 

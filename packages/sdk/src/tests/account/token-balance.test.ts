@@ -1,9 +1,8 @@
 import { describe, expect, test, beforeEach, jest, afterEach } from '@jest/globals';
 import { PublicKey } from '@solana/web3.js';
 import { 
-    getTokenBalance, 
+    getTokenBalanceByMint, 
     getTokenBalanceBySymbol, 
-    getBalanceForTokenSafe 
 } from '../../okito/account/get-balance-for-token';
 import { 
     createTestConnection, 
@@ -46,7 +45,7 @@ describe('Token Balance Functions', () => {
     describe('getTokenBalance', () => {
         test('should return token balance for valid wallet and mint', async () => {
             const result = await withTimeout(
-                getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -64,7 +63,7 @@ describe('Token Balance Functions', () => {
             invalidWallet.publicKey = null;
 
             const result = await withTimeout(
-                getTokenBalance(connection, invalidWallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, invalidWallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
@@ -89,7 +88,7 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalance(noAccountConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(noAccountConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -101,7 +100,7 @@ describe('Token Balance Functions', () => {
 
         test('should handle invalid mint address', async () => {
             const result = await withTimeout(
-                getTokenBalance(connection, wallet, 'invalid-mint')
+                getTokenBalanceByMint(connection, wallet, 'invalid-mint')
             );
 
             expect(result.success).toBe(false);
@@ -116,7 +115,7 @@ describe('Token Balance Functions', () => {
             );
 
             const result = await withTimeout(
-                getTokenBalance(errorConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(errorConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
@@ -131,7 +130,7 @@ describe('Token Balance Functions', () => {
             );
 
             const result = await withTimeout(
-                getTokenBalance(errorConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(errorConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
@@ -191,16 +190,7 @@ describe('Token Balance Functions', () => {
         });
     });
 
-    describe('getBalanceForTokenSafe (Legacy)', () => {
-        test('should work as alias for getTokenBalanceBySymbol', async () => {
-            const result = await withTimeout(
-                getBalanceForTokenSafe(connection, wallet, 'USDC', TEST_CONFIG.NETWORK)
-            );
 
-            expect(result.success).toBe(true);
-            expect(result.balance).toBeDefined();
-        });
-    });
 
     describe('Edge Cases', () => {
         test('should handle different token decimals', async () => {
@@ -219,7 +209,7 @@ describe('Token Balance Functions', () => {
             jest.spyOn(customConnection, 'getAccountInfo').mockResolvedValue(null);
 
             const result = await withTimeout(
-                getTokenBalance(customConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(customConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -238,7 +228,7 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalance(largeBalanceConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(largeBalanceConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -257,7 +247,7 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalance(zeroBalanceConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(zeroBalanceConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -277,7 +267,7 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalance(fractionalConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(fractionalConnection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
@@ -290,7 +280,7 @@ describe('Token Balance Functions', () => {
             const startTime = Date.now();
             
             await withTimeout(
-                getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT),
                 5000
             );
             
@@ -302,7 +292,7 @@ describe('Token Balance Functions', () => {
 
         test('should handle concurrent balance requests', async () => {
             const promises = Array.from({ length: 5 }, () =>
-                getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);
@@ -317,7 +307,7 @@ describe('Token Balance Functions', () => {
             const wallets = Array.from({ length: 3 }, () => createTestWallet());
             
             const promises = wallets.map(w =>
-                getTokenBalance(connection, w, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, w, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);
@@ -337,9 +327,9 @@ describe('Token Balance Functions', () => {
             const wallet3 = createTestWallet();
 
             const results = await Promise.all([
-                getTokenBalance(connection, wallet1, TEST_CONFIG.USDC_MINT),
-                getTokenBalance(connection, wallet2, TEST_CONFIG.USDC_MINT),
-                getTokenBalance(connection, wallet3, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, wallet1, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet2, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet3, TEST_CONFIG.USDC_MINT)
             ]);
 
             results.forEach(result => {
@@ -360,7 +350,7 @@ describe('Token Balance Functions', () => {
             expect(testWallet.connected).toBe(true);
             
             const result = await withTimeout(
-                getTokenBalance(connection, testWallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, testWallet, TEST_CONFIG.USDC_MINT)
             );
             
             expect(result.success).toBe(true);

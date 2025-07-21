@@ -12,8 +12,8 @@ import {
 
 // Import SDK functions
 import { 
-    getTokenSupply,
-    getTokenBalance,
+    getTokenSupplyByMint,
+    getTokenBalanceByMint,
     getTransactionHistory,
     pay,
 } from '../../index'
@@ -56,12 +56,12 @@ describe('SDK Integration Tests', () => {
             mockBurnToken.mockResolvedValue(mockTransactionSuccess);
 
             // 1. Check token supply
-            const supplyResult = await getTokenSupply(connection, TEST_CONFIG.USDC_MINT);
+            const supplyResult = await getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT);
             console.log(supplyResult);
             expect(supplyResult.success).toBe(true);
 
             // 2. Check wallet balance
-            const balanceResult = await getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
             expect(balanceResult.success).toBe(true);
 
             // 3. Transfer tokens
@@ -95,7 +95,7 @@ describe('SDK Integration Tests', () => {
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
 
             // 1. Check balance before payment
-            const initialBalance = await getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const initialBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
             expect(initialBalance.success).toBe(true);
 
             // 2. Make payment
@@ -130,7 +130,7 @@ describe('SDK Integration Tests', () => {
             ];
 
             // 1. Check sender balance
-            const senderBalance = await getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const senderBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
             expect(senderBalance.success).toBe(true);
 
             // 2. Execute airdrop
@@ -156,12 +156,12 @@ describe('SDK Integration Tests', () => {
                 new Error('Network unavailable')
             );
 
-            const supplyResult = await getTokenSupply(errorConnection, TEST_CONFIG.USDC_MINT);
+            const supplyResult = await getTokenSupplyByMint(errorConnection, TEST_CONFIG.USDC_MINT);
             expect(supplyResult.success).toBe(false);
             expect(supplyResult.error).toContain('Network unavailable');
 
             // Ensure other operations also handle the same connection error
-            const balanceResult = await getTokenBalance(errorConnection, wallet, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(errorConnection, wallet, TEST_CONFIG.USDC_MINT);
             expect(balanceResult.success).toBe(false);
         });
 
@@ -171,7 +171,7 @@ describe('SDK Integration Tests', () => {
             disconnectedWallet.publicKey = null;
 
             // All operations should fail gracefully
-            const balanceResult = await getTokenBalance(connection, disconnectedWallet, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(connection, disconnectedWallet, TEST_CONFIG.USDC_MINT);
             expect(balanceResult.success).toBe(false);
             expect(balanceResult.error).toBe('Wallet not connected');
 
@@ -187,10 +187,10 @@ describe('SDK Integration Tests', () => {
         test('should handle invalid token addresses consistently', async () => {
             const invalidMint = 'invalid-mint-address';
 
-            const supplyResult = await getTokenSupply(connection, invalidMint);
+            const supplyResult = await getTokenSupplyByMint(connection, invalidMint);
             expect(supplyResult.success).toBe(false);
 
-            const balanceResult = await getTokenBalance(connection, wallet, invalidMint);
+            const balanceResult = await getTokenBalanceByMint(connection, wallet, invalidMint);
             expect(balanceResult.success).toBe(false);
 
             // All operations should consistently handle invalid addresses
@@ -206,8 +206,8 @@ describe('SDK Integration Tests', () => {
 
             // Execute multiple operations concurrently
             const promises = [
-                getTokenSupply(connection, TEST_CONFIG.USDC_MINT),
-                getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT),
+                getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT),
                 getTransactionHistory(connection, wallet, { limit: 5 }),
                 mockTransferTokens({
                     connection,
@@ -241,7 +241,7 @@ describe('SDK Integration Tests', () => {
             const wallets = Array.from({ length: 5 }, () => createTestWallet());
 
             const promises = wallets.map(w => 
-                getTokenBalance(connection, w, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, w, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);
@@ -263,7 +263,7 @@ describe('SDK Integration Tests', () => {
             const wallet1 = createTestWallet();
             const publicKey = wallet1.publicKey.toString();
 
-            const balanceResult = await getTokenBalance(connection, wallet1, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(connection, wallet1, TEST_CONFIG.USDC_MINT);
             const historyResult = await getTransactionHistory(connection, wallet1, { limit: 1 });
 
             expect(balanceResult.success).toBe(true);
@@ -306,7 +306,7 @@ describe('SDK Integration Tests', () => {
             // Scenario: User wants to trade tokens
             
             // 1. Check available balance
-            const balance = await getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const balance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
             expect(balance.success).toBe(true);
 
             // 2. Check transaction history for recent activity
@@ -342,7 +342,7 @@ describe('SDK Integration Tests', () => {
             // Scenario: Customer making a payment to merchant
             
             // 1. Customer checks balance
-            const customerBalance = await getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const customerBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
             expect(customerBalance.success).toBe(true);
 
             // 2. Merchant provides payment config
@@ -376,7 +376,7 @@ describe('SDK Integration Tests', () => {
             // Scenario: Project distributing tokens to community
             
             // 1. Check project balance
-            const projectBalance = await getTokenBalance(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const projectBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
             expect(projectBalance.success).toBe(true);
 
             // 2. Generate recipient list
@@ -403,14 +403,14 @@ describe('SDK Integration Tests', () => {
     describe('SDK Stability', () => {
         test('should maintain stable API across operations', async () => {
             // Test that all major SDK functions are available and have consistent signatures
-            expect(typeof getTokenSupply).toBe('function');
-            expect(typeof getTokenBalance).toBe('function');
+            expect(typeof getTokenSupplyByMint).toBe('function');
+            expect(typeof getTokenBalanceByMint).toBe('function');
             expect(typeof getTransactionHistory).toBe('function');
             expect(typeof pay).toBe('function');
 
             // Functions should accept connection as first parameter (streamlined approach)
-            expect(getTokenSupply.length).toBeGreaterThanOrEqual(2);
-            expect(getTokenBalance.length).toBeGreaterThanOrEqual(3);
+            expect(getTokenSupplyByMint.length).toBeGreaterThanOrEqual(2);
+            expect(getTokenBalanceByMint.length).toBeGreaterThanOrEqual(3);
             expect(getTransactionHistory.length).toBeGreaterThanOrEqual(2);
             expect(pay.length).toBeGreaterThanOrEqual(5);
         });
@@ -422,8 +422,8 @@ describe('SDK Integration Tests', () => {
 
             // Both should work identically
             const [result1, result2] = await Promise.all([
-                getTokenBalance(connection, standardWallet, TEST_CONFIG.USDC_MINT),
-                getTokenBalance(connection, customWallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, standardWallet, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, customWallet, TEST_CONFIG.USDC_MINT)
             ]);
 
             expect(result1.success).toBe(true);
