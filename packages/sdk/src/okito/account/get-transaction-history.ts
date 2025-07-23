@@ -139,7 +139,7 @@ export async function getTransactionHistory(
  * @param limit - Number of transactions to fetch (default: 20)
  * @returns Promise resolving to simplified transaction history result
  */
-export async function getSimpleTransactionHistory(
+export async function get20Transactions(
     connection: Connection,
     wallet: SignerWallet,
     limit: number = 20

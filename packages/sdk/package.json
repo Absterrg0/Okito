@@ -11,6 +11,7 @@
     "test:coverage": "jest --coverage",
     "test:integration": "jest tests/integration/",
     "test:unit": "jest tests/ --ignore-pattern=tests/integration/",
+    "test:class": "jest tests/okito-class.test.ts",
     "build": "tsup",
     "build:watch": "tsup --watch",
     "lint": "eslint src/**/*.ts",

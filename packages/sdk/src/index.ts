@@ -2,6 +2,9 @@
 export { getMintAddress } from './okito/get-mint-address';
 export { pay } from './okito/payment/pay';
 
+// Main Okito class for object-oriented usage
+export { Okito } from './okito/Okito';
+
 // Token launch functionality
 export { 
     createNewToken, 
@@ -51,18 +54,20 @@ export {
 // Account and balance functions
 export {
     getTokenBalanceByMint,
-    getTokenBalanceBySymbol
+    getTokenBalanceBySymbol,
+    getTokenBalanceByMint as getTokenBalance, // Alias for compatibility
 } from './okito/account/get-balance-for-token';
 
 export {
     getTransactionHistory,
-    getSimpleTransactionHistory
+    get20Transactions   
 } from './okito/account/get-transaction-history';
 
 // Token utility functions
 export {
     getTokenSupplyByMint,
-    getTokenSupplyBySymbol
+    getTokenSupplyBySymbol,
+    getTokenSupplyByMint as getTokenSupply, // Alias for compatibility
 } from './okito/token/getTokenSupply';
 
 // Helper functions

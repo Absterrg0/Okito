@@ -1,0 +1,7 @@
+# Ignore everything by default
+*
+
+# But include the files specified in the "files" field of package.json
+!dist/
+!README.md
+!LICENSE

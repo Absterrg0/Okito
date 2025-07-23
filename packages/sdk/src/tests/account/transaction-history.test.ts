@@ -1,12 +1,11 @@
 import { describe, expect, test, beforeEach, jest } from '@jest/globals';
 import { 
     getTransactionHistory, 
-    getSimpleTransactionHistory, 
+    get20Transactions, 
 } from '../../okito/account/get-transaction-history';
 import { 
     createTestConnection, 
     createTestWallet,
-    TEST_CONFIG, 
     withTimeout,
     MockConnection,
     MockWallet
@@ -223,7 +222,7 @@ describe('Transaction History Functions', () => {
     describe('getSimpleTransactionHistory', () => {
         test('should return simplified transaction history', async () => {
             const result = await withTimeout(
-                getSimpleTransactionHistory(connection, wallet)
+                get20Transactions(connection, wallet)
             );
 
             expect(result.success).toBe(true);
@@ -234,7 +233,7 @@ describe('Transaction History Functions', () => {
 
         test('should use custom limit', async () => {
             const result = await withTimeout(
-                getSimpleTransactionHistory(connection, wallet, 5)
+                get20Transactions(connection, wallet, 5)
             );
 
             expect(result.success).toBe(true);
@@ -248,7 +247,7 @@ describe('Transaction History Functions', () => {
             );
 
             const result = await withTimeout(
-                getSimpleTransactionHistory(errorConnection, wallet)
+                get20Transactions(errorConnection, wallet)
             );
 
             expect(result.success).toBe(false);
