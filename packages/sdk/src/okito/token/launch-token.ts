@@ -28,10 +28,9 @@ import {
 } from '@solana/spl-token-metadata';
 import type { 
     TokenLaunchData, 
-    TokenLaunchResult, 
+    TokenResult, 
     FeeEstimation,
     ProductionTokenLaunchConfig,
-    TokenResult
 } from '../../types/token/launch';
 import { TokenLaunchError, TokenLaunchErrorCode } from '../../types/errors';
 import type { SignerWallet } from '../../types/custom-wallet-adapter';
@@ -41,6 +40,7 @@ import { withRetry, checkConnectionHealth, confirmTransactionWithRetry } from '.
 import { log } from '../utils/logger';
 import { estimateTokenCreationFee } from './helpers';
 import { isValidMintAddress, isValidUrl } from '../utils/sanitizers';
+import { BaseOperationConfig } from '../core/BaseTokenOperation';
 
 
 
@@ -57,8 +57,8 @@ export async function buildToken(
     wallet: SignerWallet,
     connection: Connection,
     tokenData: TokenLaunchData,
-    config: ProductionTokenLaunchConfig = {}
-): Promise<TokenLaunchResult> {
+    config: BaseOperationConfig = {}
+): Promise<TokenResult> {
     const startTime = Date.now();
     
     // Default configuration
@@ -289,8 +289,25 @@ export async function buildToken(
                 });
             }
 
-            // 15. Calculate actual fees (approximate)
-            const actualFee = feeEstimation.estimatedFee; // Could be improved with actual fee calculation
+            // 15. Calculate actual fees (using getFeeForMessage for accuracy)
+            let actualFee = feeEstimation.estimatedFee;
+            try {
+                // Rebuild the message for fee calculation
+                const messageV0 = new TransactionMessage({
+                    payerKey: wallet.publicKey,
+                    recentBlockhash: blockhash,
+                    instructions: transaction.instructions,
+                }).compileToV0Message();
+                actualFee = await connection.getFeeForMessage(messageV0, 'confirmed').then(
+                    (res) => res.value ?? feeEstimation.estimatedFee,
+                    () => feeEstimation.estimatedFee
+                );
+            } catch (feeError) {
+                if (enableLogging) {
+                    log('warn', 'Failed to fetch actual fee, using estimated fee', feeError);
+                }
+                actualFee = feeEstimation.estimatedFee;
+            }
 
             return {
                 success: true,
@@ -353,23 +370,9 @@ export async function createNewToken(
     wallet: SignerWallet,
     connection: Connection,
     tokenData: TokenLaunchData,
-    config?: ProductionTokenLaunchConfig,
-    onSuccess?: (mintAddress: string, txId: string) => void,
-    onError?: (error: TokenLaunchError) => void,
+    config?: BaseOperationConfig,
 ): Promise<TokenResult> {
-    const result = await buildToken(wallet, connection, tokenData, config);
-    
-    if (result.success && result.mintAddress && result.transactionId) {
-        onSuccess?.(result.mintAddress, result.transactionId);
-    } else if (!result.success && result.error) {
-        const error = new TokenLaunchError(
-            TokenLaunchErrorCode.TRANSACTION_FAILED,
-            result.error
-        );
-        onError?.(error);
-    }
-    
-    return result;
+    return await buildToken(wallet, connection, tokenData, config);
 }
 
 /**
@@ -386,8 +389,8 @@ export async function updateTokenImage(
     connection: Connection,
     mintAddress: string,
     newImageUrl: string,
-    config: ProductionTokenLaunchConfig = {}
-): Promise<TokenLaunchResult> {
+    config: BaseOperationConfig = {}
+): Promise<TokenResult> {
     const {
         maxRetries = 3,
         timeoutMs = 30000,

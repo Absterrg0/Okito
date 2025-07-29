@@ -14,11 +14,19 @@ import { createNewToken } from "@okito/sdk";
 const {connection} = useConnection();
 const wallet = useWallet();
 
-const tokenTransferFees = await createNewToken(connection,wallet,tokenData)
+const tokenData = {
+  name: "My Token",                        // The name of your token (max 32 characters)
+  symbol: "MTK",                           // The symbol for your token (max 10 characters)
+  imageUrl: "https://example.com/image.png", // A URL pointing to the image to your token
+  initialSupply: 1000000000,               // The initial supply of tokens (in base units)
+  decimals: 9,                             // Number of decimal places your token will have
+  freezeAuthority: false,                  
+  description: "This is my token",         
+  externalUrl: "https://example.com",      // (Optional) An external URL for your project 
+}
+
+const result = await createNewToken(connection,wallet,tokenData)
 ```
-<Callout type='warning'>
-<b>Note:</b> The priority fees is optional which can be paid to improve the chances of successfully passing the transaction.
-</Callout>
 
 
 ## Props
@@ -32,25 +40,26 @@ const tokenTransferFees = await createNewToken(connection,wallet,tokenData)
       default: "—",
     },
     {
-      name: "mint",
-      type: "string",
-      description: "Mint address of the token being transferred.",
-      default: `—`,
+      name: "wallet",
+      type: "SignerWallet",
+      description: "The wallet of the user.",
+      default: "—",
     },
     {
-      name: "recipientAddress",
-      type: "string",
-      description: "The address of the recipient of the token.",
-      default: `—`,
+      name: "tokenData",
+      type: "TokenLaunchData",
+      description: "The data of the token to be created.",
+      default: "—",
     },
     {
-      name: "Priority Fees",
-      type: "number",
-      description: "The priority fees to be paid to improve the chances of successfully passing the transaction.",
-      default: `0`,
+      name: "config",
+      type: "BaseOperationConfig",
+      description: "The base operation for any transaction in Okito.",
+      default: "-",
     }
   ]}
 />
+
 
 
 
@@ -60,19 +69,46 @@ const tokenTransferFees = await createNewToken(connection,wallet,tokenData)
 <PropsTable
   rows={[
     {
-      name: "estimatedFee",
-      type: "number",
-      description: "The total estimated fee for token creation.",
+      name: "success",
+      type: "boolean",
+      description: "Whether the token creation was successful.",
       default: "—",
     },
     {
-      name: "breakdown",
-      type: `{
-  transfer: number;
-  accountCreation: number;
-  priorityFee: number;
-}`,
-    default:`—`,
-    }
+      name: "mintAddress",
+      type: "string",
+      description: "The mint address of the token.",
+      default: "—",
+    },
+    {
+      name: "transactionId",
+      type: "string",
+      description: "The transaction ID of the token creation.",
+      default: "—",
+    },
+        {
+      name: "error",
+      type: "string",
+    },
+    {
+      name: "estimatedFee",
+      type: "number",
+      description: "The estimated fee for the token creation.",
+      default: "—",
+    },
+    {
+      name: "actualFee",
+      type: "number",
+      description: "The actual fee for the token creation.",
+      default: "—",
+    },
+    {
+      name: "confirmationTime",
+      type: "number",
+      description: "The time taken to confirm the token creation.",
+      default: "—",
+    },
+
+    
   ]}
 />

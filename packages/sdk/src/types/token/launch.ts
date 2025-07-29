@@ -1,5 +1,7 @@
+import { Connection } from "@solana/web3.js";
 import type { SignerWallet } from "../custom-wallet-adapter";
 import type { TokenLaunchError } from "../errors";
+import { BaseOperationConfig } from "../../okito/core/BaseTokenOperation";
 
 export interface TokenLaunchData {
     name: string;
@@ -24,12 +26,11 @@ export interface ProductionTokenLaunchConfig {
 
 export interface TokenLaunchProps {
     wallet: SignerWallet;
-    connection: any; // Connection from @solana/web3.js
+    connection: Connection; // Connection from @solana/web3.js
     tokenData: TokenLaunchData;
-    config?: ProductionTokenLaunchConfig;
+    config?: BaseOperationConfig;
     orgName?: string;
-    onSuccess?: (mintAddress: string, txId: string) => void;
-    onError?: (error: TokenLaunchError) => void;
+   
 }
 
 export interface TokenResult {
