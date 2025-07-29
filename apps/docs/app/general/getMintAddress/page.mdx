@@ -1,0 +1,51 @@
+import { Callout } from 'nextra/components'
+import PropsTable from '../../initialising/PropsTable.jsx'
+
+## `getMintAddress`
+
+This function is defined to retrieve the mint address of a particular token on the blockchain.
+
+## Snippet
+
+``` jsx filename="page.tsx"
+const mintAddress = getMintAddress("USDC",'mainnet-beta')
+```
+<Callout type='warning'>
+<b>Note:</b> This function currently only supports **USDC** and **USDT** tokens. More tokens will be added soon.
+</Callout>
+
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: "token",
+      type: "string",
+      description: "The token symbol to get the mint address for.",
+      default: "—",
+    },
+    {
+      name: "network",
+      type: `"mainnet-beta" | "devnet"`,
+      description: "The network to get the mint address for.",
+      default: `"mainnet-beta"`,
+    },
+
+  ]}
+/>
+
+
+
+## Response
+
+<PropsTable
+    rows = {[
+        {
+            name:"mintAddress",
+            type:"PublicKey",
+            description:"The mint address of the token.",
+            default:"—",
+        }
+    ]}
+/>

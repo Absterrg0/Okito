@@ -1,25 +1,35 @@
 // Re-export from the new class-based implementation
-export { airdropTokensToMultiple, airdropTokenToAddress, AirdropOperation } from './AirdropOperation';
+export { airdropTokens, AirdropOperation } from './AirdropOperation';
 export type { AirdropConfig, AirdropRecipient, AirdropResult } from '../../types/airdrop/drop';
+import { Connection } from '@solana/web3.js';
+import { SignerWallet } from '../../types/custom-wallet-adapter';
 import {log} from '../utils/logger';
-import { airdropTokensToMultiple } from './AirdropOperation';
+import { airdropTokens} from './AirdropOperation';
+import { AirdropConfig, AirdropRecipient, AirdropResult } from '../../types/airdrop/drop';
 
 /**
  * Batch airdrop function for large-scale distributions
  * Automatically splits large recipient lists into manageable chunks
  */
+
+interface AirdropTokenBatch{
+    batchSize:number,
+    delayBetweenBatches:number,
+    enableLogging:boolean,
+    airdropConfig:AirdropConfig
+}
 export async function airdropTokensBatch(
-    connection: any,
-    wallet: any,
+    connection: Connection,
+    wallet: SignerWallet,
     mint: string,
-    recipients: any[],
-    config: any = {}
-): Promise<any[]> {
+    recipients: AirdropRecipient[],
+    config: AirdropTokenBatch 
+): Promise<AirdropResult[]> {
     const {
         batchSize = 25, // Conservative batch size to avoid transaction size limits
         delayBetweenBatches = 2000, // 2 second delay between batches
         enableLogging = true,
-        ...airdropConfig
+        airdropConfig
     } = config;
 
     if (enableLogging) {
@@ -46,7 +56,7 @@ export async function airdropTokensBatch(
                 });
             }
 
-            const result = await airdropTokensToMultiple({connection, wallet, mint, batch, ...airdropConfig, enableLogging: false });
+            const result = await airdropTokens(connection, wallet, mint, batch, airdropConfig);
             
             results.push(result);
 

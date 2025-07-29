@@ -2,9 +2,10 @@ import {
     createBurnInstruction,
     getAssociatedTokenAddress,
 } from '@solana/spl-token';
-import { PublicKey, TransactionMessage } from '@solana/web3.js';
+import { Connection, PublicKey, TransactionMessage } from '@solana/web3.js';
 import { BaseTokenOperation, ValidationResult, FeeEstimation } from '../core/BaseTokenOperation';
-import type { BurnTokenConfig, BurnTokenResult, BurnTokenParams } from '../../types/token/burn-token';
+import type { BurnTokenConfig, BurnTokenResult } from '../../types/token/burn-token';
+import { SignerWallet } from '../../types/custom-wallet-adapter';
 
 interface BurnOperationData {
     mintInfo: any;
@@ -20,10 +21,10 @@ export class BurnTokenOperation extends BaseTokenOperation<BurnTokenConfig, Burn
     private mint: string;
     private amount: number;
 
-    constructor(params: BurnTokenParams) {
-        super(params.connection, params.wallet, params.config || {});
-        this.mint = params.mint;
-        this.amount = params.amount;
+    constructor(connection: Connection, wallet: SignerWallet, mint: string, amount: number, config: BurnTokenConfig) {
+        super(connection, wallet, config || {});
+        this.mint = mint;
+        this.amount = amount;
     }
 
     protected getOperationName(): string {
@@ -146,8 +147,12 @@ export class BurnTokenOperation extends BaseTokenOperation<BurnTokenConfig, Burn
  * Factory function to maintain the original API
  */
 export async function burnToken(
-    params: BurnTokenParams
+    connection: Connection,
+    wallet: SignerWallet,
+    mint: string,
+    amount: number,
+    config: BurnTokenConfig,
 ): Promise<BurnTokenResult> {
-    const operation = new BurnTokenOperation(params);
+    const operation = new BurnTokenOperation(connection, wallet, mint, amount, config);
     return await operation.execute();
 } 

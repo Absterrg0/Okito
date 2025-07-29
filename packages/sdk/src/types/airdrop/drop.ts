@@ -1,10 +1,11 @@
-import { BaseOperationConfig, BaseOperationResult } from '../../okito/core/BaseTokenOperation';
+import { BaseOperationConfig, OperationResult } from '../../okito/core/BaseTokenOperation';
+import { PublicKey } from '@solana/web3.js';
 
 /**
  * Configuration options for airdrop operations
  */
 export interface AirdropConfig extends BaseOperationConfig {
-    createRecipientAccount?: boolean; // Auto-create recipient token account if needed
+    createRecipientAccount?: boolean; 
 }
 
 /**
@@ -18,7 +19,7 @@ export interface AirdropRecipient {
 /**
  * Result of airdrop operation
  */
-export interface AirdropResult extends BaseOperationResult {
+export interface AirdropResult extends OperationResult {
     recipientsProcessed?: number;
     accountsCreated?: number;
     totalAmountSent?: string;
@@ -43,4 +44,4 @@ export interface AirdropParams {
     mint: string;
     recipients: AirdropRecipient[];
     config: AirdropConfig;
-}
+}   

@@ -1,0 +1,92 @@
+import {Steps,Callout} from 'nextra/components'
+
+# Getting started with Solana
+
+This guide will cover the initial steps to setup a solana dApp for frameworks like Next.Js and React.Js
+
+<Steps>
+
+### Step 1
+
+Install the required UI packages offered by Solana:
+
+```sh filename="terminal"
+npm install @solana/wallet-adapter-react @solana/web3.js @solana/wallet-adapter-react-ui
+```
+
+
+### Step 2
+
+Create a new provider for the wallet adapters in Solana:
+
+```jsx filename="wallet-provider.tsx" {10}
+'use client'
+import { ConnectionProvider,WalletProvider } from "@solana/wallet-adapter-react";
+import {clusterApiUrl} from "@solana/web3.js";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+
+require('@solana/wallet-adapter-react-ui/styles.css');
+
+export default function Wallet({children}: {children: React.ReactNode}) {
+
+    const endpoint = clusterApiUrl('mainnet-beta')  // mainnet-beta || devnet || testnet
+
+    return (
+       <ConnectionProvider endpoint={endpoint}> 
+        <WalletProvider wallets={[]} autoConnect>
+            <WalletModalProvider>
+                {children}
+            </WalletModalProvider>
+        </WalletProvider>
+       </ConnectionProvider>
+    )
+} 
+```
+
+
+ **`clusterApiUrl`**  
+   The `clusterApiUrl` function returns the endpoint URL for a given Solana network. You can specify:
+   
+   - **`mainnet-beta`**: The primary Solana network where real SOL is used for transactions.
+   - **`devnet`**: A development network, ideal for building and testing your `dApp` without using real SOL.
+   - **`testnet`**: A public test network for final testing before deploying to mainnet.
+
+<Callout type="info">
+ **Custom RPC URL**  
+   Alternatively, you can use a custom RPC endpoint from providers like **Alchemy**, **Infura**, or others by directly specifying their URL.
+</Callout>
+
+
+### Step 3
+
+Wrap your application's root `layout.tsx` with the `Wallet` provider you just created.
+
+```jsx filename="layout.tsx" {1,10,13}
+import Wallet from '@/components/wallet-provider'
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <Wallet>
+      {/** Other providers **/} 
+      {children}
+      </Wallet>
+    </html>
+  );
+}
+
+
+```
+
+### Step 4
+
+You have now successfully initialised your `dApp` with the Solana wallet adapter. For integration of the UI, go to the next section.
+
+
+
+
+</Steps>

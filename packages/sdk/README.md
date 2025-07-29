@@ -381,7 +381,7 @@ const result = await wrapSol({
 
 ## Configuration
 
-### Network Configuration
+### Network Configuration(ONLY WHILE USING @OKITO/UI)
 
 The SDK supports different Solana networks:
 

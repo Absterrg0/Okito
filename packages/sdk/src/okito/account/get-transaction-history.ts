@@ -1,19 +1,18 @@
-import { Connection, ParsedTransactionWithMeta, ConfirmedSignatureInfo, Commitment } from "@solana/web3.js";
-import { SignerWallet } from "../../types/custom-wallet-adapter";
+import { Connection, PublicKey, ParsedTransactionWithMeta, ConfirmedSignatureInfo, Commitment } from "@solana/web3.js";
 import { TransactionHistoryOptions, TransactionHistoryResult } from "../../types/account/transaction-history";
 
 /**
- * Fetches the transaction history for a given wallet address.
+ * Fetches the transaction history for any given Solana address.
  * Enhanced version with pagination support and better error handling.
- * 
- * @param connection - Solana connection instance
- * @param wallet - SignerWallet instance
- * @param options - Configuration options for fetching transaction history
- * @returns Promise resolving to transaction history result
+ *
+ * @param connection - Solana connection instance.
+ * @param address - The public key of the address (as a PublicKey object or base-58 string).
+ * @param options - Configuration options for fetching transaction history.
+ * @returns A promise resolving to the transaction history result.
  */
-export async function getTransactionHistory(
+export async function getAddressTransactionHistory(
     connection: Connection,
-    wallet: SignerWallet,
+    address: PublicKey | string,
     options: TransactionHistoryOptions = {}
 ): Promise<TransactionHistoryResult> {
     const { 
@@ -22,14 +21,6 @@ export async function getTransactionHistory(
         until, 
         commitment = 'confirmed' 
     } = options;
-
-    if (!wallet.publicKey) {
-        return {
-            success: false,
-            transactions: null,
-            error: "Wallet not connected"
-        };
-    }
 
     // Validate limit
     if (limit < 1 || limit > 1000) {
@@ -41,14 +32,14 @@ export async function getTransactionHistory(
     }
 
     try {
-        const address = wallet.publicKey;
+        const pubkey = new PublicKey(address);
 
         if (process.env.NODE_ENV !== 'test') {
-            console.log(`Fetching ${limit} transactions for ${address.toString()}`);
+            console.log(`Fetching ${limit} transactions for ${pubkey.toString()}`);
         }
 
         // Fetch recent confirmed signatures for the address
-        const signatures = await connection.getSignaturesForAddress(address, {
+        const signatures = await connection.getSignaturesForAddress(pubkey, {
             limit: limit + 1, // Fetch one extra to check if there are more
             before,
             until
@@ -72,7 +63,7 @@ export async function getTransactionHistory(
         }
 
         // Fetch parsed transactions for each signature
-        const parsedTxs: (ParsedTransactionWithMeta | null)[] = await connection.getParsedTransactions(
+        const parsedTxs = await connection.getParsedTransactions(
             signaturesToFetch.map(sig => sig.signature),
             { 
                 maxSupportedTransactionVersion: 0,
@@ -80,7 +71,6 @@ export async function getTransactionHistory(
             }
         );
 
-        // Filter out nulls and log any failed fetches
         const transactions = parsedTxs.filter((tx, index): tx is ParsedTransactionWithMeta => {
             if (!tx) {
                 if (process.env.NODE_ENV !== 'test') {
@@ -107,51 +97,20 @@ export async function getTransactionHistory(
             console.error('Transaction history fetch failed:', error);
         }
         
-        // Handle specific error types
-        if (error.message?.includes('429') || error.message?.includes('rate limit')) {
-            return {
-                success: false,
-                transactions: null,
-                error: "Rate limited. Please try again later."
-            };
-        }
-
-        if (error.message?.includes('timeout')) {
-            return {
-                success: false,
-                transactions: null,
-                error: "Request timeout. Network may be slow."
-            };
+        let errorMessage = error.message || "Failed to fetch transaction history";
+        
+        if (errorMessage.includes('Invalid public key')) {
+            errorMessage = "Invalid address provided.";
+        } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
+            errorMessage = "Rate limited. Please try again later.";
+        } else if (errorMessage.includes('timeout')) {
+            errorMessage = "Request timeout. Network may be slow.";
         }
 
         return {
             success: false,
             transactions: null,
-            error: error.message || "Failed to fetch transaction history"
+            error: errorMessage
         };
     }
-}
-
-/**
- * Convenience function for simple usage (maintains backward compatibility)
- * @param connection - Solana connection instance
- * @param wallet - SignerWallet instance
- * @param limit - Number of transactions to fetch (default: 20)
- * @returns Promise resolving to simplified transaction history result
- */
-export async function get20Transactions(
-    connection: Connection,
-    wallet: SignerWallet,
-    limit: number = 20
-): Promise<{
-    success: boolean;
-    transactions: ParsedTransactionWithMeta[] | null;
-    error?: string;
-}> {
-    const result = await getTransactionHistory(connection, wallet, { limit });
-    return {
-        success: result.success,
-        transactions: result.transactions,
-        error: result.error
-    };
 }

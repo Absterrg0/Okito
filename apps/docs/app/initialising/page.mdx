@@ -1,0 +1,138 @@
+import {Steps,Callout} from 'nextra/components'
+import PropsTable from './PropsTable.jsx'
+
+
+# UI Integration in SOL
+
+This section covers the integration of the UI in the `dApp` using the Solana Wallet Adapter with the prebuilt UI offered.
+
+
+
+## UI Components:
+
+The Solana Wallet Adapter provides a set of prebuilt UI components that make it easy to integrate wallet connection and management features into your dApp, significantly improving the developer experience (DX). These components handle wallet selection, connection, and display, so you don't have to build them from scratch.
+
+### `WalletMultiButton`
+
+The `WalletMultiButton` is the most commonly used component. It automatically displays the current wallet status and provides a dropdown for users to connect, disconnect, or switch wallets. When a wallet is connected, it shows the wallet's address and icon.
+
+
+
+```tsx filename="wallet-button.tsx" {8}
+'use client'
+
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
+export default function Home() {
+  return (
+    <div className="w-full h-screen flex justify-center items-center ">
+      <WalletMultiButton></WalletMultiButton>
+    </div>
+  );
+}
+```
+
+
+## Hooks
+
+Below are two important hooks provided by the Solana Wallet Adapter that are essential for interacting with wallets and the Solana network in your dApp:
+
+### `useWallet`
+
+The `useWallet` hook gives you access to the current wallet's state and methods, such as connecting, disconnecting, and sending transactions. It is the primary way to interact with the user's wallet programmatically.
+
+<PropsTable
+  rows={[
+    {
+      name: "connect",
+      type: "() => Promise<void>",
+      description: "Function to initiate wallet connection.",
+      default: "—",
+    },
+    {
+      name: "connected",
+      type: "boolean",
+      description: "Indicates if a wallet is currently connected.",
+      default: "false",
+    },
+    {
+      name: "connecting",
+      type: "boolean",
+      description: "Indicates if a wallet connection is in progress.",
+      default: "false",
+    },
+    {
+      name: "disconnect",
+      type: "() => Promise<void>",
+      description: "Function to disconnect the wallet.",
+      default: "—",
+    },
+    {
+      name: "publicKey",
+      type: "PublicKey | null",
+      description: "The public key of the connected wallet, or null if not connected.",
+      default: "null",
+    },
+    {
+      name: "signIn",
+      type: "(input) => Promise<SignInOutput>",
+      description: "Signs in using the wallet, if supported.",
+      default: "—",
+    },
+    {
+      name: "signMessage",
+      type: "(message: Uint8Array) => Promise<Uint8Array>",
+      description: "Signs an arbitrary message with the connected wallet.",
+      default: "—",
+    },
+  ]}
+/>
+
+
+### `useConnection`
+
+The `useConnection` hook provides access to the current Solana network connection. This allows you to interact with the blockchain, such as querying account data or sending transactions.
+
+These hooks are typically used inside your React components to build custom wallet interactions or to access the connection object for blockchain operations.
+
+
+<PropsTable
+  rows={[
+    {
+      name: "getBlockHeight",
+      type: "async (commitmentOrConfig?) => number",
+      description: "Fetches the current block height from the Solana network.",
+      default: "—",
+    },
+    {
+      name: "_commitment",
+      type: `"processed" | "confirmed" | "finalized"`,
+      description: "The default commitment level used for requests (e.g., 'confirmed').",
+      default: `"confirmed"`,
+    },
+    {
+      name: "_rpcEndpoint",
+      type: "string",
+      description: "The HTTP endpoint URL for the Solana RPC node.",
+      default: `"https://api.mainnet-beta.solana.com/"`,
+    },
+    {
+      name: "_rpcWebSocket",
+      type: "RpcWebSocketClient",
+      description: "WebSocket client instance for subscriptions and real-time updates.",
+      default: "—",
+    },
+    {
+      name: "_rpcRequest",
+      type: "(method: string, args: any[]) => Promise<any>",
+      description: "Performs a raw RPC request to the Solana node.",
+      default: "—",
+    },
+    {
+      name: "_rpcClient",
+      type: "ClientBrowser",
+      description: "Underlying RPC client used for HTTP requests.",
+      default: "—",
+    },
+  ]}
+/>

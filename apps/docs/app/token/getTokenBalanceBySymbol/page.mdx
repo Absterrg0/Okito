@@ -1,0 +1,114 @@
+import { Callout } from 'nextra/components'
+import PropsTable from '../../initialising/PropsTable.jsx'
+
+## `getTokenBalanceBySymbol`
+
+This function allows you to fetch the token balance of a token for any address provided
+
+## Snippet
+
+``` jsx filename="page.tsx"
+import { useConnection } from "@solana/wallet-adapter-react";
+import { getTokenBalanceBySymbol } from "@okito/sdk";
+
+const {connection} = useConnection();
+
+const mintAddress = ""; //mint address for the token 
+const for = "";  // the account for which balance is requested 
+const tokenBalance = await getTokenBalanceBySymbol(connection,for,mintAddress)
+```
+
+<Callout type="warning">
+  This function will only works  for fetching token balances of tokens that can be fetched using `getMintAddress`.
+</Callout>
+
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: "Connection",
+      type: "Connection",
+      description: "The connection object to the blockchain.",
+      default: "—",
+    },
+    {
+      name: "target",
+      type: " PublicKey | string ",
+      description: "The address of the account for which balance is being retrieved.",
+      default: `—`,
+    },
+    {
+      name: "tokenSymbol",
+      type: "string",
+      description: "Token symbol of the token being used.",
+      default: `—`,
+    },
+    {
+        name:"network",
+        type:"'mainnet-beta' | 'devnet'",
+        description:"The network of the token being used.",
+        default:"'mainnet-beta'"
+    }    
+  ]}
+/>
+
+
+
+## Response
+
+The response object contains:
+
+<PropsTable
+  rows = {[
+    {
+      name:"balance",
+      type:"Balance | null",
+      description:"The balance of the token",
+      default:"—"
+    },
+    {
+      name:"success",
+      type:"boolean",
+      description:"Whether the token balance was fetched successfully",
+    },
+    {
+      name:"error",
+      type:"string | undefined",
+      description:"The error message if the token balance was not fetched successfully",
+      default:"—"
+    }
+  ]}>
+
+</PropsTable>
+
+### Balance
+<PropsTable
+  rows={[
+    {
+      name: "amount",
+      type: "string",
+      description: "The amount of the tokens present without account for decimals",
+      default: "—",
+    },
+    {
+      name: "decimals",
+      type: "number",
+      description: "The number of decimals that the token possess",
+      default: "—",
+    },
+    {
+      name: "uiAmount",
+      type: "number | null",
+      description: "The number of tokens present with account for decimals",
+      default: "—",
+    },
+    {
+      name: "uiAmountString",
+      type: "string | null",
+      description: "The number of tokens present with account for decimals in string format",
+      default: "—",
+    }
+  ]}
+/>

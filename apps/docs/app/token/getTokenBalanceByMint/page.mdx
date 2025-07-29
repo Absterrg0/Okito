@@ -1,0 +1,81 @@
+import { Callout } from 'nextra/components'
+import PropsTable from '../../initialising/PropsTable.jsx'
+
+## `getTokenBalanceByMint`
+
+This function allows you to fetch the token balance of a token for any address provided
+
+## Snippet
+
+``` jsx filename="page.tsx"
+import { useConnection } from "@solana/wallet-adapter-react";
+import { getTokenBalanceByMint } from "@okito/sdk";
+
+const {connection} = useConnection();
+
+const mintAddress = ""; //mint address for the token 
+const for = "";  // the account for which balance is requested 
+const tokenBalance = await getTokenBalanceByMint(connection,for,mintAddress)
+```
+
+
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: "Connection",
+      type: "Connection",
+      description: "The connection object to the blockchain.",
+      default: "—",
+    },
+    {
+      name: "target",
+      type: " PublicKey | string ",
+      description: "The address of the account for which balance is being retrieved.",
+      default: `—`,
+    },
+    {
+      name: "mint",
+      type: "string",
+      description: "Mint address of the token being used.",
+      default: `—`,
+    },
+    
+  ]}
+/>
+
+
+
+## Response
+
+### Balance
+<PropsTable
+  rows={[
+    {
+      name: "amount",
+      type: "string",
+      description: "The amount of the tokens present without account for decimals",
+      default: "—",
+    },
+    {
+      name: "decimals",
+      type: "number",
+      description: "The number of decimals that the token possess",
+      default: "—",
+    },
+    {
+      name: "uiAmount",
+      type: "number | null",
+      description: "The number of tokens present with account for decimals",
+      default: "—",
+    },
+    {
+      name: "uiAmountString",
+      type: "string | null",
+      description: "The number of tokens present with account for decimals in string format",
+      default: "—",
+    }
+  ]}
+/>

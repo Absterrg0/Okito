@@ -31,7 +31,7 @@ export interface BaseOperationConfig {
 /**
  * Base result interface for all token operations
  */
-export interface BaseOperationResult {
+export interface OperationResult {
     success: boolean;
     transactionId?: string;
     error?: string;
@@ -61,7 +61,7 @@ export interface FeeEstimation {
  * Abstract base class for all token operations
  * Encapsulates common patterns: validation, transaction building, error handling, confirmation
  */
-export abstract class BaseTokenOperation<TConfig extends BaseOperationConfig, TResult extends BaseOperationResult> {
+export abstract class BaseTokenOperation<TConfig extends BaseOperationConfig, TResult extends OperationResult> {
     protected connection: Connection;
     protected wallet: SignerWallet;
     protected config: Required<TConfig>;

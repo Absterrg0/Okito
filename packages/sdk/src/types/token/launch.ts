@@ -21,6 +21,7 @@ export interface ProductionTokenLaunchConfig {
     enableLogging?: boolean;
 }
 
+
 export interface TokenLaunchProps {
     wallet: SignerWallet;
     connection: any; // Connection from @solana/web3.js
@@ -31,7 +32,7 @@ export interface TokenLaunchProps {
     onError?: (error: TokenLaunchError) => void;
 }
 
-export interface TokenLaunchResult {
+export interface TokenResult {
     success: boolean;
     mintAddress?: string;
     transactionId?: string;

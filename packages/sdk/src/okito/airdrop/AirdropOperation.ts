@@ -4,9 +4,10 @@ import {
     getAssociatedTokenAddress,
     getAccount,
 } from '@solana/spl-token';
-import { PublicKey, TransactionMessage } from '@solana/web3.js';
+import { Connection, PublicKey, TransactionMessage } from '@solana/web3.js';
 import { BaseTokenOperation, ValidationResult, FeeEstimation } from '../core/BaseTokenOperation';
 import type { AirdropConfig, AirdropRecipient, AirdropResult, AirdropParams } from '../../types/airdrop/drop';
+import { SignerWallet } from '../../types/custom-wallet-adapter';
 
 interface RecipientData {
     address: PublicKey;
@@ -256,18 +257,20 @@ export class AirdropOperation extends BaseTokenOperation<AirdropConfig, AirdropR
 /**
  * Factory function to maintain the original API
  */
-export async function airdropTokensToMultiple(
-    params: AirdropParams
+export async function airdropTokens(
+    connection: Connection,
+    wallet: SignerWallet,
+    mint:  string,
+    recipients: AirdropRecipient[],
+    config: AirdropConfig = {}
 ): Promise<AirdropResult> {
-    const operation = new AirdropOperation(params);
+    
+    const operation = new AirdropOperation({
+        connection,
+        wallet,
+        mint,
+        recipients,
+        config
+    });
     return await operation.execute();
 }
-
-/**
- * Convenience function for single recipient airdrop
- */
-export async function airdropTokenToAddress(
-    params: AirdropParams
-): Promise<AirdropResult> {
-    return airdropTokensToMultiple(params);
-} 

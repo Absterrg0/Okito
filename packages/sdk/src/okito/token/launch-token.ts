@@ -30,7 +30,8 @@ import type {
     TokenLaunchData, 
     TokenLaunchResult, 
     FeeEstimation,
-    ProductionTokenLaunchConfig
+    ProductionTokenLaunchConfig,
+    TokenResult
 } from '../../types/token/launch';
 import { TokenLaunchError, TokenLaunchErrorCode } from '../../types/errors';
 import type { SignerWallet } from '../../types/custom-wallet-adapter';
@@ -348,24 +349,24 @@ export async function buildToken(
  * @param props - TokenLaunchProps containing wallet, connection, tokenData, config, and callbacks
  * @returns Promise resolving to TokenLaunchResult
  */
-export async function createNewToken(props: {
-    wallet: SignerWallet;
-    connection: Connection;
-    tokenData: TokenLaunchData;
-    config?: ProductionTokenLaunchConfig;
-    onSuccess?: (mintAddress: string, txId: string) => void;
-    onError?: (error: TokenLaunchError) => void;
-}): Promise<TokenLaunchResult> {
-    const result = await buildToken(props.wallet, props.connection, props.tokenData, props.config);
+export async function createNewToken(
+    wallet: SignerWallet,
+    connection: Connection,
+    tokenData: TokenLaunchData,
+    config?: ProductionTokenLaunchConfig,
+    onSuccess?: (mintAddress: string, txId: string) => void,
+    onError?: (error: TokenLaunchError) => void,
+): Promise<TokenResult> {
+    const result = await buildToken(wallet, connection, tokenData, config);
     
     if (result.success && result.mintAddress && result.transactionId) {
-        props.onSuccess?.(result.mintAddress, result.transactionId);
+        onSuccess?.(result.mintAddress, result.transactionId);
     } else if (!result.success && result.error) {
         const error = new TokenLaunchError(
             TokenLaunchErrorCode.TRANSACTION_FAILED,
             result.error
         );
-        props.onError?.(error);
+        onError?.(error);
     }
     
     return result;

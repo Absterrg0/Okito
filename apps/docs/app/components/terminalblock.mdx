@@ -1,0 +1,8 @@
+import { compileMdx } from 'nextra/compile'
+import { MDXRemote } from 'nextra/mdx-remote'
+ import TerminalBlock from './TerminalBlock'
+<MDXRemote
+  compiledSource={await compileMdx('```sh {myVariable} <TerminalBlock />```')}
+  components={TerminalBlock}
+  scope={{ myVariable: 'World' }}
+/>

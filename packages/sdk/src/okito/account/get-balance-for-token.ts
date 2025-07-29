@@ -1,65 +1,57 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddress, getMint } from "@solana/spl-token";
-import { SignerWallet } from "../../types/custom-wallet-adapter";
+
 import { getMintAddress } from "../get-mint-address";
 /**
  * Gets the token balance for a specific wallet and mint address
  * @param connection - Solana connection instance
- * @param wallet - SignerWallet instance
+ * @param for - The address for which token balance is requested
  * @param mintAddress - Token mint address as string
  * @returns Promise resolving to balance information
  */
 export async function getTokenBalanceByMint(
     connection: Connection,
-    wallet: SignerWallet,
-    mintAddress: string
+    target: PublicKey | string,
+    mintAddress: string,
 ) {
-    if (!wallet.publicKey) {
-        return {
-            success: false,
-            error: 'Wallet not connected',
-            balance: null
-        };
-    }
-
     try {
+        const ownerPubkey = new PublicKey(target);
         const mintPubkey = new PublicKey(mintAddress);
         
-        // Get the Associated Token Account address
+        // Get the Associated Token Account (ATA) address for the owner
         const tokenAccountAddress = await getAssociatedTokenAddress(
             mintPubkey,
-            wallet.publicKey
+            ownerPubkey
         );
         
-        // Check if the token account exists first
+        // Check if the ATA exists
         const accountInfo = await connection.getAccountInfo(tokenAccountAddress);
         
         if (!accountInfo) {
-            // Token account doesn't exist, balance is 0
-            // Get mint info to provide correct decimals
+            // If ATA doesn't exist, balance is 0.
+            // Fetch mint info to return the correct decimal structure.
             const mintInfo = await getMint(connection, mintPubkey);
             return {
-                success: true,
+            
                 balance: {
-                    value: {
                         amount: "0",
                         decimals: mintInfo.decimals,
                         uiAmount: 0,
                         uiAmountString: "0"
-                    }
+                    
                 }
             };
         }
         
-        // Get the actual balance
+        // If ATA exists, fetch the actual balance
         const balance = await connection.getTokenAccountBalance(tokenAccountAddress);
         
         return {
-            success: true,
             balance
         };
         
     } catch (error: any) {
+        console.error("Failed to fetch token balance:", error);
         return {
             success: false,
             error: error.message || 'Failed to fetch token balance',
@@ -71,27 +63,52 @@ export async function getTokenBalanceByMint(
 /**
  * Gets token balance using token symbol and network (convenience function)
  * @param connection - Solana connection instance  
- * @param wallet - SignerWallet instance
+ * @param for - The address for which token balance is requested
  * @param token - Token symbol (e.g., "USDC", "USDT")
  * @param network - Network type for getting mint address
  * @returns Promise resolving to balance information
  */
 export async function getTokenBalanceBySymbol(
     connection: Connection,
-    wallet: SignerWallet, 
-    token: string, 
-    network: string
-) {
+    target: PublicKey | string,
+    tokenSymbol: string,
+    network: 'mainnet-beta' | 'devnet' = 'mainnet-beta'
+): Promise<{
+    balance: {
+        amount: string;
+        decimals: number;
+        uiAmount: number;
+        uiAmountString: string;
+    } | null;
+    success: boolean;
+    error?: string;
+}> {
     try {
-
-        const mintAddress = getMintAddress(token as string, network as 'mainnet-beta' | 'devnet' | 'custom');
-        return await getTokenBalanceByMint(connection, wallet, mintAddress.toString());
-    } catch (error:any) {
+        const mintAddress = getMintAddress(tokenSymbol, network);
+        if(!mintAddress){
+            return {
+                balance: null,
+                success: false,
+                error: "Mint address not found for this token symbol"
+            }
+        }
+        const balance = await getTokenBalanceByMint(connection, target, mintAddress.toString());
         return {
+            balance: balance.balance as {
+                amount: string;
+                decimals: number;
+                uiAmount: number;
+                uiAmountString: string;
+            },
+            success: true,
+            error: undefined
+        }
+    } catch (error: any) {
+        return {
+            balance: null,
             success: false,
-            error: error.message || 'Failed to fetch token balance',
-            balance: null
-        };
+            error: error.message || 'Failed to fetch token balance'
+        }
     }
 }
 

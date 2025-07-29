@@ -1,6 +1,6 @@
 import { Connection } from "@solana/web3.js";
 import { NFTData, NFTConfig } from "../../types/NFT/create";
-import { TokenLaunchData, TokenLaunchResult } from "../../types/token/launch";
+import { TokenLaunchData, TokenResult } from "../../types/token/launch";
 import { TokenLaunchError, TokenLaunchErrorCode } from "../../types/errors";
 import { SignerWallet } from "../../types/custom-wallet-adapter";
 import { log } from "../utils/logger";
@@ -21,11 +21,11 @@ import { validateNFTData } from "./helpers";
  * @returns Promise resolving to TokenLaunchResult with NFT details
  */
 export async function createNFT(
-    wallet: SignerWallet,
     connection: Connection,
-    nftData: NFTData,
+    wallet: SignerWallet,
+    data: NFTData,
     config: NFTConfig = {}
-): Promise<TokenLaunchResult> {
+): Promise<TokenResult> {
     const startTime = Date.now();
     
     // NFT-specific default configuration
@@ -36,6 +36,7 @@ export async function createNFT(
         priorityFee: 0,
         enableSimulation: true,
         enableLogging: true, // Enable logging by default for NFTs (important operations)
+        validateBalance:false,
         enableFreezeAuthority: true, // Default true for NFTs
         ...config
     };
@@ -43,14 +44,14 @@ export async function createNFT(
     try {
         if (nftConfig.enableLogging) {
             log('info', 'Starting NFT creation', { 
-                name: nftData.name, 
-                symbol: nftData.symbol,
-                hasAttributes: !!nftData.attributes?.length
+                name: data.name, 
+                symbol: data.symbol,
+                hasAttributes: !!data.attributes?.length
             });
         }
 
         // 1. Validate NFT-specific data requirements
-        const nftValidation = validateNFTData(nftData);
+        const nftValidation = validateNFTData(data);
         if (!nftValidation.isValid) {
             throw new TokenLaunchError(
                 TokenLaunchErrorCode.INVALID_TOKEN_DATA,
@@ -64,14 +65,14 @@ export async function createNFT(
 
         // 2. Transform NFT data to TokenLaunchData format with NFT constraints
         const tokenData: TokenLaunchData = {
-            name: nftData.name,
-            symbol: nftData.symbol,
-            imageUrl: nftData.imageUrl,
+            name: data.name,
+            symbol: data.symbol,
+            imageUrl: data.imageUrl,
             initialSupply: 1, // NFTs are unique with supply of 1
             decimals: 0, // NFTs are indivisible
             freezeAuthority: nftConfig.enableFreezeAuthority, // Often enabled for NFTs
-            description: nftData.description,
-            externalUrl: nftData.externalUrl
+            description: data.description,
+            externalUrl: data.externalUrl
         };
 
         if (nftConfig.enableLogging) {
@@ -90,28 +91,23 @@ export async function createNFT(
             log('info', 'NFT created successfully', {
                 mintAddress: result.mintAddress,
                 transactionId: result.transactionId,
-                name: nftData.name,
-                symbol: nftData.symbol,
-                hasAttributes: !!nftData.attributes?.length,
+                name: data.name,
+                symbol: data.symbol,
+                hasAttributes: !!data.attributes?.length,
                 totalTime: Date.now() - startTime
             });
         }
 
         return {
             ...result,
-            // Add NFT-specific metadata to result if needed
-            ...(nftData.attributes && { 
-                nftAttributes: nftData.attributes,
-                isNFT: true
-            })
         };
 
     } catch (error: any) {
         if (nftConfig.enableLogging) {
             log('error', 'NFT creation failed', {
                 error: error.message,
-                name: nftData.name,
-                symbol: nftData.symbol,
+                name: data.name,
+                symbol: data.symbol,
                 totalTime: Date.now() - startTime
             });
         }
@@ -138,13 +134,14 @@ export async function createNFT(
  * @param nftDataArray - Array of NFT configurations
  * @param config - Shared configuration for all NFTs
  * @returns Promise resolving to array of TokenLaunchResults
+ * @deprecated Use createNFT instead
  */
-export async function createNFTBatch(
+async function createNFTBatch(
     wallet: SignerWallet,
     connection: Connection,
     nftDataArray: NFTData[],
     config: NFTConfig = {}
-): Promise<TokenLaunchResult[]> {
+): Promise<TokenResult[]> {
     const batchConfig = {
         enableLogging: true,
         maxRetries: 2, // Slightly lower for batch to avoid long waits
@@ -157,7 +154,7 @@ export async function createNFTBatch(
         });
     }
 
-    const results: TokenLaunchResult[] = [];
+    const results: TokenResult[] = [];
     const errors: { index: number; error: string }[] = [];
 
     // Process NFTs sequentially to avoid overwhelming the network
@@ -169,7 +166,7 @@ export async function createNFTBatch(
                 });
             }
 
-            const result = await createNFT(wallet, connection, nftDataArray[i], {
+            const result = await createNFT( connection,wallet, nftDataArray[i], {
                 ...batchConfig,
                 enableLogging: false // Disable individual logging to reduce noise
             });
