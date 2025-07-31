@@ -1,0 +1,65 @@
+import {Steps} from 'nextra/components'
+
+# @okito/sdk
+
+This package exposes a variety of functions related to core blockchain functionality. Mainly developed to better the developer experience of building blockchain features.
+
+
+## Installation
+
+The package can be installed by running the following command:
+
+```sh filename="terminal" npm2yarn
+npm install @okito/sdk
+```
+
+
+### Usage:
+
+
+The package is now setup correctly and you could start using the functions exposed directly.
+
+
+
+- Check out all the functions exposed by @okito/sdk [here](/sdk/functions)
+
+#### Example:
+
+
+- Launching a new token using okito:
+
+
+``` tsx filename="page.tsx"
+
+import { useConnection } from "@solana/wallet-adapter-react";
+import { createNewToken } from "@okito/sdk";
+
+const {connection} = useConnection();
+const wallet = useWallet();
+
+const tokenData = {
+  name: "My Token",                        // The name of your token (max 32 characters)
+  symbol: "MTK",                           // The symbol for your token (max 10 characters)
+  imageUrl: "https://example.com/image.png", // A URL pointing to the image to your token
+  initialSupply: 1000000000,               // The initial supply of tokens (in base units)
+  decimals: 9,                             // Number of decimal places your token will have
+  freezeAuthority: false,                  
+  description: "This is my token",         
+  externalUrl: "https://example.com",      // (Optional) An external URL for your project 
+}
+
+const result = await createNewToken(connection,wallet,tokenData)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+

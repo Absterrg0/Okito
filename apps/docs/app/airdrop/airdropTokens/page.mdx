@@ -1,0 +1,123 @@
+import { Callout } from 'nextra/components'
+import PropsTable from '../../PropsTable.jsx'
+
+# `airdropTokens`
+
+This function allows you to implement airdrop functionality easily for any number of users.
+## Usage
+
+``` jsx filename="page.tsx"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { airdropTokenToAddress } from "@okito/sdk";
+
+const {connection} = useConnection();
+const wallet = useWallet();
+const mintAddress = ""; //mint address for the token 
+const recipient = [{
+        address: "", //the address to which the token is being airdropped
+        amount: 10.5 //the amount of the token to be airdropped
+    }]
+
+const airdropResult = await airdropTokens(connection,wallet,mintAddress,recipients)
+
+```
+
+<Callout type="warning">
+  Recipients is an array of objects, hence **multiple accounts** could be airdropped as well.
+</Callout>
+
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: "Connection",
+      type: "Connection",
+      description: "The connection object to the blockchain.",
+      default: "—",
+    },
+    {
+      name: "wallet",
+      type: " SignerWallet ",
+      description: "The wallet object of the sender, conforming to the SignerWallet interface.",
+      default: `—`,
+    },
+    {
+      name: "mint",
+      type: " string ",
+      description: "The mint address of the token being airdropped.",
+      default: `—`,
+    },
+    {
+        name:"recipients",
+        type:"AirdropRecipient[]",
+        description:"The recipients of the airdrop.",
+        default:"[]"
+    },
+    {
+        name:"config",
+        type:"AirdropConfig",
+        description:"The configuration for the airdrop.",
+        default:"{}"
+    }
+  ]}
+/>
+
+
+
+### AirdropConfig
+
+<PropsTable
+  rows={[
+    {
+      name: "createRecipientAccount",
+      type: "boolean",
+      description: "Automatically create the recipient's associated token account if it does not exist.",
+      default: "false",
+    },
+    {
+      name: "baseConfig",
+      type: "BaseOperationConfig",
+      description: "The base configuration for a transaction in Okito.",
+      default: "—",
+    }
+  ]}
+/>
+
+
+
+
+## Response
+
+The response object contains:
+
+<PropsTable
+  rows = {[
+    {
+        name:"OperationResult",
+        type:"OperationResult",
+        description:"The result of a transaction in Okito.",
+        default:"—"
+    },
+    {
+      name:"recipientsProcessed",
+      type:"number | null",
+      description:"The number of recipients processed",
+      default:"—"
+    },
+    {
+      name:"accountsCreated",
+      type:"number | null",
+      description:"The number of accounts created",
+    },
+    {
+      name:"totalAmountSent",
+      type:"string | null",
+      description:"The total amount of the token sent",
+      default:"—"
+    },
+
+  ]}
+  />
+

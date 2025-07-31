@@ -1,0 +1,50 @@
+import PropsTable from '../walletMultiButton/PropsTable.jsx'
+
+
+# `useConnection`
+
+The `useConnection` hook provides access to the current Solana network connection. This allows you to interact with the blockchain, such as querying account data or sending transactions.
+
+These hooks are typically used inside your React components to build custom wallet interactions or to access the connection object for blockchain operations.
+
+
+<PropsTable
+  rows={[
+    {
+      name: "getBlockHeight",
+      type: "async (commitmentOrConfig?) => number",
+      description: "Fetches the current block height from the Solana network.",
+      default: "—",
+    },
+    {
+      name: "_commitment",
+      type: `"processed" | "confirmed" | "finalized"`,
+      description: "The default commitment level used for requests (e.g., 'confirmed').",
+      default: `"confirmed"`,
+    },
+    {
+      name: "_rpcEndpoint",
+      type: "string",
+      description: "The HTTP endpoint URL for the Solana RPC node.",
+      default: `"https://api.mainnet-beta.solana.com/"`,
+    },
+    {
+      name: "_rpcWebSocket",
+      type: "RpcWebSocketClient",
+      description: "WebSocket client instance for subscriptions and real-time updates.",
+      default: "—",
+    },
+    {
+      name: "_rpcRequest",
+      type: "(method: string, args: any[]) => Promise<any>",
+      description: "Performs a raw RPC request to the Solana node.",
+      default: "—",
+    },
+    {
+      name: "_rpcClient",
+      type: "ClientBrowser",
+      description: "Underlying RPC client used for HTTP requests.",
+      default: "—",
+    },
+  ]}
+/>

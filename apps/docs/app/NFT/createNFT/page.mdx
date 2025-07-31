@@ -1,0 +1,91 @@
+import { Callout } from 'nextra/components'
+import PropsTable from '../../PropsTable.jsx'
+
+# `createNFT`
+
+This function allows you to create an NFT on the Solana blockchain.
+## Snippet
+
+``` jsx filename="page.tsx"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { createNFT } from "@okito/sdk";
+
+const {connection} = useConnection();
+const wallet = useWallet();
+
+const nftData = {
+    name: "My NFT",                                     // Name of the NFT
+    symbol: "MNFT",                                     // Symbol of the NFT
+    description: "This is my NFT",                      // Description of the NFT
+    imageUrl: "https://example.com/image.png",          // Image URL of the NFT
+    externalUrl: "https://example.com",                 // (optional) External URL for the NFT
+    attributes: [                                       // (optional) Array of attributes
+      { trait_type: "Background", value: "Blue" },
+      { trait_type: "Eyes", value: "Green" }
+    ],
+    collection: {
+        name: "My Collection",
+        family: "My Family"
+    }
+    
+}
+
+const nftResult = await createNFT(connection,wallet,nftData)
+
+```
+
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: "Connection",
+      type: "Connection",
+      description: "The connection object to the blockchain.",
+      default: "—",
+    },
+    {
+      name: "wallet",
+      type: " SignerWallet ",
+      description: "The wallet object of the sender, conforming to the SignerWallet interface.",
+      default: "—",
+    },
+    {
+      name: "data",
+      type: " NFTData ",
+      description: "The data of the NFT to be created.",
+      default: "—",
+    },
+    {
+        name:"config",
+        type:"NFTConfig",
+        description:"The configuration for the NFT.",
+        default:"{}"
+    }
+  ]}
+/>
+
+
+
+
+
+
+
+## Response
+
+The response object contains:
+
+<PropsTable
+  rows = {[
+    {
+    name:"TokenResult",
+    type:"TokenResult",
+    description:"The result of the NFT creation.",
+    default:"—"
+
+    } 
+    ]}
+  
+  />
+

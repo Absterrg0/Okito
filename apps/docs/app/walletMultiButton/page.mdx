@@ -1,0 +1,128 @@
+import PropsTable from './PropsTable.jsx'
+
+
+# `WalletMultiButton`
+
+The `WalletMultiButton` is the most commonly used component from the Solana Wallet Adapter. It provides a complete wallet connection solution with a single button that automatically adapts to the current wallet state. The component intelligently displays different content based on whether a wallet is connected, connecting, or disconnected.
+
+
+The component handles all wallet state management internally and provides a seamless user experience for wallet interactions in Solana dApps.
+
+```tsx filename="wallet-button.tsx" {8}
+'use client'
+
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
+export default function Home() {
+  return (
+    <div className="w-full h-screen flex justify-center items-center ">
+      <WalletMultiButton />
+    </div>
+  );
+}
+```
+
+## Usage Examples
+
+
+
+### With Custom Styling
+```tsx
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
+function App() {
+  return (
+    <WalletMultiButton 
+      className="bg-purple-600 hover:bg-purple-700 rounded-lg px-4 py-2"
+      style={{ fontWeight: 'bold' }}
+    />
+  );
+}
+```
+
+
+
+
+## Behavior
+
+- **Disconnected State**: Shows "Select Wallet" text and opens wallet selection modal when clicked
+- **Connecting State**: Shows loading spinner and "Connecting..." text
+- **Connected State**: Displays wallet icon, truncated public key, and dropdown with additional options
+- **Error State**: Shows error message and allows retry
+
+The component automatically updates based on the wallet context provided by the `WalletProvider`.
+
+### Props
+
+<PropsTable
+  rows={[
+    {
+      name: "className",
+      type: "string",
+      description: "Additional CSS classes to style the button. These classes are merged with the default button styles.",
+      default: "—",
+    },
+    {
+      name: "disabled",
+      type: "boolean",
+      description: "Disables the button if set to true. When disabled, the button cannot be clicked and appears in a disabled state.",
+      default: "false",
+    },
+    {
+      name: "endIcon",
+      type: "ReactElement",
+      description: "React element to display at the end of the button content (e.g., a dropdown arrow or additional icon).",
+      default: "—",
+    },
+    {
+      name: "onClick",
+      type: "(e: MouseEvent<HTMLButtonElement>) => void",
+      description: "Custom callback fired when the button is clicked. This is called in addition to the default wallet connection behavior.",
+      default: "—",
+    },
+    {
+      name: "startIcon",
+      type: "ReactElement",
+      description: "React element to display at the start of the button content (e.g., a custom icon or image).",
+      default: "—",
+    },
+    {
+      name: "style",
+      type: "CSSProperties",
+      description: "Inline styles to apply to the button element.",
+      default: "—",
+    },
+    {
+      name: "tabIndex",
+      type: "number",
+      description: "Tab index for keyboard navigation accessibility. Controls the order in which elements receive focus when using the Tab key.",
+      default: "0",
+    },
+  ]}
+/>
+
+## Styling
+
+The `WalletMultiButton` comes with default styles that can be customized using CSS classes or inline styles. The component uses CSS modules internally, so you can override specific parts by targeting the appropriate class names.
+
+### Default CSS Classes
+- `.wallet-adapter-button`: Base button styles
+- `.wallet-adapter-button-trigger`: Main button trigger
+- `.wallet-adapter-button-start-icon`: Start icon container
+- `.wallet-adapter-button-end-icon`: End icon container
+
+### Custom Styling Example
+```css
+.custom-wallet-button {
+  background: linear-gradient(45deg, #9945ff, #14f195);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.custom-wallet-button:hover {
+  transform: translateY(-2px);
+}
+```

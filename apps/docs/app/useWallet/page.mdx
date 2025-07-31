@@ -1,0 +1,52 @@
+import PropsTable from '../walletMultiButton/PropsTable.jsx'
+
+# `useWallet`
+
+The `useWallet` hook gives you access to the current wallet's state and methods, such as connecting, disconnecting, and sending transactions. It is the primary way to interact with the user's wallet programmatically.
+
+<PropsTable
+  rows={[
+    {
+      name: "connect",
+      type: "() => Promise<void>",
+      description: "Function to initiate wallet connection.",
+      default: "—",
+    },
+    {
+      name: "connected",
+      type: "boolean",
+      description: "Indicates if a wallet is currently connected.",
+      default: "false",
+    },
+    {
+      name: "connecting",
+      type: "boolean",
+      description: "Indicates if a wallet connection is in progress.",
+      default: "false",
+    },
+    {
+      name: "disconnect",
+      type: "() => Promise<void>",
+      description: "Function to disconnect the wallet.",
+      default: "—",
+    },
+    {
+      name: "publicKey",
+      type: "PublicKey | null",
+      description: "The public key of the connected wallet, or null if not connected.",
+      default: "null",
+    },
+    {
+      name: "signIn",
+      type: "(input) => Promise<SignInOutput>",
+      description: "Signs in using the wallet, if supported.",
+      default: "—",
+    },
+    {
+      name: "signMessage",
+      type: "(message: Uint8Array) => Promise<Uint8Array>",
+      description: "Signs an arbitrary message with the connected wallet.",
+      default: "—",
+    },
+  ]}
+/>

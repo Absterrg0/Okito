@@ -3,7 +3,4 @@ export default{
     estimateTokenCreationFees: "tokenCreationFees",
     estimateTransferFees: "transferFees",
     estimateAirdropFees: "airdropFees",
-    getTransactionHistory: "getTransactionHistory",
-    Airdrops:'Airdrop',
-    NFT:"NFT"
 }

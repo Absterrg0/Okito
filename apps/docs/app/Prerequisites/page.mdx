@@ -18,17 +18,8 @@ node -v
 npm -v
 ```
 
-## 2. Project Setup
 
-The Okito SDK is designed to work seamlessly in modern front-end applications, especially those built with React or Next.js. Your project should be set up to handle React components and hooks.
-
-If you are starting a new project, we recommend using Create Next App:
-
-```sh
-npx create-next-app@latest my-solana-app
-```
-
-## 3. Solana Wallet Adapter
+## 2. Solana Wallet Adapter
 
 To sign transactions on the front end, your application must be able to connect to a user's Solana wallet (like Phantom, Solflare, etc.). The Okito SDK requires a wallet object that conforms to its `SignerWallet` interface.
 
@@ -43,12 +34,6 @@ pnpm add @solana/wallet-adapter-react @solana/wallet-adapter-react-ui
 pnpm add @solana/wallet-adapter-base @solana/web3.js
 ```
 
-
-You will also want to install adapters for the specific wallets you want to support:
-
-```sh
-pnpm add @solana/wallet-adapter-wallets
-```
 
 Once these packages are installed, you will need to wrap your application in the required providers. Please refer to the [official Solana Wallet Adapter documentation](https://github.com/solana-labs/wallet-adapter) for instructions on setting up the providers in your application.
 

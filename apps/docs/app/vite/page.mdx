@@ -1,0 +1,138 @@
+import {Callout,Steps} from 'nextra/components'
+
+# Integrating Okito with Vite
+
+Getting started with the **@okito** in your Vite application is straightforward. This guide will walk you through installing and configuring the environment to use Okito.
+
+
+### Create a Vite Project
+
+First, you need to have a Vite project. Create a new project by running the command below in terminal.
+
+```sh filename="terminal" npm2yarn
+npm create vite@latest my-okito-app
+cd my-okito-app
+npm install
+```
+
+-----
+
+
+
+
+
+## Getting started with Solana
+
+Follow the steps below to setup your Vite application with appropriate solana development environment.
+
+<Steps>
+
+### Step 1
+
+Install the required packages offered by Solana:
+
+```sh filename="terminal" npm2yarn
+npm install @solana/wallet-adapter-react @solana/web3.js @solana/wallet-adapter-react-ui
+```
+
+
+### Step 2
+
+Create a new provider(`wallet-provider`) for the wallet adapters in Solana:
+
+```jsx filename="src/components/wallet-provider.tsx" {9}
+import { ConnectionProvider,WalletProvider } from "@solana/wallet-adapter-react";
+import {clusterApiUrl} from "@solana/web3.js";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+
+import '@solana/wallet-adapter-react-ui/styles.css';
+
+export default function Wallet({children}: {children: React.ReactNode}) {
+
+    const endpoint = clusterApiUrl('mainnet-beta')  // mainnet-beta || devnet || testnet
+
+    return (
+       <ConnectionProvider endpoint={endpoint}> 
+        <WalletProvider wallets={[]} autoConnect>
+            <WalletModalProvider>
+                {children}
+            </WalletModalProvider>
+        </WalletProvider>
+       </ConnectionProvider>
+    )
+} 
+```
+
+
+ **`clusterApiUrl`**  
+
+   The `clusterApiUrl` function returns the endpoint URL for a given Solana network. You can specify:
+   
+   - **`mainnet-beta`**: The primary Solana network where real SOL is used for transactions.
+   - **`devnet`**: A development network, ideal for building and testing your `dApp` without using real SOL.
+   - **`testnet`**: A public test network for final testing before deploying to mainnet.
+
+<Callout type="info">
+ **Custom RPC URL**  
+   Alternatively, you can use a custom RPC endpoint from providers like **Alchemy**, **Infura**, or others by directly specifying their URL.
+</Callout>
+
+
+### Step 3
+
+Wrap your application's root `main.tsx` (or `App.tsx`) with the `Wallet` provider you just created.
+
+```jsx filename="src/main.tsx" {1,8,12}
+import Wallet from './components/wallet-provider'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <Wallet>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Wallet>,
+)
+```
+
+### Step 4
+
+Configure Vite to handle Node.js polyfills (required for Solana Web3.js). Update your `vite.config.ts`:
+
+```ts filename="vite.config.ts"
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  define: {
+    global: 'globalThis',
+  },
+  resolve: {
+    alias: {
+      buffer: 'buffer',
+    },
+  },
+  optimizeDeps: {
+    include: ['buffer'],
+  },
+})
+```
+
+### Step 5
+
+Install the buffer polyfill:
+
+```sh filename="terminal"
+npm install buffer
+```
+
+### Step 6
+
+You have successfully completed the setup the environment for your Vite application to use Okito. For core blockchain functions, check out the [Okito SDK](https://okito.io/docs/sdk/overview) documentation.
+
+</Steps>

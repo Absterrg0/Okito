@@ -1,0 +1,114 @@
+import { Callout } from 'nextra/components'
+import PropsTable from '../../PropsTable.jsx'
+
+# `updateTokenImage`
+
+This function allows you to update the image (URI) of an existing token on Solana using the Okito SDK.
+## Usage
+
+``` jsx filename="page.tsx"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { updateTokenImage } from "@okito/sdk";
+
+const {connection} = useConnection();
+const wallet = useWallet();
+const mintAddress = ""; //mint address for the token 
+const newImageUrl = ""; //the new image URL
+
+const updateResult = await updateTokenImage(connection,wallet,mintAddress,newImageUrl)
+
+```
+
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: "connection",
+      type: "Connection",
+      description: "The connection object to the Solana blockchain.",
+      default: "—",
+    },
+    {
+      name: "wallet",
+      type: "SignerWallet",
+      description: "The sender's wallet object, conforming to the SignerWallet interface.",
+      default: "—",
+    },
+    {
+      name: "mint",
+      type: "string",
+      description: "The mint address of the token to be updated.",
+      default: "—",
+    },
+    {
+      name: "newImageUrl",
+      type: "string",
+      description: "The new image URL to be updated.",
+      default: "—",
+    },
+    {
+      name: "config",
+      type: "BaseOperationConfig",
+      default: "—",
+    },
+  ]}
+/>
+
+
+#
+
+
+
+## Response
+
+The response object contains: **`TokenResult`**
+
+<PropsTable
+  rows = {[
+    {
+        name:"success",
+        type:"boolean",
+        description:"Whether the token image was updated successfully.",
+        default:"—"
+    },
+    {
+      name:"mintAddress",
+      type:"string | null",
+      description:"The mint address of the token",
+      default:"—"
+    },
+    {
+      name:"transactionId",
+      type:"string | null",
+      description:"The transaction ID of the update",
+    },
+    {
+      name:"error",
+      type:"string | null",
+      description:"The error message if the token image was not updated successfully",
+      default:"—"
+    },
+    {
+      name:"estimatedFee",
+      type:"number | null",
+      description:"The estimated fee for the update",
+      default:"—"
+    },  
+    {
+      name:"actualFee",
+      type:"number | null",
+      description:"The actual fee for the update",
+      default:"—"
+    },  
+    {
+      name:"confirmationTime",
+      type:"number | null",
+      description:"The confirmation time for the update",
+      default:"—"
+    },
+    
+  ]}
+  />
+

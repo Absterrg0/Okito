@@ -5,7 +5,7 @@ export default {
     },
     introduction:"Introduction",
     Prerequisites:"Prerequisites",
-    getting_started:"Getting Started",
+    gettingStarted:"Getting Started",
     "###_setup":{
         type:"separator",
         title:"Setup"
@@ -16,29 +16,36 @@ export default {
 
     "###_newToWeb3":{
         type:"separator",
-        title:"New to web3?"
+        title:"Wallet Adapter"
     },
-    solana:"Solana",
-    initialising:"Getting started with UI",
-    
-    "###_installation":{
+    solIntroduction: "Adapter Basics",
+    walletMultiButton:"WalletMultiButton",
+    useConnection:"useConnection",
+    useWallet:"useWallet",
+
+    "###_packages":{
         type:"separator",
-        title:"Installation"
+        title:"Packages"
     },
-    
-    packages:{
-        title:"Packages",
-        theme:{
-            typesetting:"article"
-        }
+    sdk:"@okito/sdk",
+    ui:"@okito/ui",
+    "###_Config":{
+        type:"separator",
+        title:"Config"
     },
+    baseOperationConfig:"BaseOperationConfig",
+
     "###_getting_started":{
         type:"separator",
-        title:"Getting Started"
+        title:"SDK"
     },
-    general:"Helper functions",
-        sdk:"@okito/sdk",
-    ui:"@okito/ui"
+    airdrop:"Airdrop",
+    account:"Account",
+    token:"Token",
+    NFT:"NFT",
+    general:"Misc",
+
+ 
 
 
 }
