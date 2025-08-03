@@ -12,7 +12,7 @@ import { AirdropConfig, AirdropRecipient, AirdropResult } from '../../types/aird
  * Automatically splits large recipient lists into manageable chunks
  */
 
-interface AirdropTokenBatch{
+export interface AirdropTokenBatch{
     batchSize:number,
     delayBetweenBatches:number,
     enableLogging:boolean,
@@ -23,7 +23,12 @@ export async function airdropTokensBatch(
     wallet: SignerWallet,
     mint: string,
     recipients: AirdropRecipient[],
-    config: AirdropTokenBatch 
+    config: AirdropTokenBatch = {
+        batchSize: 25,
+        delayBetweenBatches: 2000,
+        enableLogging: true,
+        airdropConfig: {}
+    }
 ): Promise<AirdropResult[]> {
     const {
         batchSize = 25, // Conservative batch size to avoid transaction size limits

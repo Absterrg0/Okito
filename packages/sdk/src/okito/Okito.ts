@@ -7,10 +7,9 @@ import { validateAndResolveOkitoConfig } from './config';
 import { 
     getTokenBalanceByMint, 
     getTokenBalanceBySymbol 
-} from './account/get-balance-for-token';
+} from './token/get-balance-for-token';
 import { 
-    getTransactionHistory, 
-    get20Transactions 
+    getAddressTransactionHistory, 
 } from './account/get-transaction-history';
 import { 
     getTokenSupplyByMint, 
@@ -21,39 +20,35 @@ import { burnToken } from './token/burn-token';
 import { createNewToken, updateTokenImage } from './token/launch-token';
 import { pay } from './payment/pay';
 import { 
-    airdropTokensToMultiple, 
-    airdropTokenToAddress, 
+    AirdropTokenBatch,
+    airdropTokens,  
     airdropTokensBatch 
 } from './airdrop/airdrop';
-import { createNFT, createNFTBatch } from './NFT/create';
-import { wrapSol } from './SOL/wrap';
+import { createNFT } from './NFT/create';
+// import { wrapSol } from './SOL/wrap';
 
 // Import type definitions
 import type { TransactionHistoryOptions } from '../types/account/transaction-history';
 import type { 
-    TransferTokensParams,
     ProductionTransferConfig,
     TransferResult 
 } from '../types/token/transfer';
 import type { 
-    BurnTokenParams,
     BurnTokenConfig,
     BurnTokenResult 
 } from '../types/token/burn-token';
 import type { 
     TokenLaunchData,
     ProductionTokenLaunchConfig,
-    TokenLaunchResult 
+    TokenResult 
 } from '../types/token/launch';
 import type { 
-    AirdropParams,
     AirdropRecipient,
     AirdropConfig,
     AirdropResult 
 } from '../types/airdrop/drop';
 import type { NFTData, NFTConfig } from '../types/NFT/create';
 import type { 
-    WrapSolParams,
     WrapSolConfig,
     WrapSolResult 
 } from '../types/SOL/wrap';
@@ -71,28 +66,28 @@ class AccountOperations {
      * Get token balance by mint address
      */
     async getBalance(mintAddress: string) {
-        return getTokenBalanceByMint(this.connection, this.wallet, mintAddress);
+        return getTokenBalanceByMint(this.connection, this.wallet.publicKey, mintAddress);
     }
 
     /**
      * Get token balance by symbol
      */
     async getBalanceBySymbol(symbol: string, network: OkitoNetwork) {
-        return getTokenBalanceBySymbol(this.connection, this.wallet, symbol, network);
+        return getTokenBalanceBySymbol(this.connection, this.wallet.publicKey, symbol, network);
     }
 
     /**
      * Get transaction history
      */
     async getTransactionHistory(options?: TransactionHistoryOptions) {
-        return getTransactionHistory(this.connection, this.wallet, options);
+        return getAddressTransactionHistory(this.connection, this.wallet.publicKey, options);
     }
 
     /**
      * Get last 20 transactions
      */
     async get20Transactions() {
-        return get20Transactions(this.connection, this.wallet);
+        return getAddressTransactionHistory(this.connection, this.wallet.publicKey, {limit: 20});
     }
 }
 
@@ -143,13 +138,13 @@ class TokenOperations {
         amount: number;
         config?: BurnTokenConfig;
     }): Promise<BurnTokenResult> {
-        return burnToken({
-            connection: this.connection,
-            wallet: this.wallet,
-            mint: params.mint,
-            amount: params.amount,
-            config: params.config || {}
-        });
+        return burnToken(
+            this.connection,
+            this.wallet,
+            params.mint,
+            params.amount,
+            params.config || {}
+        );
     }
 
     /**
@@ -158,13 +153,13 @@ class TokenOperations {
     async create(
         tokenData: TokenLaunchData, 
         config?: ProductionTokenLaunchConfig
-    ): Promise<TokenLaunchResult> {
-        return createNewToken({
-            wallet: this.wallet,
-            connection: this.connection,
+    ): Promise<TokenResult> {
+        return createNewToken(
+            this.wallet,
+            this.connection,
             tokenData,
             config
-        });
+        );
     }
 
     /**
@@ -174,7 +169,7 @@ class TokenOperations {
         mintAddress: string;
         newImageUrl: string;
         config?: ProductionTokenLaunchConfig;
-    }): Promise<TokenLaunchResult> {
+    }): Promise<TokenResult> {
         return updateTokenImage(
             this.wallet,
             this.connection,
@@ -220,13 +215,13 @@ class AirdropOperations {
         recipients: AirdropRecipient[],
         config?: AirdropConfig
     ): Promise<AirdropResult> {
-        return airdropTokensToMultiple({
-            connection: this.connection,
-            wallet: this.wallet,
+        return airdropTokens(
+            this.connection,
+            this.wallet,
             mint,
             recipients,
-            config: config || {}
-        });
+            config || {}
+        );
     }
 
     /**
@@ -238,13 +233,13 @@ class AirdropOperations {
         amount: number,
         config?: AirdropConfig
     ): Promise<AirdropResult> {
-        return airdropTokenToAddress({
-            connection: this.connection,
-            wallet: this.wallet,
+        return airdropTokens(
+            this.connection,
+            this.wallet,
             mint,
-            recipients: [{ address: recipient, amount: amount }],
-            config: config || {}
-        });
+            [{ address: recipient, amount: amount }],
+            config || {}
+        );
     }
 
     /**
@@ -253,14 +248,14 @@ class AirdropOperations {
     async batch(
         mint: string,
         recipients: AirdropRecipient[],
-        config?: AirdropConfig
+        config?: AirdropTokenBatch
     ): Promise<AirdropResult[]> {
         return airdropTokensBatch(
             this.connection,
             this.wallet,
             mint,
             recipients,
-            config || {}
+            config 
         );
     }
 }
@@ -277,16 +272,11 @@ class NFTOperations {
     /**
      * Create a single NFT
      */
-    async create(nftData: NFTData, config?: NFTConfig): Promise<TokenLaunchResult> {
-        return createNFT(this.wallet, this.connection, nftData, config);
+    async create(nftData: NFTData, config?: NFTConfig): Promise<TokenResult> {
+        return createNFT(this.connection, this.wallet, nftData, config);
     }
 
-    /**
-     * Create multiple NFTs in batch
-     */
-    async createBatch(nftDataArray: NFTData[], config?: NFTConfig): Promise<TokenLaunchResult[]> {
-        return createNFTBatch(this.wallet, this.connection, nftDataArray, config);
-    }
+
 }
 
 /**
@@ -301,17 +291,6 @@ class SOLOperations {
     /**
      * Wrap SOL to wSOL
      */
-    async wrap(params: {
-        amount: number;
-        config?: WrapSolConfig;
-    }): Promise<WrapSolResult> {
-        return wrapSol({
-            connection: this.connection,
-            wallet: this.wallet,
-            amountSol: params.amount,
-            config: params.config || {}
-        });
-    }
 }
 
 /**

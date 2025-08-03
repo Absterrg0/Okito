@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js';
 import { 
     getTokenBalanceByMint, 
     getTokenBalanceBySymbol, 
-} from '../../okito/account/get-balance-for-token';
+} from '../../okito/token/get-balance-for-token';
 import { 
     createTestConnection, 
     createTestWallet,

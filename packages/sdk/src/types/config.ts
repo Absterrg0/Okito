@@ -8,7 +8,7 @@ export type OkitoToken = "USDC" | "USDT";
 /**
  * Allowed Solana network environments.
  */
-export type OkitoNetwork = "mainnet-beta" | "devnet" | "custom";
+export type OkitoNetwork = "mainnet-beta" | "devnet";
 
 /**
  * User-defined config structure for `okito.config.ts`

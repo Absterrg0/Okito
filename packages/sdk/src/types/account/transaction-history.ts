@@ -9,7 +9,7 @@ export interface TransactionHistoryOptions {
 
 export interface TransactionHistoryResult {
     success: boolean;
-    transactions: ParsedTransactionWithMeta[] | null;
+    transactions?: ParsedTransactionWithMeta[] ;
     signatures?: ConfirmedSignatureInfo[]; // Include raw signatures for pagination
     hasMore?: boolean; // Indicates if there are more transactions
     error?: string;

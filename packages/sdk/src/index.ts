@@ -14,7 +14,6 @@ export {
 
 export {
     createNFT,
-    createNFTBatch,
 } from './okito/NFT/create';
 
 // NFT types
@@ -56,7 +55,7 @@ export {
     getTokenBalanceByMint,
     getTokenBalanceBySymbol,
     getTokenBalanceByMint as getTokenBalance, // Alias for compatibility
-} from './okito/account/get-balance-for-token';
+} from './okito/token/get-balance-for-token';
 
 export {
     getTransactionHistory,

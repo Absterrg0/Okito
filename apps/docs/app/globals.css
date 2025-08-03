@@ -10,3 +10,598 @@
 html {
   scroll-behavior: smooth;
 }
+
+
+/* Okito Landing Page - Global Styles */
+
+/* Glass Morphism Effects */
+.floating-nav {
+  backdrop-filter: blur(12px);
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.glass-card {
+  backdrop-filter: blur(16px);
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.glass-enhanced {
+  backdrop-filter: blur(20px);
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+/* Animation Classes */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+  }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 6s ease-in-out infinite;
+}
+
+@keyframes float-gentle {
+  0%, 100% { 
+    transform: translateY(0px); 
+  }
+  50% { 
+    transform: translateY(-10px); 
+  }
+}
+
+.animate-float-gentle-delay-1 {
+  animation: float-gentle 6s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-float-gentle-delay-2 {
+  animation: float-gentle 6s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.animate-float-gentle-delay-4 {
+  animation: float-gentle 6s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+/* 3D Perspective */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-hero {
+  background: linear-gradient(135deg, 
+    rgb(15, 23, 42) 0%, 
+    rgb(2, 6, 23) 50%, 
+    rgb(15, 23, 42) 100%);
+}
+
+.bg-gradient-hero-overlay {
+  background: linear-gradient(45deg, 
+    rgba(6, 78, 59, 0.2) 0%, 
+    transparent 50%, 
+    rgba(30, 58, 138, 0.2) 100%);
+}
+
+.bg-gradient-hero-center {
+  background: radial-gradient(ellipse at center, 
+    rgba(34, 197, 94, 0.1) 0%, 
+    transparent 50%, 
+    transparent 100%);
+}
+
+.bg-gradient-section {
+  background: linear-gradient(180deg, 
+    rgb(2, 6, 23) 0%, 
+    rgba(15, 23, 42, 0.2) 50%, 
+    rgb(2, 6, 23) 100%);
+}
+
+.bg-gradient-section-alt {
+  background: linear-gradient(180deg, 
+    rgb(2, 6, 23) 0%, 
+    rgba(15, 23, 42, 0.3) 50%, 
+    rgb(2, 6, 23) 100%);
+}
+
+.bg-gradient-section-enhanced {
+  background: linear-gradient(180deg, 
+    rgb(2, 6, 23) 0%, 
+    rgba(15, 23, 42, 0.4) 50%, 
+    rgb(2, 6, 23) 100%);
+}
+
+.bg-gradient-footer {
+  background: linear-gradient(180deg, 
+    rgba(15, 23, 42, 0.5) 0%, 
+    transparent 100%);
+}
+
+.bg-gradient-footer-radial {
+  background: radial-gradient(ellipse at center, 
+    rgba(34, 197, 94, 0.05) 0%, 
+    transparent 50%, 
+    transparent 100%);
+}
+
+/* Card Hover Effects */
+.card-hover-green {
+  transition: all 0.5s ease;
+}
+
+.card-hover-green:hover {
+  background: rgba(34, 197, 94, 0.05);
+  border-color: rgba(34, 197, 94, 0.15);
+}
+
+.card-hover-blue {
+  transition: all 0.5s ease;
+}
+
+.card-hover-blue:hover {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+.card-hover-purple {
+  transition: all 0.5s ease;
+}
+
+.card-hover-purple:hover {
+  background: rgba(147, 51, 234, 0.05);
+  border-color: rgba(147, 51, 234, 0.15);
+}
+
+.card-hover-red {
+  transition: all 0.5s ease;
+}
+
+.card-hover-red:hover {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.card-hover-yellow {
+  transition: all 0.5s ease;
+}
+
+.card-hover-yellow:hover {
+  background: rgba(245, 158, 11, 0.05);
+  border-color: rgba(245, 158, 11, 0.15);
+}
+
+.card-hover-pink {
+  transition: all 0.5s ease;
+}
+
+.card-hover-pink:hover {
+  background: rgba(236, 72, 153, 0.05);
+  border-color: rgba(236, 72, 153, 0.15);
+}
+
+.card-hover-cyan {
+  transition: all 0.5s ease;
+}
+
+.card-hover-cyan:hover {
+  background: rgba(6, 182, 212, 0.05);
+  border-color: rgba(6, 182, 212, 0.15);
+}
+
+/* Button Shimmer Effects */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.7s ease;
+}
+
+.btn-shimmer:hover::before {
+  left: 100%;
+}
+
+.btn-shimmer-green::before {
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(34, 197, 94, 0.2), 
+    rgba(34, 197, 94, 0.1), 
+    transparent);
+}
+
+.btn-shimmer-blue::before {
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(59, 130, 246, 0.2), 
+    rgba(59, 130, 246, 0.1), 
+    transparent);
+}
+
+.btn-shimmer-purple::before {
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(147, 51, 234, 0.2), 
+    rgba(147, 51, 234, 0.1), 
+    transparent);
+}
+
+/* Icon Container Styles */
+.icon-container-green {
+  background: linear-gradient(135deg, 
+    rgba(34, 197, 94, 0.2) 0%, 
+    rgba(22, 163, 74, 0.2) 100%);
+}
+
+.icon-container-blue {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.2) 0%, 
+    rgba(37, 99, 235, 0.2) 100%);
+}
+
+.icon-container-purple {
+  background: linear-gradient(135deg, 
+    rgba(147, 51, 234, 0.2) 0%, 
+    rgba(126, 34, 206, 0.2) 100%);
+}
+
+.icon-container-red {
+  background: linear-gradient(135deg, 
+    rgba(239, 68, 68, 0.2) 0%, 
+    rgba(220, 38, 38, 0.2) 100%);
+}
+
+.icon-container-yellow {
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.2) 0%, 
+    rgba(217, 119, 6, 0.2) 100%);
+}
+
+.icon-container-pink {
+  background: linear-gradient(135deg, 
+    rgba(236, 72, 153, 0.2) 0%, 
+    rgba(219, 39, 119, 0.2) 100%);
+}
+
+.icon-container-cyan {
+  background: linear-gradient(135deg, 
+    rgba(6, 182, 212, 0.2) 0%, 
+    rgba(8, 145, 178, 0.2) 100%);
+}
+
+/* Code Block Styles */
+.code-block {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  backdrop-filter: blur(20px);
+  border-radius: 1rem;
+  padding: 2rem;
+  overflow-x: auto;
+}
+
+.code-block-enhanced {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  backdrop-filter: blur(16px);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  position: relative;
+}
+
+.code-block-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    rgba(34, 197, 94, 0.05) 0%, 
+    transparent 100%);
+  border-radius: 0.75rem;
+}
+
+/* Terminal Window Styles */
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.terminal-dot-red {
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: rgb(239, 68, 68);
+  border-radius: 50%;
+}
+
+.terminal-dot-yellow {
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: rgb(245, 158, 11);
+  border-radius: 50%;
+}
+
+.terminal-dot-green {
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: rgb(34, 197, 94);
+  border-radius: 50%;
+}
+
+/* Progress Bar Styles */
+.progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: rgb(55, 65, 81);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgb(59, 130, 246) 0%, 
+    rgb(147, 51, 234) 100%);
+  border-radius: 9999px;
+  transition: width 2s ease;
+}
+
+.progress-fill-animated {
+  animation: progress-pulse 2s ease-in-out infinite;
+}
+
+@keyframes progress-pulse {
+  0%, 100% { 
+    width: 75%; 
+  }
+  50% { 
+    width: 90%; 
+  }
+}
+
+/* Badge Styles */
+.badge-green {
+  background: rgba(34, 197, 94, 0.2);
+  color: rgb(134, 239, 172);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-blue {
+  background: rgba(59, 130, 246, 0.2);
+  color: rgb(147, 197, 253);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-purple {
+  background: rgba(147, 51, 234, 0.2);
+  color: rgb(196, 181, 253);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+}
+
+.badge-red {
+  background: rgba(239, 68, 68, 0.2);
+  color: rgb(252, 165, 165);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-yellow {
+  background: rgba(245, 158, 11, 0.2);
+  color: rgb(253, 230, 138);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-pink {
+  background: rgba(236, 72, 153, 0.2);
+  color: rgb(249, 168, 212);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.badge-cyan {
+  background: rgba(6, 182, 212, 0.2);
+  color: rgb(165, 243, 252);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+/* Mini Chart Animation */
+.mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  height: 2rem;
+}
+
+.mini-chart-bar {
+  flex: 1;
+  background: rgba(34, 197, 94, 0.6);
+  border-radius: 0.125rem;
+  animation: chart-pulse 2s ease-in-out infinite;
+}
+
+.mini-chart-bar:nth-child(1) { animation-delay: 0s; }
+.mini-chart-bar:nth-child(2) { animation-delay: 0.2s; }
+.mini-chart-bar:nth-child(3) { animation-delay: 0.4s; }
+.mini-chart-bar:nth-child(4) { animation-delay: 0.6s; }
+.mini-chart-bar:nth-child(5) { animation-delay: 0.8s; }
+.mini-chart-bar:nth-child(6) { animation-delay: 1s; }
+.mini-chart-bar:nth-child(7) { animation-delay: 1.2s; }
+.mini-chart-bar:nth-child(8) { animation-delay: 1.4s; }
+
+@keyframes chart-pulse {
+  0%, 100% { 
+    height: 0.625rem; 
+  }
+  50% { 
+    height: 1.5rem; 
+  }
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 9999px;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: rgb(34, 197, 94);
+  border-radius: 50%;
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { 
+    opacity: 0.5; 
+  }
+  50% { 
+    opacity: 1; 
+  }
+}
+
+/* Floating Particles */
+.floating-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 0.25rem;
+  height: 0.25rem;
+  background: rgba(34, 197, 94, 0.3);
+  border-radius: 50%;
+  animation: float-particle 20s linear infinite;
+}
+
+.particle-blue {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.particle-purple {
+  background: rgba(147, 51, 234, 0.2);
+}
+
+.particle-large {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) translateX(0px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .floating-nav {
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+    max-width: none;
+  }
+  
+  .glass-card,
+  .glass-enhanced {
+    backdrop-filter: blur(12px);
+  }
+  
+  .animate-float-gentle {
+    animation-duration: 8s;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .glass-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+  }
+  
+  .glass-enhanced {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow,
+  .animate-float-gentle,
+  .animate-float-gentle-delay-1,
+  .animate-float-gentle-delay-2,
+  .animate-float-gentle-delay-4,
+  .mini-chart-bar,
+  .status-dot,
+  .particle {
+    animation: none;
+  }
+  
+  .btn-shimmer::before {
+    display: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .glass-card,
+  .glass-enhanced {
+    border-width: 2px;
+    backdrop-filter: none;
+    background: rgb(30, 41, 59);
+  }
+  
+  .floating-nav {
+    backdrop-filter: none;
+    background: rgb(30, 41, 59);
+    border-width: 2px;
+  }
+}

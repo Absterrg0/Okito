@@ -23,11 +23,10 @@ export async function getAddressTransactionHistory(
     } = options;
 
     // Validate limit
-    if (limit < 1 || limit > 1000) {
+    if (limit < 1 || limit > 500) {
         return {
             success: false,
-            transactions: null,
-            error: "Limit must be between 1 and 1000"
+            error: "Limit must be between 1 and 500"
         };
     }
 
@@ -104,12 +103,11 @@ export async function getAddressTransactionHistory(
         } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
             errorMessage = "Rate limited. Please try again later.";
         } else if (errorMessage.includes('timeout')) {
-            errorMessage = "Request timeout. Network may be slow.";
+            errorMessage = "Request timeout. Network may be slow. Try reducing the limit.";
         }
 
         return {
             success: false,
-            transactions: null,
             error: errorMessage
         };
     }

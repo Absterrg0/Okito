@@ -14,7 +14,7 @@ export interface AirdropConfig extends BaseOperationConfig {
 export interface AirdropRecipient {
     address: string; // Recipient wallet address
     amount: number; // Amount in human-readable format (e.g., 10.5 for tokens with decimals)
-}
+    }
 
 /**
  * Result of airdrop operation
