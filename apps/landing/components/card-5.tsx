@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants } from 'motion/react';
 import { X, ArrowUpRight, CheckCircle, Clock, Wallet } from 'lucide-react';
 
 export default function PaymentCard() {

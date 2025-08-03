@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { Code2, Sparkles, ArrowRight, Github } from 'lucide-react';
