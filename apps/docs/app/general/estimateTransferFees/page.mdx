@@ -1,77 +1,58 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
 
-## `estimateTokenTransferFee`
 
-This function is defined to calculate the value of the estimated fee while transferring a token(SPL) on the blockchain.
+# `estimateTransferFee`
 
-## Snippet
+Estimates total cost to transfer a token, optionally including rent for creating the recipient ATA.
 
-``` jsx filename="page.tsx"
+## Usage
+
+```jsx filename="page.tsx"
 import { useConnection } from "@solana/wallet-adapter-react";
-import { estimateTokenTransferFee, getMintAddress } from "@okito/sdk";
+import { estimateTransferFee } from "@okito/sdk";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { PublicKey } from "@solana/web3.js";
 
-const {connection} = useConnection();
-const usdcMintAddress = getMintAddress("USDC",'devnet').toString();
-const tokenTransferFees = await estimateTokenTransferFee(connection,usdcMintAddress,recipientAddress,0)
+const MyComponent = () => {
+    const { connection } = useConnection();
+
+    const getFeeEstimate = async (recipientAddress: string, mintAddress: string) => {
+        try {
+          const needsDestinationATA = false;
+            const priorityFee = 5000; // Optional priority fee
+            const feeInfo = await estimateTransferFee(connection, needsDestinationATA, priorityFee);
+
+            console.log("Estimated Fee (in lamports):", feeInfo.estimatedFee);
+            alert(`Estimated transfer cost: ${feeInfo.estimatedFee / 1e9} SOL`);
+        } catch (e) {
+            console.error("Failed to get fee estimate:", e);
+        }
+    };
+
+    // ... your component JSX
+};
 ```
-<Callout type='warning'>
-<b>Note:</b> The priority fees is optional which can be paid to improve the chances of successfully passing the transaction.
-</Callout>
 
-
-## Props
+## Parameters
 
 <PropsTable
   rows={[
+    { name: "connection", type: "Connection", description: "Solana connection instance." },
+    { name: "needsDestinationATA", type: "boolean", description: "Set true if the recipient lacks an ATA for this mint." },
     {
-      name: "Connection",
-      type: "Connection",
-      description: "The connection object to the blockchain.",
+      name: "priorityFee",
+      type: "number",
+      description: "Optional priority fee in micro‑lamports to improve processing priority.",
       default: "—",
     },
-    {
-      name: "mint",
-      type: "string",
-      description: "Mint address of the token being transferred.",
-      default: `—`,
-    },
-    {
-      name: "recipientAddress",
-      type: "string",
-      description: "The address of the recipient of the token.",
-      default: `—`,
-    },
-    {
-      name: "Priority Fees",
-      type: "number",
-      description: "The priority fees to be paid to improve the chances of successfully passing the transaction.",
-      default: `0`,
-    }
   ]}
 />
 
-
-
 ## Response
-
 
 <PropsTable
   rows={[
-    {
-      name: "estimatedFee",
-      type: "number",
-      description: "The total estimated fee for token creation.",
-      default: "—",
-    },
-    {
-      name: "breakdown",
-      type: `{
-  transfer: number;
-  accountCreation: number;
-  priorityFee: number;
-}`,
-    default:`—`,
-    }
+    { name: "estimatedFee", type: "number", description: "Estimated fee in lamports." },
   ]}
 />

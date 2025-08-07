@@ -1,0 +1,144 @@
+import PropsTable from "../PropsTable.jsx"
+import {Callout} from 'nextra/components'
+import Typelink from "../TypeLink.jsx"
+
+# OperationConfig
+
+Configuration options used by all operations.
+
+## Properties
+
+<PropsTable
+    rows={[{
+        name:"maxRetries",
+        type:"number",
+        description:"Maximum retry attempts on transient errors.",
+        default:"3"
+    },
+    {
+        name:"timeoutMs",
+        type:"number",
+        description:"Overall timeout per operation (milliseconds).",
+        default:"60000"
+    },
+    {
+        name:"confirmationStrategy",
+        type:"'processed' | 'confirmed' | 'finalized'",
+        description:"Confirmation level to wait for.",
+        default:"'confirmed'"
+    },
+    {
+        name:"priorityFee",
+        type:"number",
+        description:"Additional fee in lamports to prioritize the transaction.",
+        default:"—"
+    },
+    {
+        name:"enableLogging",
+        type:"boolean",
+        description:"Enable structured logs for the operation.",
+        default:"true"
+    },
+    {
+        name:"enableSimulation",
+        type:"boolean",
+        description:"Run a pre-flight simulation before sending.",
+        default:"true"
+    },
+    {
+        name:"validateBalance",
+        type:"boolean",
+        description:"Check payer balance before executing.",
+        default:"true"
+    },
+    {
+        name:"logLevel",
+        type:"'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'",
+        description:"Minimum log level.",
+        default:"'info'"
+    },
+    {
+        name:"enableMetrics",
+        type:"boolean",
+        description:"Collect basic timing metrics.",
+        default:"true"
+    },
+    {
+        name:"enablePerformanceTracking",
+        type:"boolean",
+        description:"Collect detailed stage timings.",
+        default:"true"
+    },
+    {
+        name:"customRetryConfig",
+        type:<Typelink href="#customRetryConfig">customRetryConfig</Typelink>,
+        description:"Retry tuning. See details below.",
+        default:"—"
+    },
+    {
+        name:"healthCheckTimeout",
+        type:"number",
+        description:"Timeout for connection health checks (ms).",
+        default:"5000"
+    },
+    {
+        name:"enableCircuitBreaker",
+        type:"boolean",
+        description:"Temporarily halt operations after repeated failures.",
+        default:"true"
+    },
+    {
+        name:"connectionFeatureCheck",
+        type:"boolean",
+        description:"Probe connection features (e.g., support for versioned tx).",
+        default:"true"
+    },
+    {
+        name:"computeUnitLimit",
+        type:"number",
+        description:"Optional limit for compute units.",
+        default:"—"
+    },
+    {
+        name:"computeUnitPrice",
+        type:"number",
+        description:"Optional price for compute units (micro‑lamports).",
+        default:"—"
+    },
+    {
+        name:"enableVersionedTransactions",
+        type:"boolean",
+        description:"Use v0 versioned transactions when appropriate.",
+        default:"true"
+    },
+    {
+        name:"strictValidation",
+        type:"boolean",
+        description:"Stricter parameter checks with clearer errors.",
+        default:"true"
+    },
+    {
+        name:"allowUnsafeOperations",
+        type:"boolean",
+        description:"Allow explicitly marked risky flows (not recommended).",
+        default:"false"
+    },
+    {
+        name:"requireSignatureValidation",
+        type:"boolean",
+        description:"Validate expected signers are present.",
+        default:"false"
+    }
+    ]}
+/>
+
+### customRetryConfig
+
+<PropsTable
+  rows={[
+    { name: "baseDelay", type: "number", description: "Initial delay before first retry (ms).", default: "—" },
+    { name: "maxDelay", type: "number", description: "Upper bound for retry delay (ms).", default: "—" },
+    { name: "backoffFactor", type: "number", description: "Multiplier applied to delay after each attempt.", default: "—" },
+    { name: "jitter", type: "boolean", description: "Randomize delays slightly to reduce thundering herd.", default: "true" },
+  ]}
+/>

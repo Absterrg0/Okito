@@ -1,70 +1,80 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
+import Typelink from '../../TypeLink.jsx'
+
+
 
 # `airdropTokens`
 
-This function allows you to implement airdrop functionality easily for any number of users.
+Airdrops tokens to multiple recipients in a single operation (up to 30 recipients).
+
 ## Usage
 
-``` jsx filename="page.tsx"
+```jsx filename="page.tsx"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { airdropTokenToAddress } from "@okito/sdk";
+import { airdropTokens } from "@okito/sdk";
 
 const {connection} = useConnection();
 const wallet = useWallet();
-const mintAddress = ""; //mint address for the token 
-const recipient = [{
-        address: "", //the address to which the token is being airdropped
-        amount: 10.5 //the amount of the token to be airdropped
-    }]
+const mintAddress = ""; // mint address for the token 
+const recipients = [{
+    address: "", // the address to which the token is being airdropped
+    amount: 10.5 // the amount of the token to be airdropped
+}];
 
-const airdropResult = await airdropTokens(connection,wallet,mintAddress,recipients)
-
+const airdropResult = await airdropTokens(connection, wallet, mintAddress, recipients, config);
 ```
 
-<Callout type="warning">
-  Recipients is an array of objects, hence **multiple accounts** could be airdropped as well.
+## Capabilities
+
+<Callout type="info">
+- Single-transaction flow for small batches
+- Auto-create recipient ATAs when enabled
+- Clear per-recipient validation feedback
 </Callout>
 
+### Limits
 
-## Props
+<Callout type="warning">
+Up to 30 recipients per call. For larger distributions, use `airdropTokensBatch`.
+</Callout>
+
+### Props
 
 <PropsTable
   rows={[
     {
-      name: "Connection",
+      name: "connection",
       type: "Connection",
-      description: "The connection object to the blockchain.",
+      description: "The connection object to the Solana blockchain.",
       default: "—",
     },
     {
       name: "wallet",
-      type: " SignerWallet ",
+      type: "SignerWallet",
       description: "The wallet object of the sender, conforming to the SignerWallet interface.",
-      default: `—`,
+      default: "—",
     },
     {
       name: "mint",
-      type: " string ",
+      type: "string",
       description: "The mint address of the token being airdropped.",
-      default: `—`,
+      default: "—",
     },
     {
-        name:"recipients",
-        type:"AirdropRecipient[]",
-        description:"The recipients of the airdrop.",
-        default:"[]"
+      name: "recipients",
+      type: "AirdropRecipient[]",
+      description: "Array of recipients (max 30 for simple airdrop).",
+      default: "[]"
     },
     {
-        name:"config",
-        type:"AirdropConfig",
-        description:"The configuration for the airdrop.",
-        default:"{}"
+      name: "config",
+      type: "AirdropConfig",
+      description: "Optional configuration for the airdrop operation.",
+      default: "{}"
     }
   ]}
 />
-
-
 
 ### AirdropConfig
 
@@ -74,50 +84,74 @@ const airdropResult = await airdropTokens(connection,wallet,mintAddress,recipien
       name: "createRecipientAccount",
       type: "boolean",
       description: "Automatically create the recipient's associated token account if it does not exist.",
-      default: "false",
+      default: "true",
     },
     {
-      name: "baseConfig",
-      type: "BaseOperationConfig",
-      description: "The base configuration for a transaction in Okito.",
-      default: "—",
+      name: "Operation Config",
+      type: <a href="/OperationConfig">OperationConfig</a>,
+      description: "Operation config for the airdrop operation.",
+      default: "{}",
     }
   ]}
 />
 
-
-
-
-## Response
-
-The response object contains:
+### Response
 
 <PropsTable
-  rows = {[
+  rows={[
     {
-        name:"OperationResult",
-        type:"OperationResult",
-        description:"The result of a transaction in Okito.",
-        default:"—"
+      name: "success",
+      type: "boolean",
+      description: "Whether the airdrop operation was successful.",
+      default: "—"
     },
     {
-      name:"recipientsProcessed",
-      type:"number | null",
-      description:"The number of recipients processed",
-      default:"—"
+      name: "transactionId",
+      type: "string | undefined",
+      description: "The transaction ID of the successful airdrop.",
+      default: "—"
     },
     {
-      name:"accountsCreated",
-      type:"number | null",
-      description:"The number of accounts created",
+      name: "estimatedFee",
+      type: "number",
+      description: "Estimated fee in lamports.",
+      default: "—"
     },
     {
-      name:"totalAmountSent",
-      type:"string | null",
-      description:"The total amount of the token sent",
-      default:"—"
+      name: "actualFee",
+      type: "number",
+      description: "Actual fee paid in lamports.",
+      default: "—"
     },
-
+    {
+      name: "confirmationTime",
+      type: "number",
+      description: "Time taken for confirmation in milliseconds.",
+      default: "—"
+    },
+    {
+      name: "recipientsProcessed",
+      type: "number",
+      description: "The number of recipients successfully processed.",
+      default: "—"
+    },
+    {
+      name: "accountsCreated",
+      type: "number",
+      description: "The number of token accounts created.",
+      default: "—"
+    },
+    {
+      name: "totalAmountSent",
+      type: "string",
+      description: "The total amount of tokens sent (in raw token units).",
+      default: "—"
+    },
+    {
+      name: "error",
+      type: "string | undefined",
+      description: "Error message if the operation failed.",
+      default: "—"
+    }
   ]}
-  />
-
+/>

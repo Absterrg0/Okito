@@ -1,33 +1,49 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
 
-# `airdropTokensBatch`
 
-This function allows you to implement airdrop functionality in batches for large sized airdrops(Greater than 30-40 recipients)
+
+
+
+# `airdropTokensBatch` 
+
+This function performs large-scale airdrops using a batched approach.
+
 ## Usage
 
-``` jsx filename="page.tsx"
+```jsx filename="page.tsx"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { airdropTokensBatch } from "@okito/sdk";
 
 const {connection} = useConnection();
 const wallet = useWallet();
-const mintAddress = ""; //mint address for the token 
-const recipients = [{
-        address: "", //the address to which the token is being airdropped
-        amount: 10.5 //the amount of the token to be airdropped
-    }]
+const mintAddress = ""; // mint address for the token 
+const recipients = [
+    { address: "recipient1Address", amount: 100 },
+    { address: "recipient2Address", amount: 200 },
+    // ... thousands more recipients
+];
 
-const airdropResult = await airdropTokensBatch(connection,wallet,mintAddress,recipients)
+const config = {
+    batchSize: 15,
+    batchDelayMs: 3000,
+    progressCallback: (progress) => {
+        console.log(`Progress: ${progress.completedBatches}/${progress.totalBatches} batches completed`);
+    }
+};
 
+const airdropResult = await airdropTokensBatch(connection, wallet, mintAddress, recipients, config);
 ```
 
+## Capabilities
+
 <Callout type="info">
-  Airdrop will proceed in batches, hence expect long transaction time.
+- Handles large recipient lists in batches
+- Optional progress callback for UI feedback
+- Per-batch retries with delays
 </Callout>
 
-
-## Props
+## Parameters
 
 <PropsTable
   rows={[
@@ -40,94 +56,257 @@ const airdropResult = await airdropTokensBatch(connection,wallet,mintAddress,rec
     {
       name: "wallet",
       type: "SignerWallet",
-      description: "The sender's wallet object, conforming to the SignerWallet interface.",
+      description: "The wallet object of the sender.",
       default: "—",
     },
     {
       name: "mint",
       type: "string",
-      description: "The mint address of the token to be airdropped.",
+      description: "The mint address of the token being airdropped.",
       default: "—",
     },
     {
       name: "recipients",
       type: "AirdropRecipient[]",
-      description: "Array of recipient objects, each with an address and amount.",
-      default: "[]",
+      description: "Array of recipients (unlimited for large safe airdrop).",
+      default: "[]"
     },
     {
       name: "config",
-      type: "AirdropTokenBatch",
-      default: "—",
-    },
+      type: "AirdropInBatchesConfig",
+      description: "Configuration for the large-scale airdrop operation.",
+      default: "{}"
+    }
   ]}
 />
 
-
-### `AirdropTokenBatch`
+### AirdropInBatchesConfig
 
 <PropsTable
   rows={[
     {
       name: "batchSize",
       type: "number",
-      description: "Batch size for airdrop. Number of recipients per batch.",
-      default: "25",
+      description: "Number of recipients per batch (max 20).",
+      default: "15",
     },
     {
-      name: "delayBetweenBatches",
+      name: "batchDelayMs",
       type: "number",
-      description: "Delay in milliseconds between batches.",
-      default: "2000",
+      description: "Delay between batches in milliseconds (min 2000).",
+      default: "3000",
     },
     {
-      name: "enableLogging",
+      name: "maxBatchRetries",
+      type: "number",
+      description: "Maximum retry attempts per batch.",
+      default: "3",
+    },
+    {
+      name: "preflightValidation",
       type: "boolean",
-      description: "Whether to enable logging for progress and errors.",
+      description: "Enable comprehensive preflight validation.",
       default: "true",
     },
     {
-      name: "airdropConfig",
-      type: "AirdropConfig",
-      description: "Additional airdrop configuration (see AirdropConfig for details).",
-      default: "—",
+      name: "networkStabilityCheck",
+      type: "boolean",
+      description: "Check network stability before execution.",
+      default: "true",
     },
+    {
+      name: "progressCallback",
+      type: "(progress: AirdropProgress) => void",
+      description: "Callback function for progress updates.",
+      default: "undefined",
+    },
+    {
+      name: "pauseOnError",
+      type: "boolean",
+      description: "Pause execution on repeated batch failures.",
+      default: "false",
+    },
+    {
+      name: "dryRun",
+      type: "boolean",
+      description: "Simulate the operation without sending transactions.",
+      default: "false",
+    },
+    {
+      name: "confirmationStrategy",
+      type: "'processed' | 'confirmed' | 'finalized'",
+      description: "Transaction confirmation level.",
+      default: "'finalized'",
+    },
+    {
+      name: "priorityFee",
+      type: "number",
+      description: "Priority fee in micro-lamports.",
+      default: "50000",
+    },
+    {
+      name: "createRecipientAccount",
+      type: "boolean",
+      description: "Automatically create recipient token accounts.",
+      default: "true",
+    }
   ]}
 />
 
-
-
-
-## Response
-
-The response object contains: **`AirdropResult`**
+### AirdropProgress
 
 <PropsTable
-  rows = {[
+  rows={[
     {
-        name:"OperationResult",
-        type:"OperationResult",
-        description:"The result of a transaction in Okito.",
-        default:"—"
+      name: "totalBatches",
+      type: "number",
+      description: "Total number of batches to process.",
+      default: "—"
     },
     {
-      name:"recipientsProcessed",
-      type:"number | null",
-      description:"The number of recipients processed",
-      default:"—"
+      name: "completedBatches",
+      type: "number",
+      description: "Number of batches completed successfully.",
+      default: "—"
     },
     {
-      name:"accountsCreated",
-      type:"number | null",
-      description:"The number of accounts created",
+      name: "failedBatches",
+      type: "number",
+      description: "Number of batches that failed.",
+      default: "—"
     },
     {
-      name:"totalAmountSent",
-      type:"string | null",
-      description:"The total amount of the token sent",
-      default:"—"
+      name: "totalRecipients",
+      type: "number",
+      description: "Total number of recipients.",
+      default: "—"
     },
-
+    {
+      name: "processedRecipients",
+      type: "number",
+      description: "Number of recipients processed successfully.",
+      default: "—"
+    },
+    {
+      name: "failedRecipients",
+      type: "number",
+      description: "Number of recipients that failed.",
+      default: "—"
+    },
+    {
+      name: "currentBatch",
+      type: "number | undefined",
+      description: "Currently processing batch number.",
+      default: "—"
+    },
+    {
+      name: "estimatedTimeRemaining",
+      type: "number | undefined",
+      description: "Estimated time remaining in milliseconds.",
+      default: "—"
+    },
+    {
+      name: "lastTransactionId",
+      type: "string | undefined",
+      description: "Last successful transaction ID.",
+      default: "—"
+    }
   ]}
-  />
+/>
 
+### Response (Large Safe Airdrop)
+
+<PropsTable
+  rows={[
+    {
+      name: "success",
+      type: "boolean",
+      description: "Whether the overall airdrop operation was successful.",
+      default: "—"
+    },
+    {
+      name: "transactionId",
+      type: "string | undefined",
+      description: "The first transaction ID (for compatibility).",
+      default: "—"
+    },
+    {
+      name: "transactionIds",
+      type: "string[] | undefined",
+      description: "Array of all transaction IDs from successful batches.",
+      default: "—"
+    },
+    {
+      name: "estimatedFee",
+      type: "number",
+      description: "Estimated total fee in lamports.",
+      default: "—"
+    },
+    {
+      name: "actualFee",
+      type: "number",
+      description: "Actual total fee paid in lamports.",
+      default: "—"
+    },
+    {
+      name: "confirmationTime",
+      type: "number",
+      description: "Total time taken for the operation in milliseconds.",
+      default: "—"
+    },
+    {
+      name: "recipientsProcessed",
+      type: "number",
+      description: "Number of recipients successfully processed.",
+      default: "—"
+    },
+    {
+      name: "recipientsFailed",
+      type: "number | undefined",
+      description: "Number of recipients that failed.",
+      default: "—"
+    },
+    {
+      name: "accountsCreated",
+      type: "number",
+      description: "Total number of token accounts created.",
+      default: "—"
+    },
+    {
+      name: "totalAmountSent",
+      type: "string",
+      description: "Total amount of tokens sent (in raw token units).",
+      default: "—"
+    },
+    {
+      name: "batchCount",
+      type: "number | undefined",
+      description: "Total number of batches processed.",
+      default: "—"
+    },
+    {
+      name: "successfulBatches",
+      type: "number | undefined",
+      description: "Number of batches completed successfully.",
+      default: "—"
+    },
+    {
+      name: "failedBatches",
+      type: "number | undefined",
+      description: "Number of batches that failed.",
+      default: "—"
+    },
+    {
+      name: "successRate",
+      type: "number | undefined",
+      description: "Success rate as a percentage (0-100).",
+      default: "—"
+    },
+    {
+      name: "error",
+      type: "string | undefined",
+      description: "Error message if the operation failed.",
+      default: "—"
+    }
+  ]}
+/>

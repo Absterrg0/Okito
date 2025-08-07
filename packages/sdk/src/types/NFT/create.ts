@@ -1,9 +1,9 @@
-import { BaseOperationConfig } from "../../okito/core/BaseTokenOperation";
+import { OperationConfig } from "../core";
 
 /**
  * NFT-specific configuration extending ProductionTokenLaunchConfig
  */
-export interface NFTConfig extends BaseOperationConfig {
+export interface NFTConfig extends OperationConfig {
     // NFT-specific options
     enableFreezeAuthority?: boolean; // Default true for NFTs to prevent transfers
     royaltyBasisPoints?: number; // Future: for royalty configuration

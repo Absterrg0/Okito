@@ -2,15 +2,15 @@ import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
 import TypeLink from '../../TypeLink.jsx'
 
-# `getTransactionHistory`
+# `getTransactions`
 
-Retrieves the transaction history of a given address.
+Fetches recent transactions for a given address with simple pagination support.
 
-## Code Usage
+## Usage
 
 ``` jsx filename="page.tsx"
 import { useConnection } from "@solana/wallet-adapter-react";
-import { getTransactionHistory } from "@okito/sdk";
+import { getTransactions } from "@okito/sdk";
 
 const {connection} = useConnection();
 
@@ -23,40 +23,30 @@ const options = {
         commitment: "processed" //The commitment level to use
 }
 
-const transactionHistory = await getTransactionHistory(connection,address,options)
+const transactionHistory = await getTransactions(connection,address,options)
 ```
 
 <Callout type="warning">
 The default values of the params( **limit = 20, commitment = "confirmed"** ) will be used if not provided.
 </Callout>
 
+## Capabilities
 
-## Props
+<Callout type="info">
+- Limit, before, until parameters for pagination
+- Batching under the hood for efficient lookups
+- Returns parsed transactions when available
+</Callout>
+
+## Parameters
 
 <PropsTable
   rows={[
-    {
-      name: "Connection",
-      type: "Connection",
-      description: "The connection object to the blockchain.",
-      default: "—",
-    },
-    {
-      name: "address",
-      type: " PublicKey | string ",
-      description: "The address of the account for which transactions are being fetched.",
-      default: `—`,
-    },
-    {
-      name: "options",
-      type: "TransactionHistoryOptions",
-      description: "The options for fetching the transaction history.",
-      default: `—`,
-    },
+    { name: "connection", type: "Connection", description: "Solana connection instance." },
+    { name: "address", type: "PublicKey | string", description: "Address to query." },
+    { name: "options", type: "TransactionHistoryOptions", description: "Limit, before, until, commitment." },
   ]}
 />
-
-
 
 ## Response
 
@@ -80,7 +70,7 @@ The default values of the params( **limit = 20, commitment = "confirmed"** ) wil
       default:"—"
     },{
      name:"signatures?",
-     type:"ConfirmedSignatureInfo[]",
+     type:<TypeLink href="#confirmedsignatureinfo">ConfirmedSignatureInfo[]</TypeLink>,
      description:"The raw signatures fetched",
      default:"—"
     },{

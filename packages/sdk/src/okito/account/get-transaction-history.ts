@@ -1,16 +1,16 @@
-import { Connection, PublicKey, ParsedTransactionWithMeta, ConfirmedSignatureInfo, Commitment } from "@solana/web3.js";
+import { Connection, PublicKey, ParsedTransactionWithMeta} from "@solana/web3.js";
 import { TransactionHistoryOptions, TransactionHistoryResult } from "../../types/account/transaction-history";
 
 /**
  * Fetches the transaction history for any given Solana address.
- * Enhanced version with pagination support and better error handling.
+ * Enhanced version with pagination support, better error handling, and batching.
  *
  * @param connection - Solana connection instance.
  * @param address - The public key of the address (as a PublicKey object or base-58 string).
  * @param options - Configuration options for fetching transaction history.
  * @returns A promise resolving to the transaction history result.
  */
-export async function getAddressTransactionHistory(
+export async function getTransactions(
     connection: Connection,
     address: PublicKey | string,
     options: TransactionHistoryOptions = {}
@@ -27,7 +27,7 @@ export async function getAddressTransactionHistory(
         return {
             success: false,
             error: "Limit must be between 1 and 500"
-        };
+            };
     }
 
     try {
@@ -60,17 +60,31 @@ export async function getAddressTransactionHistory(
         if (process.env.NODE_ENV !== 'test') {
             console.log(`Found ${signaturesToFetch.length} signatures, fetching parsed transactions...`);
         }
+        
+        // --- START OF BATCHING LOGIC ---
+        const BATCH_SIZE = 100;
+        const signatureStrings = signaturesToFetch.map(sig => sig.signature);
+        const batches: string[][] = [];
 
-        // Fetch parsed transactions for each signature
-        const parsedTxs = await connection.getParsedTransactions(
-            signaturesToFetch.map(sig => sig.signature),
-            { 
-                maxSupportedTransactionVersion: 0,
-                commitment 
-            }
-        );
+        for (let i = 0; i < signatureStrings.length; i += BATCH_SIZE) {
+            batches.push(signatureStrings.slice(i, i + BATCH_SIZE));
+        }
 
-        const transactions = parsedTxs.filter((tx, index): tx is ParsedTransactionWithMeta => {
+        const allParsedTxs: (ParsedTransactionWithMeta | null)[] = [];
+        
+        for (const batch of batches) {
+            const parsedBatch = await connection.getParsedTransactions(
+                batch,
+                { 
+                    maxSupportedTransactionVersion: 0,
+                    commitment 
+                }
+            );
+            allParsedTxs.push(...parsedBatch);
+        }
+        // --- END OF BATCHING LOGIC ---
+
+        const transactions = allParsedTxs.filter((tx, index): tx is ParsedTransactionWithMeta => {
             if (!tx) {
                 if (process.env.NODE_ENV !== 'test') {
                     console.warn(`Failed to fetch transaction: ${signaturesToFetch[index].signature}`);

@@ -1,17 +1,26 @@
-import { TokenLaunchData, ValidationResult, FeeEstimation } from "../../types/token/launch";
+import { TokenData, FeeEstimation } from "../../types/token/launch";
 import { TransferFeeEstimation } from "../../types/token/transfer";
-import { Connection, TransactionMessage } from "@solana/web3.js";
-import { getMintLen, ExtensionType, TYPE_SIZE, LENGTH_SIZE } from "@solana/spl-token";
-import { PublicKey } from "@solana/web3.js";
-import { pack } from "@solana/spl-token-metadata";
+import { Connection, TransactionMessage, SystemProgram, PublicKey } from "@solana/web3.js";
+import {
+  getMintLen,
+  ExtensionType,
+  TYPE_SIZE,
+  LENGTH_SIZE,
+  TOKEN_2022_PROGRAM_ID,
+  createInitializeMetadataPointerInstruction,
+  createInitializeMint2Instruction,
+  getAssociatedTokenAddressSync,
+  createAssociatedTokenAccountInstruction,
+  createMintToInstruction,
+} from "@solana/spl-token";
+import { pack, createInitializeInstruction as createMetadataInitializeInstruction } from "@solana/spl-token-metadata";
 import { log } from "../utils/logger";
 import { isValidUrl, isValidMintAddress } from "../utils/sanitizers";
-import { getAccount } from "@solana/spl-token";
-
+import { ValidationResult } from "../core/BaseTokenOperation";
 /**
  * Legacy validation function for backward compatibility
  */
-export function validateTokenData(tokenData: TokenLaunchData): { isValid: boolean; error?: string } {
+export function validateTokenData(tokenData: TokenData): { isValid: boolean; error?: string } {
     const result = validateProductionTokenData(tokenData);
     return {
         isValid: result.isValid,
@@ -25,58 +34,122 @@ export function validateTokenData(tokenData: TokenLaunchData): { isValid: boolea
  * Estimates fees for token creation
  */
 export async function estimateTokenCreationFee(
-    connection: Connection,
-    tokenData: TokenLaunchData,
-    priorityFee: number = 0
+  connection: Connection,
+  tokenData: TokenData,
+  priorityFee: number = 0
 ): Promise<FeeEstimation> {
-    try {
-        // Calculate space requirements
-        const mintLen = getMintLen([ExtensionType.MetadataPointer]);
-        
-        // Basic metadata without additional fields
-        const metadata = {
-            mint: new PublicKey(0), // Placeholder
-            name: tokenData.name,
-            symbol: tokenData.symbol,
-            uri: tokenData.imageUrl,
-            additionalMetadata: []
-        };
-        
-        const metadataLen = TYPE_SIZE + LENGTH_SIZE + pack(metadata).length;
-        
-        // Get rent exemption costs
-        const accountCreationFee = await connection.getMinimumBalanceForRentExemption(mintLen + metadataLen);
-        
-        // Estimate transaction fees (approximate)
-        const baseTransactionFee = 5000; // 0.000005 SOL base fee
-        const instructionFees = 6 * 1000; // ~6 instructions * 1000 lamports each
-        
-        const breakdown = {
-            accountCreation: accountCreationFee,
-            metadata: 0, // Included in account creation
-            mintTokens: instructionFees,
-            priorityFee: priorityFee
-        };
-        
-        const estimatedFee = breakdown.accountCreation + breakdown.mintTokens + breakdown.priorityFee + baseTransactionFee;
-        
-        return {
-            estimatedFee,
-            breakdown
-        };
-    } catch (error) {
-        log('error', 'Failed to estimate fees', error);
-        // Return conservative estimate
-        return {
-            estimatedFee: 0.01 * 1e9, // 0.01 SOL in lamports
-            breakdown: {
-                accountCreation: 0.008 * 1e9,
-                metadata: 0,
-                mintTokens: 0.001 * 1e9,
-                priorityFee: priorityFee
-            }
-        };
-    }
+  try {
+    // 1) Calculate account sizes and rent
+    const mintLen = getMintLen([ExtensionType.MetadataPointer]);
+    const metadataPackedLen = pack({
+      // Minimal metadata just for sizing
+      mint: PublicKey.default,
+      name: tokenData.name,
+      symbol: tokenData.symbol,
+      uri: tokenData.imageUrl,
+      additionalMetadata: [],
+    } as any).length;
+    const metadataLen = TYPE_SIZE + LENGTH_SIZE + metadataPackedLen;
+
+    const rentForMintWithMetadata = await connection.getMinimumBalanceForRentExemption(
+      mintLen + metadataLen
+    );
+
+    // ATA rent for payer
+    const dummyMint = new PublicKey(1);
+    const payer = PublicKey.default;
+    const ata = getAssociatedTokenAddressSync(dummyMint, payer, false, TOKEN_2022_PROGRAM_ID);
+    const rentForAta = await connection.getMinimumBalanceForRentExemption(165);
+
+    // 2) Build a representative transaction and get fee from RPC
+    const latest = await connection.getLatestBlockhash();
+    const instructions = [
+      // Create mint account
+      SystemProgram.createAccount({
+        fromPubkey: payer,
+        newAccountPubkey: dummyMint,
+        lamports: rentForMintWithMetadata,
+        space: mintLen,
+        programId: TOKEN_2022_PROGRAM_ID,
+      }),
+      // Init metadata pointer
+      createInitializeMetadataPointerInstruction(
+        dummyMint,
+        payer,
+        dummyMint,
+        TOKEN_2022_PROGRAM_ID
+      ),
+      // Init mint
+      createInitializeMint2Instruction(
+        dummyMint,
+        tokenData.decimals,
+        payer,
+        null,
+        TOKEN_2022_PROGRAM_ID
+      ),
+      // Init metadata
+      createMetadataInitializeInstruction({
+        programId: TOKEN_2022_PROGRAM_ID,
+        mint: dummyMint,
+        metadata: dummyMint,
+        name: tokenData.name,
+        symbol: tokenData.symbol,
+        uri: tokenData.imageUrl,
+        mintAuthority: payer,
+        updateAuthority: payer,
+      }),
+      // Create ATA
+      createAssociatedTokenAccountInstruction(
+        payer,
+        ata,
+        payer,
+        dummyMint,
+        TOKEN_2022_PROGRAM_ID
+      ),
+      // Mint initial supply (amount value does not affect fee sizing)
+      createMintToInstruction(
+        dummyMint,
+        ata,
+        payer,
+        BigInt(1),
+        [],
+        TOKEN_2022_PROGRAM_ID
+      ),
+    ];
+
+    const message = new TransactionMessage({
+      payerKey: payer,
+      recentBlockhash: latest.blockhash,
+      instructions,
+    }).compileToV0Message();
+
+    const transactionFee = (await connection.getFeeForMessage(message)).value || 0;
+
+    const accountCreation = rentForMintWithMetadata + rentForAta;
+    const breakdown = {
+      accountCreation,
+      metadata: 0,
+      mintTokens: transactionFee,
+      priorityFee,
+    };
+
+    return {
+      estimatedFee: accountCreation + transactionFee + priorityFee,
+      breakdown,
+    };
+  } catch (error) {
+    log('error', 'Failed to estimate token creation fees', error);
+    // Conservative fallback
+    return {
+      estimatedFee: 0.01 * 1e9,
+      breakdown: {
+        accountCreation: 0.008 * 1e9,
+        metadata: 0,
+        mintTokens: 0.001 * 1e9,
+        priorityFee,
+      },
+    };
+  }
 }
 
 
@@ -87,7 +160,7 @@ export async function estimateTokenCreationFee(
  * @param tokenData - The token data to validate
  * @returns Comprehensive validation result
  */
-export function validateProductionTokenData(tokenData: TokenLaunchData): ValidationResult {
+export function validateProductionTokenData(tokenData: TokenData): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 

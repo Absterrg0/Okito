@@ -1,9 +1,10 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
+import TypeLink from '../../TypeLink.jsx'
 
 # `getTokenBalanceByMint`
 
-This function allows you to fetch the token balance of a token for any address provided
+This function fetches the SPL token balance for a given wallet and mint.
 
 ## Usage
 
@@ -14,11 +15,17 @@ import { getTokenBalanceByMint } from "@okito/sdk";
 const {connection} = useConnection();
 
 const mintAddress = ""; //mint address for the token 
-const for = "";  // the account for which balance is requested 
-const tokenBalance = await getTokenBalanceByMint(connection,for,mintAddress)
+const target = "";  // the account for which balance is requested 
+const tokenBalance = await getTokenBalanceByMint(connection,target,mintAddress)
 ```
 
+## Capabilities
 
+<Callout type="info">
+- Works whether the ATA exists or not
+- Returns decimals and formatted values
+- Clear error messages when lookups fail
+</Callout>
 
 ## Props
 
@@ -50,31 +57,56 @@ const tokenBalance = await getTokenBalanceByMint(connection,for,mintAddress)
 
 ## Response
 
-### Balance
+
+<PropsTable
+  rows={[
+    {
+      name: "balance",
+      type: <TypeLink href="#Balance">Balance</TypeLink>,
+      description: "The balance object containing token amount and formatting details, or null if not available.",
+      default: "null",
+    },
+    {
+      name: "success",
+      type: "boolean",
+      description: "Indicates if the request was successful.",
+      default: "—",
+    },
+    {
+      name: "error",
+      type: "string | undefined",
+      description: "Error message if the request failed.",
+      default: "undefined",
+    },
+  ]}
+/>
+
+### Balance 
+
 <PropsTable
   rows={[
     {
       name: "amount",
       type: "string",
-      description: "The amount of the tokens present without account for decimals",
+      description: "The amount of the tokens present without accounting for decimals.",
       default: "—",
     },
     {
       name: "decimals",
       type: "number",
-      description: "The number of decimals that the token possess",
+      description: "The number of decimals that the token possesses.",
       default: "—",
     },
     {
       name: "uiAmount",
       type: "number | null",
-      description: "The number of tokens present with account for decimals",
+      description: "The number of tokens present, accounting for decimals.",
       default: "—",
     },
     {
       name: "uiAmountString",
-      type: "string | null",
-      description: "The number of tokens present with account for decimals in string format",
+      type: "string | undefined",
+      description: "The number of tokens present, accounting for decimals, in string format.",
       default: "—",
     }
   ]}

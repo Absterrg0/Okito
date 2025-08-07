@@ -1,10 +1,12 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
+import TypeLink from '../../TypeLink.jsx'
 
 # `createNFT`
 
-This function allows you to create an NFT on the Solana blockchain.
-## Snippet
+This function creates an NFT on the Solana blockchain with metadata support.
+
+## Usage
 
 ``` jsx filename="page.tsx"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -30,62 +32,54 @@ const nftData = {
     
 }
 
-const nftResult = await createNFT(connection,wallet,nftData)
+const productionResult = await createNFT(connection, wallet, nftData, {
+  enableLogging: true,           // Detailed operation tracking
+  enableSimulation: true,        // Pre-flight transaction testing
+  maxRetries: 3,                 // Automatic retry on failure
+  confirmationStrategy: 'confirmed'
+});
 
 ```
 
+## Capabilities
 
-## Props
+<Callout type="info">
+- Metadata fields (name, symbol, description, image URL)
+- Optional external URL, attributes, and collection info
+- Optional pre-flight simulation
+- Clear error messages and safer defaults
+</Callout>
+
+## Parameters
 
 <PropsTable
   rows={[
-    {
-      name: "Connection",
-      type: "Connection",
-      description: "The connection object to the blockchain.",
-      default: "—",
-    },
-    {
-      name: "wallet",
-      type: " SignerWallet ",
-      description: "The wallet object of the sender, conforming to the SignerWallet interface.",
-      default: "—",
-    },
-    {
-      name: "data",
-      type: " NFTData ",
-      description: "The data of the NFT to be created.",
-      default: "—",
-    },
-    {
-        name:"config",
-        type:"NFTConfig",
-        description:"The configuration for the NFT.",
-        default:"{}"
-    }
+    { name: "connection", type: "Connection", description: "Solana connection instance." },
+    { name: "wallet", type: "SignerWallet", description: "Wallet with signing capabilities." },
+    { name: "data", type: "NFTData", description: "NFT metadata fields." },
+    { name: "config", type: "NFTConfig", description: "See <a href=\"/OperationConfig\">OperationConfig</a>." },
   ]}
 />
 
 
+### `NFTConfig`
 
-
-
-
+<PropsTable
+  rows={[
+    { name: "enableFreezeAuthority", type: "boolean", description: "Whether to enable freeze authority." },
+    { name: "royaltyBasisPoints", type: "number", description: "Royalty basis points." },
+    { name: "OperationConfig", type: <a href="/OperationConfig">OperationConfig</a>, description: "See <a href=\"/OperationConfig\">OperationConfig</a>." },
+  ]}
+/>
 
 ## Response
 
-The response object contains:
+Returns <a href="/OperationResult">OperationResult</a>.
 
 <PropsTable
-  rows = {[
-    {
-    name:"TokenResult",
-    type:"TokenResult",
-    description:"The result of the NFT creation.",
-    default:"—"
-
-    } 
-    ]}
-  
-  />
+  rows={[
+    { name:"OperationResult", type:<a href="/OperationResult">OperationResult</a>, description: "The result of the NFT creation." },
+    { name: "mintAddress", type: "string" },
+  ]}
+/>
 

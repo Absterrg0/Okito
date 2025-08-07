@@ -1,0 +1,61 @@
+import PropsTable from "../PropsTable.jsx"
+import {Callout} from 'nextra/components'
+
+# OperationResult
+
+Standard result object returned by operations.
+
+## Properties
+
+<PropsTable
+  rows={[
+    { name: "success", type: "boolean", description: "Whether the operation succeeded." },
+    { name: "transactionId", type: "string", description: "Signature of the submitted transaction." },
+    { name: "error", type: "string", description: "Error message if any." },
+    { name: "estimatedFee", type: "number", description: "Estimated fee in lamports." },
+    { name: "actualFee", type: "number", description: "Actual fee paid in lamports." },
+    { name: "confirmationTime", type: "number", description: "Total time in milliseconds." },
+    { name: "operationId", type: "string", description: "Identifier useful for correlating logs." },
+    { name: "metrics", type: "PerformanceMetrics", description: "Optional timing breakdown.", default: "—" },
+    { name: "errorDetails", type: "ErrorDetails", description: "Optional structured error info.", default: "—" },
+    { name: "networkInfo", type: "NetworkInfo", description: "Optional network context.", default: "—" },
+  ]}
+/>
+
+### PerformanceMetrics
+
+<PropsTable
+  rows={[
+    { name: "validationTime", type: "number | undefined" },
+    { name: "preparationTime", type: "number | undefined" },
+    { name: "simulationTime", type: "number | undefined" },
+    { name: "sendTime", type: "number | undefined" },
+    { name: "confirmationTime", type: "number | undefined" },
+    { name: "totalTime", type: "number | undefined" },
+    { name: "retryCount", type: "number | undefined" },
+    { name: "networkLatency", type: "number | undefined" },
+  ]}
+/>
+
+### ErrorDetails
+
+<PropsTable
+  rows={[
+    { name: "code", type: "string | undefined" },
+    { name: "severity", type: "string | undefined" },
+    { name: "category", type: "string | undefined" },
+    { name: "isRetryable", type: "boolean | undefined" },
+    { name: "recoverySuggestions", type: "Array<{ action: string; description: string; automated?: boolean }>| undefined" },
+  ]}
+/>
+
+### NetworkInfo
+
+<PropsTable
+  rows={[
+    { name: "cluster", type: "string | undefined" },
+    { name: "blockHeight", type: "number | undefined" },
+    { name: "blockhash", type: "string | undefined" },
+    { name: "slot", type: "number | undefined" },
+  ]}
+/>

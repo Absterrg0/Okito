@@ -3,12 +3,12 @@ import PropsTable from "../../PropsTable.jsx"
 
 # `createNewToken`
 
-This function is defined to launch a new token on the blockchain. The launched token follows the SPL token standard.
+This function creates a new token on the Solana blockchain using the Token-2022 program.
 
 ## Usage
 
 ``` jsx filename="page.tsx"
-import { useConnection } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { createNewToken } from "@okito/sdk";
 
 const {connection} = useConnection();
@@ -25,46 +25,61 @@ const tokenData = {
   externalUrl: "https://example.com",      // (Optional) An external URL for your project 
 }
 
-const result = await createNewToken(connection,wallet,tokenData)
+const tokenResult = await createNewToken(wallet, connection, tokenData, {
+  enableLogging: true,           // Structured logging with operation tracking
+  enableSimulation: true,        // Pre-flight transaction simulation
+  enableMetrics: true,           // Performance monitoring
+  strictValidation: true,        // Enhanced input validation
+  maxRetries: 3,                 // Automatic retry on failure
+  timeoutMs: 120000,            // 2-minute timeout for complex operations
+  confirmationStrategy: 'confirmed' // Transaction confirmation level
+});
 ```
 
+## Capabilities
 
-## Props
+<Callout type="info">
+- Structured logging with operation IDs and context
+- Optional pre-flight simulation before sending
+- Fee estimation with sensible fallbacks
+- Input sanitization for names, symbols, and URIs
+- Balance checks and safer initial-supply handling
+</Callout>
+
+## Parameters
 
 <PropsTable
   rows={[
     {
-      name: "Connection",
-      type: "Connection",
-      description: "The connection object to the blockchain.",
+      name: "wallet",
+      type: "SignerWallet",
+      description: "The wallet instance with signing capabilities.",
       default: "—",
     },
     {
-      name: "wallet",
-      type: "SignerWallet",
-      description: "The wallet of the user.",
+      name: "connection",
+      type: "Connection",
+      description: "Solana connection instance for blockchain interaction.",
       default: "—",
     },
     {
       name: "tokenData",
-      type: "TokenLaunchData",
-      description: "The data of the token to be created.",
+      type: "TokenData",
+      description: "Token configuration including name, symbol, decimals, and initial supply.",
       default: "—",
     },
     {
       name: "config",
-      type: "BaseOperationConfig",
-      description: "The base operation for any transaction in Okito.",
-      default: "-",
+      type: <a href="/OperationConfig">OperationConfig</a>,
+      description: "Configuration options such as logging, retries, timeouts, and simulation.",
+      default: "Defaults",
     }
   ]}
 />
 
-
-
-
 ## Response
 
+Returns a [`OperationResult`](/OperationResult) object with comprehensive information:
 
 <PropsTable
   rows={[
@@ -77,38 +92,51 @@ const result = await createNewToken(connection,wallet,tokenData)
     {
       name: "mintAddress",
       type: "string",
-      description: "The mint address of the token.",
+      description: "The newly created token's mint address.",
       default: "—",
     },
     {
-      name: "transactionId",
+      name: "transactionId", 
       type: "string",
-      description: "The transaction ID of the token creation.",
+      description: "The blockchain transaction ID for verification.",
       default: "—",
-    },
-        {
-      name: "error",
-      type: "string",
     },
     {
       name: "estimatedFee",
       type: "number",
-      description: "The estimated fee for the token creation.",
+      description: "Pre-calculated fee estimation in lamports.",
       default: "—",
     },
     {
       name: "actualFee",
-      type: "number",
-      description: "The actual fee for the token creation.",
+      type: "number", 
+      description: "Actual transaction fee paid in lamports.",
       default: "—",
     },
     {
       name: "confirmationTime",
       type: "number",
-      description: "The time taken to confirm the token creation.",
+      description: "Total operation time in milliseconds.",
       default: "—",
     },
-
-    
+    {
+      name: "error",
+      type: "string",
+      description: "Error message if the operation failed (only present when success is false).",
+      default: "—",
+    }
   ]}
 />
+
+## Error Handling
+
+The function provides comprehensive error handling with specific error codes:
+
+- **`WALLET_NOT_CONNECTED`**: Wallet is not properly connected
+- **`INSUFFICIENT_FUNDS`**: Insufficient SOL for transaction fees
+- **`INVALID_TOKEN_DATA`**: Token data validation failed
+- **`NETWORK_ERROR`**: Network connectivity issues
+- **`TRANSACTION_FAILED`**: Transaction execution failed
+- **`SIMULATION_FAILED`**: Pre-flight simulation failed
+
+Each error includes detailed context and recovery suggestions for automated handling.

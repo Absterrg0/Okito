@@ -1,9 +1,10 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
+import TypeLink from '../../TypeLink.jsx'
 
 # `getTokenBalanceBySymbol`
 
-This function allows you to fetch the token balance of a token for any address provided
+This function fetches SPL token balance by token symbol and network.
 
 ## Usage
 
@@ -13,102 +14,110 @@ import { getTokenBalanceBySymbol } from "@okito/sdk";
 
 const {connection} = useConnection();
 
-const mintAddress = ""; //mint address for the token 
-const for = "";  // the account for which balance is requested 
-const tokenBalance = await getTokenBalanceBySymbol(connection,for,mintAddress)
+const target = "WALLET_ADDRESS";     // The account for which balance is requested 
+const tokenSymbol = "USDC";          // Token symbol (e.g., "USDC", "USDT")
+const network = "mainnet-beta";      // Network type
+
+const tokenBalance = await getTokenBalanceBySymbol(connection, target, tokenSymbol, network)
 ```
 
-<Callout type="warning">
-  This function will only works  for fetching token balances of tokens that can be fetched using `getMintAddress`.
-</Callout>
+## Capabilities
 
+<Callout type="info">
+- Symbol-to-mint resolution for common tokens
+- Same balance shape as `getTokenBalanceByMint`
+- Network-aware lookups (mainnet-beta, devnet)
+</Callout>
 
 ## Props
 
 <PropsTable
   rows={[
     {
-      name: "Connection",
+      name: "connection",
       type: "Connection",
-      description: "The connection object to the blockchain.",
-      default: "—",
+      description: "The Solana `Connection` object.",
+      required: true,
+      default:"-"
     },
     {
       name: "target",
-      type: " PublicKey | string ",
-      description: "The address of the account for which balance is being retrieved.",
-      default: `—`,
+      type: "PublicKey | string",
+      description: "The wallet address for which the token balance is being retrieved.",
+      required: true,
+      default:"-"
     },
     {
       name: "tokenSymbol",
       type: "string",
-      description: "Token symbol of the token being used.",
-      default: `—`,
+      description: "The symbol of the SPL Token (e.g., 'USDC', 'RAY').",
+      required: true,
+      default:"-"
     },
     {
-        name:"network",
-        type:"'mainnet-beta' | 'devnet'",
-        description:"The network of the token being used.",
-        default:"'mainnet-beta'"
-    }    
+      name: "network",
+      type: "'mainnet-beta' | 'devnet'",
+      description: "The network to use for resolving the token symbol to a mint address.",
+      default: "'mainnet-beta'",
+      default:"-"
+    },
   ]}
 />
 
-
-
 ## Response
 
-The response object contains:
-
 <PropsTable
-  rows = {[
+  rows={[
     {
-      name:"balance",
-      type:"Balance | null",
-      description:"The balance of the token",
-      default:"—"
+      name: "success",
+      type: "boolean",
+      description: "Indicates if the balance was fetched successfully. If `false`, check the `error` property.",
+      default: "—",
     },
     {
-      name:"success",
-      type:"boolean",
-      description:"Whether the token balance was fetched successfully",
+      name: "balance",
+      type: <TypeLink href="#Balance">Balance</TypeLink>,
+      description: "An object containing balance details if successful, otherwise `null`.",
+      default: "null",
     },
     {
-      name:"error",
-      type:"string | undefined",
-      description:"The error message if the token balance was not fetched successfully",
-      default:"—"
-    }
-  ]}>
+      name: "error",
+      type: "string | undefined",
+      description: "An error message if the operation failed.",
+      default: "-",
+    },
+  ]}
+/>
 
-</PropsTable>
+### `Balance` 
 
-### Balance
+If the `success` flag is `true`, the `balance` property will contain an object with the following structure.
+
 <PropsTable
   rows={[
     {
       name: "amount",
       type: "string",
-      description: "The amount of the tokens present without account for decimals",
-      default: "—",
+      description: "The raw token balance as a string, without accounting for decimals. e.g., '1500000'.",
+      default: "'0'",
     },
     {
       name: "decimals",
       type: "number",
-      description: "The number of decimals that the token possess",
-      default: "—",
+      description: "The number of decimals for this token mint. e.g., 6.",
+      default: "0",
     },
     {
       name: "uiAmount",
       type: "number | null",
-      description: "The number of tokens present with account for decimals",
-      default: "—",
+      description: "The token balance as a floating-point number, with decimals applied. Can be inaccurate for very large numbers.",
+      default: "null",
     },
     {
       name: "uiAmountString",
-      type: "string | null",
-      description: "The number of tokens present with account for decimals in string format",
-      default: "—",
-    }
+      type: "string | undefined",
+      description: "A string representation of the token balance, with decimals applied. e.g., '1.5'. This is the safest and most precise value to use for display purposes.",
+      default: "undefined",
+    },
   ]}
 />

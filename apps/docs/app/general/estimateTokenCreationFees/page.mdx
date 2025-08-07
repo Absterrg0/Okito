@@ -1,81 +1,58 @@
 import { Callout } from 'nextra/components'
 import PropsTable from '../../PropsTable.jsx'
 
-## `estimateTokenCreationFees`
+# `estimateTokenCreationFee`
 
-This function is defined to calculate the value of the estimated fee while creating a token(SPL) on the blockchain.
+Estimates rent and fees for creating a new token.
 
-## Snippet
-
-``` jsx filename="page.tsx"
-import { useConnection } from "@solana/wallet-adapter-react";
-import { estimateTokenCreationFee, type TokenLaunchData } from "@okito/sdk";
-
-const tokenData:TokenLaunchData ={
-  name:"TEST",
-  symbol:"TST",
-  imageUrl:"https://example.com/image.png",
-  initialSupply:1000000000,
-  decimals:6,
-  freezeAuthority:true,
-} 
-
-const {connection} = useConnection();
-const tokenCreationFees = await estimateTokenCreationFee(connection,tokenData,0)
-```
-<Callout type='warning'>
-<b>Note:</b> The priority fees is optional which can be paid to improve the chances of successfully passing the transaction.
+<Callout type="info">
+The estimate includes rent for the mint + metadata account and an RPC-provided fee estimate for a representative transaction message (create mint, init metadata pointer, init mint, init metadata, create ATA, mint initial supply).
 </Callout>
 
+## Usage
 
-## Props
+```jsx filename="page.tsx"
+import { useConnection } from "@solana/wallet-adapter-react";
+import { estimateTokenCreationFee, type TokenData } from "@okito/sdk";
+
+const { connection } = useConnection();
+
+const tokenData: TokenData = {
+  name: "My Test Token",
+  symbol: "TEST",
+  imageUrl: "https://example.com/token-image.png",
+  decimals: 9,
+};
+
+const feeInfo = await estimateTokenCreationFee(connection, tokenData);
+```
+
+## Parameters
 
 <PropsTable
   rows={[
-    {
-      name: "Connection",
-      type: "Connection",
-      description: "The connection object to the blockchain.",
-      default: "—",
-    },
-    {
-      name: "TokenData",
-      type: <a href="/general/tokenCreationFee">TokenLaunchData[]</a>,
-      description: "The data of the token to be created.",
-      default: `—`,
-    },
-    {
-      name: "Priority Fees",
-      type: "number",
-      description: "The priority fees to be paid to improve the chances of successfully passing the transaction.",
-      default: `0`,
-    }
+    { name: "connection", type: "Connection", description: "Solana connection instance." },
+    { name: "tokenData", type: "TokenData", description: "Basic token metadata used for sizing." },
+    { name: "priorityFee", type: "number", description: "Optional priority fee in micro‑lamports.", default: "—" },
   ]}
 />
 
-
-
 ## Response
-
 
 <PropsTable
   rows={[
-    {
-      name: "estimatedFee",
-      type: "number",
-      description: "The total estimated fee for token creation.",
-      default: "—",
-    },
-    {
-      name: "breakdown",
-      type: `{
-  accountCreation: number;
-  metadata: number;
-  mintTokens: number;
-  priorityFee: number;
-}`,
-      description: "A breakdown of the estimated fees for each component.",
-      default: "—",
-    },
+    { name: "estimatedFee", type: "number", description: "Total estimated fee in lamports." },
+    { name: "breakdown", type: "FeeBreakdown", description: "Component costs." },
+  ]}
+/>
+
+### `FeeBreakdown`
+
+<PropsTable
+  rows={[
+    { name: "accountCreation", type: "number", description: "Rent for mint + metadata account(s) and ATA." },
+    { name: "metadata", type: "number", description: "Included in accountCreation." },
+    { name: "mintTokens", type: "number", description: "RPC-estimated tx fee for representative instructions." },
+    { name: "priorityFee", type: "number" },
   ]}
 />

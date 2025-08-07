@@ -1,3 +1,4 @@
+import { OperationConfig, OperationResult } from "../core";
 import type { SignerWallet } from "../custom-wallet-adapter";
 export interface TransferTokensParams {
     /** An initialized Solana Connection object. */
@@ -15,28 +16,16 @@ export interface TransferTokensParams {
      */
     amount: bigint;
     /** Optional production configuration. */
-    config?: ProductionTransferConfig;
+    config?: TransferConfig;
     /** Optional send options for the transaction. */
     sendOptions?: any;
 }
 
-export interface ProductionTransferConfig {
-    maxRetries?: number;
-    timeoutMs?: number;
-    confirmationStrategy?: 'processed' | 'confirmed' | 'finalized';
-    priorityFee?: number;
-    enableLogging?: boolean;
-    enableSimulation?: boolean;
-    validateBalance?: boolean;
+export interface TransferConfig extends OperationConfig {
     createDestinationATA?: boolean; // Whether to automatically create destination ATA
 }
 
-export interface TransferResult {
-    success: boolean;
-    transactionId?: string;
-    error?: string;
-    estimatedFee?: number;
-    confirmationTime?: number;
+export interface TransferResult extends OperationResult {
     createdDestinationATA?: boolean;
 }
 

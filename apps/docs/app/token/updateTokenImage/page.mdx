@@ -3,7 +3,8 @@ import PropsTable from '../../PropsTable.jsx'
 
 # `updateTokenImage`
 
-This function allows you to update the image (URI) of an existing token on Solana using the Okito SDK.
+Updates the metadata URI (image URL) for an existing token.
+
 ## Usage
 
 ``` jsx filename="page.tsx"
@@ -12,103 +13,41 @@ import { updateTokenImage } from "@okito/sdk";
 
 const {connection} = useConnection();
 const wallet = useWallet();
-const mintAddress = ""; //mint address for the token 
-const newImageUrl = ""; //the new image URL
+const mintAddress = ""; // Token mint address
+const newImageUrl = ""; // New image URL
 
-const updateResult = await updateTokenImage(connection,wallet,mintAddress,newImageUrl)
-
+const result = await updateTokenImage(wallet, connection, mintAddress, newImageUrl, {
+  enableLogging: true,
+  maxRetries: 3,
+  confirmationStrategy: 'confirmed'
+});
 ```
 
-
-## Props
+## Parameters
 
 <PropsTable
   rows={[
-    {
-      name: "connection",
-      type: "Connection",
-      description: "The connection object to the Solana blockchain.",
-      default: "—",
-    },
-    {
-      name: "wallet",
-      type: "SignerWallet",
-      description: "The sender's wallet object, conforming to the SignerWallet interface.",
-      default: "—",
-    },
-    {
-      name: "mint",
-      type: "string",
-      description: "The mint address of the token to be updated.",
-      default: "—",
-    },
-    {
-      name: "newImageUrl",
-      type: "string",
-      description: "The new image URL to be updated.",
-      default: "—",
-    },
-    {
-      name: "config",
-      type: "BaseOperationConfig",
-      default: "—",
-    },
+    { name: "connection", type: "Connection", description: "Solana connection instance.", default: "—" },
+    { name: "wallet", type: "SignerWallet", description: "Wallet with authority to update metadata.", default: "—" },
+    { name: "mint", type: "string", description: "Token mint address.", default: "—" },
+    { name: "newImageUrl", type: "string", description: "New image URL to set as the token URI.", default: "—" },
+    { name: "config", type: <a href="/OperationConfig">OperationConfig</a>, description: "General options such as logging, retries, timeouts, and confirmation level.", default: "Defaults" },
   ]}
 />
 
-
-#
-
-
-
 ## Response
 
-The response object contains: **`TokenResult`**
+Returns <a href="/OperationResult">OperationResult</a>.
 
 <PropsTable
-  rows = {[
-    {
-        name:"success",
-        type:"boolean",
-        description:"Whether the token image was updated successfully.",
-        default:"—"
-    },
-    {
-      name:"mintAddress",
-      type:"string | null",
-      description:"The mint address of the token",
-      default:"—"
-    },
-    {
-      name:"transactionId",
-      type:"string | null",
-      description:"The transaction ID of the update",
-    },
-    {
-      name:"error",
-      type:"string | null",
-      description:"The error message if the token image was not updated successfully",
-      default:"—"
-    },
-    {
-      name:"estimatedFee",
-      type:"number | null",
-      description:"The estimated fee for the update",
-      default:"—"
-    },  
-    {
-      name:"actualFee",
-      type:"number | null",
-      description:"The actual fee for the update",
-      default:"—"
-    },  
-    {
-      name:"confirmationTime",
-      type:"number | null",
-      description:"The confirmation time for the update",
-      default:"—"
-    },
-    
+  rows={[
+    { name: "success", type: "boolean", description: "Whether the update succeeded." },
+    { name: "mintAddress", type: "string | null", description: "Mint address for reference." },
+    { name: "transactionId", type: "string | null", description: "Signature of the update transaction." },
+    { name: "error", type: "string | null", description: "Error message if any." },
+    { name: "estimatedFee", type: "number | null", description: "Estimated fee (if available)." },
+    { name: "actualFee", type: "number | null", description: "Actual network fee (if available)." },
+    { name: "confirmationTime", type: "number | null", description: "Time to confirm in ms." },
   ]}
-  />
+/>
 

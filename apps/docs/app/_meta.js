@@ -33,7 +33,8 @@ export default {
         type:"separator",
         title:"Config"
     },
-    baseOperationConfig:"BaseOperationConfig",
+    OperationConfig:"OperationConfig",
+    OperationResult:"OperationResult",
 
     "###_getting_started":{
         type:"separator",

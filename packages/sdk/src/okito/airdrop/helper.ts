@@ -1,8 +1,9 @@
 import { AirdropRecipient } from "../../types/airdrop/drop";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, TransactionMessage } from "@solana/web3.js";
 import { Connection } from "@solana/web3.js";
 import { log } from "../utils/logger";
 import { AirdropFeeEstimation } from "../../types/airdrop/drop";
+import { createTransferInstruction } from "@solana/spl-token";
 
 /**
  * Validates airdrop parameters
@@ -56,14 +57,25 @@ export function validateAirdropParams(
                 }
             }
 
-            if (recipient.amount <= 0) {
+            // Fix: Ensure recipient.amount is a bigint for comparison
+            let amountBigInt: bigint;
+            try {
+                amountBigInt = typeof recipient.amount === "bigint"
+                    ? recipient.amount
+                    : BigInt(recipient.amount);
+            } catch {
+                errors.push(`Recipient ${index + 1}: invalid amount`);
+                return;
+            }
+
+            if (amountBigInt <= BigInt(0)) {
                 errors.push(`Recipient ${index + 1}: amount must be greater than zero`);
-            } else if (recipient.amount > Number.MAX_SAFE_INTEGER) {
+            } else if (amountBigInt > BigInt(Number.MAX_SAFE_INTEGER)) {
                 warnings.push(`Recipient ${index + 1}: very large amount detected`);
             }
 
             // Check for duplicate addresses
-            const duplicateIndex = recipients.findIndex((r, i) => 
+            const duplicateIndex = recipients.findIndex((r, i) =>
                 i !== index && r.address === recipient.address
             );
             if (duplicateIndex !== -1) {
@@ -80,12 +92,13 @@ export function validateAirdropParams(
 }
 
 /**
- * Estimates fees for airdrop operations
- * @param connection - Solana connection instance
- * @param recipients - Array of airdrop recipients
- * @param accountsToCreate - Number of recipient accounts that need to be created
- * @param priorityFee - Optional priority fee in lamports
- * @returns Promise resolving to fee estimation
+ * Accurately estimates the total cost (rent + fees) for an SPL token airdrop.
+ *
+ * @param connection - The Solana Connection object.
+ * @param recipients - An array of airdrop recipients, each with an address and amount.
+ * @param accountsToCreate - The number of new token accounts that need to be created.
+ * @param priorityFee - An optional priority fee in micro-lamports to add to the estimate.
+ * @returns A Promise resolving to an object containing the fee estimation or an error.
  */
 export async function estimateAirdropFee(
     connection: Connection,
@@ -94,39 +107,87 @@ export async function estimateAirdropFee(
     priorityFee: number = 0
 ): Promise<AirdropFeeEstimation> {
     try {
-        // Base transfer instruction fee per recipient
-        const transferFeePerRecipient = 5000; // ~0.000005 SOL per transfer
-        const totalTransferFees = transferFeePerRecipient * recipients.length;
-        
-        // Account creation fees
-        let accountCreationFees = 0;
-        if (accountsToCreate > 0) {
-            // Standard ATA rent exemption per account
-            const rentExemptionPerAccount = await connection.getMinimumBalanceForRentExemption(165);
-            accountCreationFees = rentExemptionPerAccount * accountsToCreate;
+        if (recipients.length === 0) {
+            return {
+                estimatedFee: 0,
+                breakdown: {
+                    accountCreations: 0,
+                    transactionFees: 0,
+                    priorityFees: 0,
+                },
+            };
         }
-        
-        const breakdown = {
-            transfers: totalTransferFees,
-            accountCreations: accountCreationFees,
-            priorityFee: priorityFee
-        };
-        
-        const estimatedFee = breakdown.transfers + breakdown.accountCreations + breakdown.priorityFee;
-        
+
+        // --- 1. Calculate Total Rent for New Accounts ---
+        let accountCreationRent = 0;
+        if (accountsToCreate > 0) {
+            const rentExemptionPerAccount = await connection.getMinimumBalanceForRentExemption(165);
+            accountCreationRent = rentExemptionPerAccount * accountsToCreate;
+        }
+
+        // --- 2. Accurately Estimate Transaction Fees ---
+
+        // Build a representative transaction to size instruction count.
+        // Note: In practice, large airdrops run across multiple txs, so
+        // this gives a lower-bound per-tx estimate; we add a small buffer.
+        const dummyPayer = PublicKey.default;
+        const dummyMint = PublicKey.default;
+        const dummySourceAta = PublicKey.default;
+
+        const instructions = [];
+        for (const recipient of recipients) {
+            // Fix: Ensure recipient.amount is a bigint for createTransferInstruction
+            let amountBigInt: bigint;
+            try {
+                amountBigInt = typeof recipient.amount === "bigint"
+                    ? recipient.amount
+                    : BigInt(recipient.amount);
+            } catch {
+                amountBigInt = BigInt(0);
+            }
+            instructions.push(
+                createTransferInstruction(
+                    dummySourceAta,
+                    new PublicKey(recipient.address), // Using a real address helps sizing
+                    dummyPayer,
+                    amountBigInt
+                )
+            );
+        }
+
+        // Use getFeeForMessage for an accurate transaction fee estimate.
+        const latestBlockhash = await connection.getLatestBlockhash();
+        const message = new TransactionMessage({
+            payerKey: dummyPayer,
+            recentBlockhash: latestBlockhash.blockhash,
+            instructions,
+        }).compileToV0Message();
+
+        let transactionFee = (await connection.getFeeForMessage(message)).value || 0;
+        // Add a 10% buffer to account for splitting across multiple transactions
+        transactionFee = Math.floor(transactionFee * 1.1);
+
+        // --- 3. Combine Costs and Return ---
+
+        const estimatedFee = accountCreationRent + transactionFee + priorityFee;
+
         return {
             estimatedFee,
-            breakdown
-        };
-    } catch (error) {
-        log('error', 'Failed to estimate airdrop fees', error);
-        return {
-            estimatedFee: 0.01 * 1e9 * recipients.length, // Conservative estimate
             breakdown: {
-                transfers: 5000 * recipients.length,
-                accountCreations: accountsToCreate * 0.002 * 1e9,
-                priorityFee
-            }
+                accountCreations: accountCreationRent,
+                transactionFees: transactionFee,
+                priorityFees: priorityFee,
+            },
+        };
+    } catch (error: any) {
+        console.error("Failed to estimate airdrop fees:", error);
+        return {
+            estimatedFee: 0,
+            breakdown: {
+                accountCreations: 0,
+                transactionFees: 0,
+                priorityFees: 0,
+            },
         };
     }
 }

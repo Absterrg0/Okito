@@ -1,9 +1,9 @@
 import { Connection } from "@solana/web3.js";
 import type { SignerWallet } from "../custom-wallet-adapter";
 import type { TokenLaunchError } from "../errors";
-import { BaseOperationConfig } from "../../okito/core/BaseTokenOperation";
+import { OperationConfig, OperationResult } from "../core";
 
-export interface TokenLaunchData {
+export interface TokenData {
     name: string;
     symbol: string;
     imageUrl: string; // Required for quality tokens
@@ -14,40 +14,15 @@ export interface TokenLaunchData {
     externalUrl?: string; // Optional website or project URL
 }
 
-export interface ProductionTokenLaunchConfig {
-    maxRetries?: number;
-    timeoutMs?: number;
-    confirmationStrategy?: 'processed' | 'confirmed' | 'finalized';
-    priorityFee?: number;
-    enableSimulation?: boolean;
-    enableLogging?: boolean;
-}
 
 
-export interface TokenLaunchProps {
-    wallet: SignerWallet;
-    connection: Connection; // Connection from @solana/web3.js
-    tokenData: TokenLaunchData;
-    config?: BaseOperationConfig;
-    orgName?: string;
-   
-}
 
-export interface TokenResult {
-    success: boolean;
+
+export interface TokenResult extends OperationResult {
     mintAddress?: string;
-    transactionId?: string;
-    error?: string;
-    estimatedFee?: number;
-    actualFee?: number;
-    confirmationTime?: number;
 }
 
-export interface ValidationResult {
-    isValid: boolean;
-    errors: string[];
-    warnings?: string[];
-}
+
 
 export interface FeeEstimation {
     estimatedFee: number;

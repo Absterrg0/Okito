@@ -1,16 +1,16 @@
-import { BaseOperationConfig, BaseOperationResult } from '../../okito/core/BaseTokenOperation';
+import { OperationConfig, OperationResult } from '../core';
 
 /**
  * Configuration options for SOL wrapping operations
  */
-export interface WrapSolConfig extends BaseOperationConfig {
+export interface WrapSolConfig extends OperationConfig {
     createAccountIfNeeded?: boolean; // Auto-create wSOL token account if needed
 }
 
 /**
  * Result of SOL wrapping operation
  */
-export interface WrapSolResult extends BaseOperationResult {
+export interface WrapSolResult extends OperationResult {
     tokenAccount?: string;
     createdTokenAccount?: boolean;
 }

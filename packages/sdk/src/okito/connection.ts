@@ -19,6 +19,9 @@ class ConnectionManager {
 
     /**
      * Get or create a connection for the specified network
+     * @param {OkitoNetwork} network - The network to get a connection for.
+     * @param {ConnectionConfig['commitment']} commitment - The commitment level to use for the connection.
+     * @return {Connection} - The connection for the specified network and commitment level.
      */
     public getConnection(
         network: OkitoNetwork, 
@@ -49,6 +52,9 @@ class ConnectionManager {
 
     /**
      * Get connection with specific configuration
+     * @param {OkitoNetwork} network - The network to get a connection for.
+     * @param {ConnectionConfig} config - The configuration to use for the connection.
+     * @return {Connection} - The connection for the specified network and configuration.
      */
     public getConnectionWithConfig(
         network: OkitoNetwork,
@@ -72,6 +78,7 @@ class ConnectionManager {
 
     /**
      * Health check for all connections
+     * @return {Promise<Map<string, boolean>>} - A map of connection keys to their health status.
      */
     public async healthCheck(): Promise<Map<string, boolean>> {
         const healthStatus = new Map<string, boolean>();
@@ -91,6 +98,7 @@ class ConnectionManager {
 
     /**
      * Clean up unhealthy connections
+     * @return {Promise<void>} - A promise that resolves when the unhealthy connections are cleaned up.
      */
     public async cleanupUnhealthyConnections(): Promise<void> {
         const healthStatus = await this.healthCheck();
@@ -105,6 +113,7 @@ class ConnectionManager {
 
     /**
      * Dispose all connections (useful for cleanup)
+     * @return {void} - Disposes all connections.
      */
     public dispose(): void {
         this.connections.clear();

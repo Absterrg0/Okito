@@ -3,87 +3,43 @@ import PropsTable from '../..//PropsTable.jsx'
 
 ## `estimateAirdropFees`
 
-This function is defined to calculate the fees required while airdropping a token(SPL) on the blockchain.
+Estimates total cost for an SPL token airdrop, including rent for new recipient token accounts and an RPC-based fee estimate for a representative transfer message.
 
-## Snippet
+<Callout type="info">
+For large recipient lists, real airdrops are split across transactions. The estimate sizes a single representative message and applies a small buffer.
+</Callout>
+
+## Usage
 
 ``` jsx filename="page.tsx"
 import { useConnection } from "@solana/wallet-adapter-react";
 import { estimateAirdropFee, type AirdropRecipient } from "@okito/sdk";
 
-const destinationAddress:AirdropRecipient[] = [
-  {
-  address:"",
-  amount:10,
-  },
-  {
-  address:"",
-  amount:20,
-  },
-  
-
-]
+const recipients: AirdropRecipient[] = [
+  { address: "...", amount: 10n },
+  { address: "...", amount: 20n },
+];
 
 const {connection} = useConnection();
-const airdropFees = await estimateAirdropFee(connection,destinationAddress,10,0);
+const airdropFees = await estimateAirdropFee(connection, recipients, /* accountsToCreate */ 2);
 ```
-<Callout type='warning'>
-<b>Note:</b> The priority fees is optional which can be paid to improve the chances of successfully passing the transaction.
-</Callout>
 
-
-## Props
+## Parameters
 
 <PropsTable
   rows={[
-    {
-      name: "Connection",
-      type: "Connection",
-      description: "The connection object to the blockchain.",
-      default: "—",
-    },
-    {
-      name: "destinationAddress",
-      type: <a href="/general/airdropRecipient">AirdropRecipient[]</a>,
-      description: "The destination address of the airdrop.",
-      default: `—`,
-    },
-    {
-      name: "accountsToCreate",
-      type: "number",
-      description: "The amount of recipient associated token accounts to be created.",
-      default: `—`,
-    },
-    {
-      name: "Priority Fees",
-      type: "number",
-      description: "The priority fees to be paid to improve the chances of successfully passing the transaction.",
-      default: `0`,
-    }
+    { name: "connection", type: "Connection", description: "Solana connection instance." },
+    { name: "recipients", type: <a href="/general/airdropRecipient">AirdropRecipient[]</a>, description: "Recipient addresses and amounts (bigint recommended)." },
+    { name: "accountsToCreate", type: "number", description: "How many recipient ATAs are expected to be created." },
+    { name: "priorityFee", type: "number", description: "Optional priority fee in micro‑lamports.", default: "—" },
   ]}
 />
 
-
-
 ## Response
-
 
 <PropsTable
   rows={[
-    {
-      name: "estimatedFee",
-      type: "number",
-      description: "The total estimated fee for token creation.",
-      default: "—",
-    },
-    {
-      name: "breakdown",
-      type: `{
-  transfers: number;
-  accountCreations: number;
-  priorityFee: number;
-}`,
-    default:`—`,
-    }
+    { name: "estimatedFee", type: "number", description: "Total estimated fee in lamports." },
+    { name: "breakdown", type: `{ transactionFees: number; accountCreations: number; priorityFees: number; }`, description: "Component costs." },
   ]}
 />

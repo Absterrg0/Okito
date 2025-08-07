@@ -1,57 +1,70 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddress, getMint } from "@solana/spl-token";
-
 import { getMintAddress } from "../get-mint-address";
+
 /**
- * Gets the token balance for a specific wallet and mint address
- * @param connection - Solana connection instance
- * @param for - The address for which token balance is requested
- * @param mintAddress - Token mint address as string
- * @returns Promise resolving to balance information
+ * Gets the token balance for a specific wallet and mint address.
+ * @param connection - Solana connection instance.
+ * @param target - The wallet address for which the token balance is requested (PublicKey or string).
+ * @param mintAddress - Token mint address as a string.
+ * @returns Promise resolving to a standardized balance information object.
  */
 export async function getTokenBalanceByMint(
     connection: Connection,
     target: PublicKey | string,
     mintAddress: string,
-) {
+): Promise<{
+    balance: {
+        amount: string;
+        decimals: number;
+        uiAmount: number | null; // Note: The RPC can return null for uiAmount
+        uiAmountString?: string;
+    } | null;
+    success: boolean;
+    error?: string;
+}> {
     try {
         const ownerPubkey = new PublicKey(target);
         const mintPubkey = new PublicKey(mintAddress);
-        
-        // Get the Associated Token Account (ATA) address for the owner
+
+        // Find the Associated Token Account (ATA) address for the owner.
+        // allowOwnerOffCurve is a best practice for robustness.
         const tokenAccountAddress = await getAssociatedTokenAddress(
             mintPubkey,
-            ownerPubkey
+            ownerPubkey,
+            true 
         );
-        
-        // Check if the ATA exists
+
+        // Check if the ATA exists on-chain.
         const accountInfo = await connection.getAccountInfo(tokenAccountAddress);
-        
+
+        // --- Success Path 1: Account does not exist (balance is 0) ---
         if (!accountInfo) {
-            // If ATA doesn't exist, balance is 0.
             // Fetch mint info to return the correct decimal structure.
             const mintInfo = await getMint(connection, mintPubkey);
             return {
-            
+                success: true,
                 balance: {
-                        amount: "0",
-                        decimals: mintInfo.decimals,
-                        uiAmount: 0,
-                        uiAmountString: "0"
-                    
+                    amount: "0",
+                    decimals: mintInfo.decimals,
+                    uiAmount: 0,
+                    uiAmountString: "0"
                 }
             };
         }
-        
-        // If ATA exists, fetch the actual balance
-        const balance = await connection.getTokenAccountBalance(tokenAccountAddress);
-        
+
+        // --- Success Path 2: Account exists, fetch its balance ---
+        const balanceResponse = await connection.getTokenAccountBalance(tokenAccountAddress);
+
+        // The actual balance data is inside the 'value' property of the response.
         return {
-            balance
+            success: true,
+            balance: balanceResponse.value
         };
-        
+
     } catch (error: any) {
-        console.error("Failed to fetch token balance:", error);
+        // --- Error Path ---
+        console.error("Failed to fetch token balance:", error.message);
         return {
             success: false,
             error: error.message || 'Failed to fetch token balance',
@@ -59,12 +72,11 @@ export async function getTokenBalanceByMint(
         };
     }
 }
-
 /**
  * Gets token balance using token symbol and network (convenience function)
- * @param connection - Solana connection instance  
- * @param for - The address for which token balance is requested
- * @param token - Token symbol (e.g., "USDC", "USDT")
+ * @param connection - Solana connection instance
+ * @param target - The address for which token balance is requested
+ * @param tokenSymbol - Token symbol (e.g., "USDC", "USDT")
  * @param network - Network type for getting mint address
  * @returns Promise resolving to balance information
  */
@@ -73,42 +85,32 @@ export async function getTokenBalanceBySymbol(
     target: PublicKey | string,
     tokenSymbol: string,
     network: 'mainnet-beta' | 'devnet' = 'mainnet-beta'
-): Promise<{
-    balance: {
-        amount: string;
-        decimals: number;
-        uiAmount: number;
-        uiAmountString: string;
-    } | null;
-    success: boolean;
-    error?: string;
-}> {
+) { // The return type is inferred but will match getTokenBalanceByMint
     try {
+        // Step 1: Find the mint address for the given symbol.
         const mintAddress = getMintAddress(tokenSymbol, network);
-        if(!mintAddress){
+
+        // Step 2: Handle the case where the symbol is not found.
+        if (!mintAddress) {
             return {
-                balance: null,
                 success: false,
-                error: "Mint address not found for this token symbol"
-            }
+                error: `Mint address not found for symbol '${tokenSymbol}' on ${network}.`,
+                balance: null,
+            };
         }
-        const balance = await getTokenBalanceByMint(connection, target, mintAddress.toString());
-        return {
-            balance: balance.balance as {
-                amount: string;
-                decimals: number;
-                uiAmount: number;
-                uiAmountString: string;
-            },
-            success: true,
-            error: undefined
-        }
+
+        // Step 3: Call the core function and return its result directly.
+        // This correctly propagates the success, balance, and error states.
+        const result = await getTokenBalanceByMint(connection, target, mintAddress.toString());
+        
+        return result;
+
     } catch (error: any) {
+        // Step 4: Catch any unexpected errors (e.g., network issues).
         return {
-            balance: null,
             success: false,
-            error: error.message || 'Failed to fetch token balance'
-        }
+            error: error.message || 'An unexpected error occurred in getTokenBalanceBySymbol',
+            balance: null,
+        };
     }
 }
-

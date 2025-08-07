@@ -1,28 +1,33 @@
-import { BaseOperationConfig, OperationResult } from '../../okito/core/BaseTokenOperation';
-import { PublicKey } from '@solana/web3.js';
-
-/**
- * Configuration options for airdrop operations
- */
-export interface AirdropConfig extends BaseOperationConfig {
-    createRecipientAccount?: boolean; 
-}
+import { OperationConfig, OperationResult } from '../core';
 
 /**
  * Single airdrop recipient data
  */
 export interface AirdropRecipient {
     address: string; // Recipient wallet address
-    amount: number; // Amount in human-readable format (e.g., 10.5 for tokens with decimals)
-    }
+    amount: bigint | string | number; // Amount in human-readable format (e.g., 10.5 for tokens with decimals)
+}
 
 /**
- * Result of airdrop operation
+ * Configuration for airdrop operations
+ */
+export interface AirdropConfig extends OperationConfig {
+    createRecipientAccount?: boolean; 
+}
+
+/**
+ * Result of airdrop operations
  */
 export interface AirdropResult extends OperationResult {
+    transactionIds?: string[];
+    recipientsFailed?: number;
+    batchCount?: number;
+    successfulBatches?: number;
+    failedBatches?: number;
     recipientsProcessed?: number;
     accountsCreated?: number;
     totalAmountSent?: string;
+    successRate?: number;
 }
 
 /**
@@ -31,17 +36,9 @@ export interface AirdropResult extends OperationResult {
 export interface AirdropFeeEstimation {
     estimatedFee: number;
     breakdown: {
-        transfers: number;
+        transactionFees: number;
         accountCreations: number;
-        priorityFee: number;
+        priorityFees: number;
+        batchCount?: number;
     };
 }
-
-
-export interface AirdropParams {
-    connection: any;
-    wallet: any;
-    mint: string;
-    recipients: AirdropRecipient[];
-    config: AirdropConfig;
-}   

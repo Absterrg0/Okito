@@ -1,0 +1,141 @@
+import { Callout } from 'nextra/components'
+import PropsTable from "../../PropsTable.jsx"
+import TypeLink from '../../TypeLink.jsx'
+
+
+# `transferTokens`
+
+This function transfers SPL tokens from one address to another.
+
+## Usage
+
+``` jsx filename="page.tsx"
+import { useConnection } from "@solana/wallet-adapter-react";
+import { transferTokens } from "@okito/sdk";
+
+const {connection} = useConnection();
+const wallet = useWallet();
+
+
+// Basic usage
+const result = await transferTokens(connection, wallet, mint, amount, destination);
+
+// Production usage with enhanced configuration
+const productionResult = await transferTokens(connection, wallet, mint, amount, destination, {
+  enableLogging: true,           // Detailed operation tracking
+  enableSimulation: true,        // Pre-flight transaction testing  
+  enableMetrics: true,           // Performance monitoring
+  createDestinationATA: true,    // Auto-create token accounts
+  strictValidation: true,        // Enhanced input validation
+  maxRetries: 3,                 // Automatic retry on failure
+  timeoutMs: 90000,             // 1.5-minute timeout
+  confirmationStrategy: 'confirmed'
+});
+
+// Transfer with human-readable amounts (convenience function)
+const decimalResult = await transferTokensWithDecimals(
+  connection, wallet, mint, 10.5, destination  // 10.5 tokens
+);
+```
+
+## Capabilities
+
+<Callout type="info">
+- Balance checks with clear feedback
+- Automatic ATA creation when needed
+- Optional pre-flight simulation
+- Support for bigint, string, or number amounts
+- Timing and basic metrics for insight
+</Callout>
+
+## Parameters
+
+<PropsTable
+  rows={[
+    {
+      name: "connection",
+      type: "Connection",
+      description: "Solana connection instance for blockchain interaction.",
+      default: "—",
+    },
+    {
+      name: "wallet", 
+      type: "SignerWallet",
+      description: "The wallet instance with signing capabilities.",
+      default: "—",
+    },
+    {
+      name: "mint",
+      type: "string",
+      description: "The mint address of the token to transfer.",
+      default: "—",
+    },
+    {
+      name: "amount",
+      type: "bigint | string | number",
+      description: "Amount in base token units.",
+      default: "—",
+    },
+    {
+      name: "destination",
+      type: "string",
+      description: "The destination wallet address for the transfer.",
+      default: "—",
+    },
+    {
+      name: "config",
+      type: <TypeLink href="#TransferConfig">TransferConfig</TypeLink>,
+      description: "Options such as logging, retries, timeouts, simulation, and ATA creation.",
+      default: "Defaults",
+    }
+  ]}
+/>
+
+
+
+
+#### `TransferConfig`
+
+
+<PropsTable
+  rows={[
+    {
+      name: "createDestinationATA",
+      type: "boolean",
+      description: "Whether to create a destination ATA for the token to be transferred.",
+      default: "—",
+    },
+    {
+      name: "OperationConfig",
+      type: <a href="/OperationConfig">OperationConfig</a>,
+      description: "The base operation for any transaction in Okito.",
+      default: "-",
+    }
+  ]}
+/>
+
+
+
+
+
+## Response
+
+
+<PropsTable
+  rows={[
+    {
+      name:"OperationResult",
+      type:<TypeLink href="/OperationResult">OperationResult</TypeLink>,
+      description: "The result of the token transfer.",
+      default: "—",
+    },
+    {
+      name: "createdDestinationATA",
+      type: "boolean",
+      description: "Whether a destination ATA was created for the token transfer.",
+      default: "—",
+    },
+
+    
+  ]}
+/>

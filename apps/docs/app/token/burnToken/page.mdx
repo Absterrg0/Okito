@@ -3,8 +3,9 @@ import PropsTable from '../../PropsTable.jsx'
 
 # `burnToken`
 
-This function allows you to burn a token on the Solana blockchain.
-## Snippet
+This function burns tokens from a token account.
+
+## Usage
 
 ``` jsx filename="page.tsx"
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -13,99 +14,112 @@ import { burnToken } from "@okito/sdk";
 const {connection} = useConnection();
 const wallet = useWallet();
 
-const mint = "";            // The mint address of the token to be burned
-const amount = 1;           // The amount of the token to be burned
+const mint = "TOKEN_MINT_ADDRESS";   // The mint address of the token to burn
+const amount = BigInt(1000000);      // Amount in raw token units
 
-
-const burnResult = await burnToken(connection,wallet,mint,amount)
+const burnResult = await burnToken(connection, wallet, mint, amount, {
+  enableLogging: true,           // Detailed operation tracking
+  enableSimulation: true,        // Pre-flight transaction testing
+  strictValidation: true,        // Enhanced safety checks
+  maxRetries: 3,                 // Automatic retry on failure
+  timeoutMs: 60000,             // 1-minute timeout
+  confirmationStrategy: 'confirmed'
+});
 
 ```
 
+## Capabilities
 
-## Props
+<Callout type="warning">
+Token burning permanently removes tokens and cannot be undone. The function includes guardrails, such as large-burn warnings and supply checks.
+</Callout>
+
+## Parameters
 
 <PropsTable
   rows={[
     {
-      name: "Connection",
+      name: "connection",
       type: "Connection",
-      description: "The connection object to the blockchain.",
+      description: "Solana connection instance for blockchain interaction.",
       default: "—",
     },
     {
       name: "wallet",
-      type: " SignerWallet ",
-      description: "The wallet object of the sender, conforming to the SignerWallet interface.",
+      type: "SignerWallet",
+      description: "The wallet instance with signing capabilities.",
       default: "—",
     },
     {
-        name:"Mint",
-        type:"string",
-        description:"The mint address of the token to be burned.",
-        default:"—"
+      name: "mint",
+      type: "string",
+      description: "The mint address of the token to burn.",
+      default: "—"
     },
     {
       name: "amount",
-      type: " number ",
-      description: "The amount of token to be burned.",
+      type: "bigint | string | number",
+      description: "Amount in base token units.",
       default: "—",
     },
     {
-        name:"config",
-        type:"BurnTokenConfig",
-        description:"The configuration for the burn.",
-        default:"{}"
+      name: "config",
+      type: "BurnTokenConfig",
+      description: "See below for burn-specific options.",
+      default: "Defaults"
     }
   ]}
 />
 
+## BurnTokenConfig
 
 
-
-
-
+<PropsTable
+  rows={[
+    {
+      name: "mint",
+      type: "string",
+      description: "The mint address of the token to burn.",
+      default: "—"
+    },
+    {
+      name: "amount",
+      type: "bigint | string | number",
+      description: "Amount in base token units.",
+      default: "—"
+    },
+    {
+      name: "Base Config",
+      type: <a href="/OperationConfig">OperationConfig</a>,
+      description: "Logging, retries, timeouts, simulation, and validation.",
+      default: "Defaults"
+    }
+  ]}
+/>
 
 ## Response
 
-The response object contains:
-
-#### `BurnTokenResult`
+Returns <a href="/OperationResult">OperationResult</a>.
 
 <PropsTable
-  rows = {[
-    {
-    name:"success",
-    type:"boolean",
-    description:"Whether the burn was successful.",
-    default:"—"
+  rows={[
+    { name: "success", type: "boolean", description: "Whether the burn succeeded." },
+    { name: "transactionId", type: "string", description: "Signature of the transaction." },
+    { name: "estimatedFee", type: "number", description: "Estimated fee in lamports." },
+    { name: "confirmationTime", type: "number", description: "Total time in ms." },
+    { name: "error", type: "string", description: "Error message if any." },
+  ]}
+/>
 
-    },
-    {
-        name:"transactionId",
-        type:"string",
-        description:"The transaction ID of the burn.",
-        default:"—"
-    },
-        {
-        name:"error",
-        type:"string",
-        description:"The error message if the burn failed.",
-        default:"—"
-    },
-    {
-        name:"estimatedFee",
-        type:"number",
-        description:"The estimated fee for the burn.",
-        default:"—"
-    },
-    {
-        name:"confirmationTime",
-        type:"number",
-        description:"The time taken to confirm the burn.",
-        default:"—"
-    }
+## Error Handling
 
-    ]}
-  
-  />
+The function provides comprehensive error handling with specific error codes:
+
+- **`WALLET_NOT_CONNECTED`**: Wallet is not properly connected
+- **`INSUFFICIENT_FUNDS`**: Insufficient token balance for burn
+- **`INVALID_TOKEN_DATA`**: Token data validation failed
+- **`NETWORK_ERROR`**: Network connectivity issues
+- **`TRANSACTION_FAILED`**: Transaction execution failed
+
+Each error includes detailed context and recovery suggestions.
 

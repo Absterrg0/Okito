@@ -46,7 +46,7 @@ export async function getTokenSupplyBySymbol(
     network: string
 ) {
     try {
-        const mintAddress = getMintAddress(token as string, network as 'mainnet-beta' | 'devnet' | 'custom');
+        const mintAddress = getMintAddress(token as string, network as 'mainnet-beta' | 'devnet');
         return await getTokenSupplyByMint(connection, mintAddress.toString());
     } catch (error: any) {
         return {

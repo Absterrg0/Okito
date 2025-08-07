@@ -1,23 +1,19 @@
+import { OperationConfig, OperationResult } from "../core";
 
 
 
-export interface BurnTokenConfig{
-    maxRetries?: number;
-    timeoutMs?: number;
-    confirmationStrategy?: 'processed' | 'confirmed' | 'finalized';
-    enableSimulation?: boolean;
-    enableLogging?: boolean;    
-
+export interface BurnTokenConfig extends OperationConfig{
+    mint: string;
+    amount: bigint | string | number;
 }
 
 
 
-export interface BurnTokenResult{
-    success: boolean;
-    transactionId?: string;
-    error?: string;
-    estimatedFee?: number;
-    confirmationTime?: number;
+export interface BurnTokenResult extends OperationResult{
+    burnedAmount?: number;
+    decimals?: number;
+    newBalance?: number;
+    totalTime?: number;
 }
 
 
