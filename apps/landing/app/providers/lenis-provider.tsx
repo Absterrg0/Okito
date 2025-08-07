@@ -8,7 +8,9 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
     // This hook runs only on the client side
     const lenis = new Lenis({
       duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom easing for a "buttery" feel // Disabling smooth scroll on mobile for better performance
       smoothWheel: true,
+      wheelMultiplier: 1,
     });
 
     function raf(time: number) {
