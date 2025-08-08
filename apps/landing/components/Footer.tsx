@@ -20,7 +20,13 @@ export default function Footer({id}:{id:string}) {
       <footer className="relative z-10 backdrop-blur-md">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-transparent"></div>
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.02)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
+        <div className="absolute inset-0 pointer-events-none" style={{
+          maskImage: "linear-gradient(to top, black 80%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to top, black 80%, transparent 100%)",
+          opacity: 0.08
+        }}>
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        </div>
         
         {/* Floating gradient orbs */}
         <motion.div 

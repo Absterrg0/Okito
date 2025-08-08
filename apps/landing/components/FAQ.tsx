@@ -82,19 +82,7 @@ export default function FAQ({id}:{id:string}) {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,.02)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
       
       {/* Floating gradient orbs */}
-      <motion.div 
-        animate={{
-          y: [-20, 20, -20],
-          x: [-10, 10, -10],
-          opacity: [0.3, 0.6, 0.3]
-        }}
-        transition={{
-          duration: 8,
-          repeat: Number.POSITIVE_INFINITY,
-          ease: "easeInOut"
-        }}
-        className="absolute top-20 left-1/4 w-64 h-64 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-full blur-3xl"
-      />
+     
       <motion.div 
         animate={{
           y: [20, -20, 20],

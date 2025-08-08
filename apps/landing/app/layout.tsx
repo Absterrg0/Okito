@@ -31,9 +31,7 @@ export const metadata: Metadata = {
   
   // Canonical URL and robots
   metadataBase: new URL("https://okito.dev"),
-  alternates: {
-    canonical: "/",
-  },
+  
   robots: {
     index: true,
     follow: true,
