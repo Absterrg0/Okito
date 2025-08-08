@@ -5,8 +5,6 @@ import Bento from "@/components/Bento"
 import Pricing from "@/components/Pricing"
 import FAQ from "@/components/FAQ"
 import Footer from "@/components/Footer"
-import LenisProvider from "@/app/providers/lenis-provider" // Import the LenisProvider
-
 export default function OkitoLanding() {
   return (
     <div className="h-full bg-slate-950 text-white overflow-x-hidden relative">
@@ -31,8 +29,6 @@ export default function OkitoLanding() {
       {/* The Navbar component should be outside the LenisProvider as it's a fixed element */}
       <Navbar />
 
-      {/* Wrap all scrollable sections with the LenisProvider */}
-      <LenisProvider>
         {/* Enhanced Hero Section */}
         <Hero id="hero" />
 
@@ -50,7 +46,7 @@ export default function OkitoLanding() {
 
         {/* Enhanced Footer */}
         <Footer id="footer" />
-      </LenisProvider>
+  
     </div>
   )
 }
