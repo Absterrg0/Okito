@@ -21,7 +21,7 @@ export default function SolanaTokenCard() {
       variants={cardVariants}
       initial="paused"
       whileHover="animate"
-      className="group px-4 py-6 bg-gradient-to-br from-slate-900/90 via-gray-900/80 to-slate-900/90 rounded-xl relative overflow-hidden w-[40rem] h-[24rem] border border-emerald-500/20 shadow-[0_4px_12px_rgba(16,185,129,0.07)] hover:shadow-[0_16px_48px_rgba(16,185,129,0.15)] hover:border-emerald-500/30 "
+      className="group px-4 py-6 bg-gradient-to-br from-slate-900/90 via-gray-900/80 to-slate-900/90 rounded-xl relative overflow-hidden w-full sm:w-[32rem] md:w-[36rem] lg:w-[40rem] h-[24rem] border border-emerald-500/20 shadow-[0_4px_12px_rgba(16,185,129,0.07)] hover:shadow-[0_16px_48px_rgba(16,185,129,0.15)] hover:border-emerald-500/30 "
     >
       {/* Simplified background effects */}
       <div className="absolute inset-0">

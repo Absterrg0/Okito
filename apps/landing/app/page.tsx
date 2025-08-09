@@ -35,8 +35,12 @@ export default function OkitoLanding() {
         {/* Enhanced Packages Section */}
         <Packages id="packages" />
 
-        {/* New Animated Bento Grid Features Section */}
-        <Bento id="bento" />
+        {/* Animated Bento Grid Features Section: show only on lg+ */}
+        <div className="hidden lg:block">
+          <Bento id="bento" />
+        </div>
+        {/* Mobile spacer to keep rhythm without UI change */}
+        <div className="block lg:hidden h-12" />
 
         {/* Enhanced Pricing Section */}
         <Pricing id="pricing" />

@@ -1,7 +1,6 @@
 'use client'
 import { motion, useInView } from "motion/react"
 import { Badge } from "@/components/ui/badge"
-import { Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Terminal,
@@ -11,7 +10,6 @@ import {
   Database,
   Lock,
   BookOpen,
-  ArrowRight,
   Copy,
   CheckCircle,
   Clock,
@@ -39,7 +37,7 @@ export default function Packages({id}:{id:string}) {
 
   return (
     <div id={id}>
-      <section  ref={packagesRef} className="relative py-32">
+      <section  ref={packagesRef} className="relative py-16 md:py-24 lg:py-32">
         <div className="absolute inset-0" />
         <motion.div
           variants={containerVariants}
@@ -47,12 +45,12 @@ export default function Packages({id}:{id:string}) {
           animate={isInViewPackages ? "visible" : "hidden"}
           className="container mx-auto px-4 lg:px-6 relative"
         >
-          <motion.div variants={itemVariants} className="text-center mb-16">
+          <motion.div variants={itemVariants} className="text-center mb-10 sm:mb-12 md:mb-16">
             <Badge className="rounded-full bg-red-500/20 text-red-300 border-red-500/30 px-4 py-2 mb-6">
               Alpha Release
             </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-8 text-white">Choose your development path</h2>
-            <p className="text-xl text-gray-300 mb-16 leading-relaxed max-w-3xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 text-white">Choose your development path</h2>
+            <p className="text-base sm:text-lg xl:text-xl text-gray-300 mb-10 sm:mb-12 md:mb-16 leading-relaxed max-w-3xl mx-auto">
               Powerful packages designed to accelerate your Solana development journey
             </p>
           </motion.div>
@@ -207,7 +205,7 @@ export default function Packages({id}:{id:string}) {
 
                   {/* Features Grid */}
                   <motion.div
-                    className="grid grid-cols-2 gap-4"
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
@@ -272,7 +270,7 @@ export default function Packages({id}:{id:string}) {
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
                   </div>
-                  <pre className="text-sm overflow-x-auto">
+                   <pre className="text-xs sm:text-sm overflow-x-auto">
                     <code>
                       <span className="text-purple-400">import</span> <span className="text-gray-300">{"{"}</span>{" "}
                       <span className="text-green-400">createToken</span>
@@ -344,7 +342,7 @@ export default function Packages({id}:{id:string}) {
                   </div>
 
                   {/* Features Grid */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       { icon: Package, title: "Wallet Connect", desc: "Ready-to-use buttons" },
                       { icon: TrendingUp, title: "Token Display", desc: "Beautiful components" },

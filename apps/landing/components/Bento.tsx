@@ -20,7 +20,7 @@ export default function Bento({id}:{id:string}) {
   const [activeTab, setActiveTab] = useState("create")
 
   return (
-    <div id={id}>
+    <div id={id} className="hidden lg:block">
       <section ref={featuresRef} className="relative py-32">
         <div className="absolute inset-0" />
         <motion.div

@@ -2,16 +2,26 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { Code2, Github, Twitter, MessageCircle, ArrowRight, Heart, Zap } from 'lucide-react';
+import { Code2, Github, Twitter, MessageCircle, ArrowRight, Heart, Zap, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { TextHoverEffect } from './ui/text-hover-effect';
 import { FaXTwitter } from 'react-icons/fa6';
 
 export default function Footer({id}:{id:string}) {
+  const quickLinks = [
+    { name: "Documentation", href: "https://docs.okito.dev" },
+    { name: "Get Started", href: "https://docs.okito.dev/gettingStarted" },
+    { name: "Packages", href: "https://docs.okito.dev/sdk" },
+  ];
+  const resourcesLinks = [
+    { name: "Community", href: "https://x.com/OkitoLabs" },
+    { name: "Blog", href: "#" },
+    { name: "Support", href: "https://x.com/notabbytwt" },
+  ];
   return (
-    <div id={id} className='relative mt-64'>
-      <div className='absolute inset-0 -top-160 z-0 '>
+    <div id={id} className='relative mt-24 md:mt-40 lg:mt-64'>
+      <div className='absolute inset-0 -top-140 z-0 '>
         <TextHoverEffect  
           text="OKITO"
           duration={5}
@@ -41,7 +51,7 @@ export default function Footer({id}:{id:string}) {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute top-20 left-1/4 w-64 h-64 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-full blur-3xl"
+          className="absolute top-10 md:top-20 left-1/4 w-40 h-40 md:w-64 md:h-64 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-full blur-3xl"
         />
         <motion.div 
           animate={{
@@ -55,14 +65,14 @@ export default function Footer({id}:{id:string}) {
             ease: "easeInOut",
             delay: 3
           }}
-          className="absolute bottom-20 right-1/3 w-80 h-80 bg-gradient-to-r from-cyan-500/5 to-teal-500/5 rounded-full blur-3xl"
+          className="absolute bottom-10 md:bottom-20 right-1/3 w-56 h-56 md:w-80 md:h-80 bg-gradient-to-r from-cyan-500/5 to-teal-500/5 rounded-full blur-3xl"
         />
 
-        <div className="relative py-20">
-          <div className="container mx-auto px-6 lg:px-8">
+        <div className="relative py-12 sm:py-16 lg:py-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Main Footer Content */}
-            <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-12 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
               
               {/* Brand Section */}
               <div className="lg:col-span-2 space-y-6">
@@ -72,12 +82,12 @@ export default function Footer({id}:{id:string}) {
                   <Image
                     src="/image.png"
                     alt="Okito Logo"
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                   ></Image>
                 </motion.div>
                 
-                <p className="text-slate-300 leading-relaxed text-lg max-w-md">
+                <p className="text-slate-300 leading-relaxed text-base sm:text-lg max-w-xl">
                   The most elegant way to build on Solana. Open source, free forever, 
                   and built by developers for developers.
                 </p>
@@ -93,67 +103,119 @@ export default function Footer({id}:{id:string}) {
                       href={social.href}
                       whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.9 }}
-                      className={`w-12 h-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl flex items-center justify-center text-slate-400 ${social.color} transition-all duration-300 hover:border-emerald-500/30`}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl flex items-center justify-center text-slate-400 ${social.color} transition-all duration-300 hover:border-emerald-500/30`}
                       aria-label={social.label}
                     >
-                      <social.icon className="h-5 w-5" />
+                      <social.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </motion.a>
                   ))}
                 </div>
               </div>
 
               {/* Quick Links */}
-              <div className="space-y-6">
-                <h4 className="text-white font-semibold text-xl">Quick Links</h4>
-                <ul className="space-y-4">
-                  {[
-                    { name: "Documentation", href: "https://docs.okito.dev" },
-                    { name: "Get Started", href: "https://docs.okito.dev/gettingStarted" },
-                    { name: "Packages", href: "https://docs.okito.dev/sdk" },
-                  ].map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Link
-                        href={link.href}
-                        className="text-slate-400 hover:text-emerald-400 transition-all duration-300 flex items-center group"
+              <div className="space-y-4 sm:space-y-6">
+                {/* Mobile collapsible */}
+                <details className="sm:hidden bg-white/5 border border-white/10 rounded-xl p-4">
+                  <summary className="text-white font-semibold text-base flex items-center justify-between cursor-pointer select-none">
+                    Quick Links
+                    <ChevronDown className="h-4 w-4 opacity-70" />
+                  </summary>
+                  <ul className="mt-3 space-y-3">
+                    {quickLinks.map((link, index) => (
+                      <motion.li
+                        key={link.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.05 }}
                       >
-                        <ArrowRight className="h-3 w-3 mr-3 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" />
-                        <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
+                        <Link
+                          href={link.href}
+                          className="text-slate-400 hover:text-emerald-400 transition-all duration-300 flex items-center group text-sm"
+                        >
+                          <ArrowRight className="h-3 w-3 mr-3 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" />
+                          <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
+                        </Link>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </details>
+
+                {/* Desktop/tablet */}
+                <div className="hidden sm:block">
+                  <h4 className="text-white font-semibold text-lg sm:text-xl">Quick Links</h4>
+                  <ul className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+                    {quickLinks.map((link, index) => (
+                      <motion.li
+                        key={link.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Link
+                          href={link.href}
+                          className="text-slate-400 hover:text-emerald-400 transition-all duration-300 flex items-center group text-sm sm:text-base"
+                        >
+                          <ArrowRight className="h-3 w-3 mr-3 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" />
+                          <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
+                        </Link>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
               {/* Resources */}
-              <div className="space-y-6">
-                <h4 className="text-white font-semibold text-xl">Resources</h4>
-                <ul className="space-y-4">
-                  {[
-                    { name: "Community", href: "https://x.com/OkitoLabs" },
-                    { name: "Blog", href: "#" },
-                    { name: "Support", href: "https://x.com/notabbytwt" },
-                  ].map((link, index) => (
-                    <motion.li
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 + 0.2 }}
-                    >
-                      <Link
-                        href={link.href}
-                        className="text-slate-400 hover:text-emerald-400 transition-all duration-300 flex items-center group"
+              <div className="space-y-4 sm:space-y-6">
+                {/* Mobile collapsible */}
+                <details className="sm:hidden bg-white/5 border border-white/10 rounded-xl p-4">
+                  <summary className="text-white font-semibold text-base flex items-center justify-between cursor-pointer select-none">
+                    Resources
+                    <ChevronDown className="h-4 w-4 opacity-70" />
+                  </summary>
+                  <ul className="mt-3 space-y-3">
+                    {resourcesLinks.map((link, index) => (
+                      <motion.li
+                        key={link.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.05 + 0.1 }}
                       >
-                        <ArrowRight className="h-3 w-3 mr-3 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" />
-                        <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
+                        <Link
+                          href={link.href}
+                          className="text-slate-400 hover:text-emerald-400 transition-all duration-300 flex items-center group text-sm"
+                        >
+                          <ArrowRight className="h-3 w-3 mr-3 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" />
+                          <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
+                        </Link>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </details>
+
+                {/* Desktop/tablet */}
+                <div className="hidden sm:block">
+                  <h4 className="text-white font-semibold text-lg sm:text-xl">Resources</h4>
+                  <ul className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+                    {resourcesLinks.map((link, index) => (
+                      <motion.li
+                        key={link.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 + 0.2 }}
+                      >
+                        <Link
+                          href={link.href}
+                          className="text-slate-400 hover:text-emerald-400 transition-all duration-300 flex items-center group text-sm sm:text-base"
+                        >
+                          <ArrowRight className="h-3 w-3 mr-3 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" />
+                          <span className="group-hover:translate-x-1 transition-transform duration-300">{link.name}</span>
+                        </Link>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
 
@@ -161,9 +223,9 @@ export default function Footer({id}:{id:string}) {
 
 
             {/* Bottom Footer */}
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="flex flex-col sm:flex-row items-center gap-6 text-slate-400 text-sm">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-slate-400 text-xs sm:text-sm text-center sm:text-left">
                   <span>&copy; {new Date().getFullYear()} Okito. All rights reserved.</span>
                   <div className="flex items-center gap-6">
                     {['Privacy', 'Terms', 'License'].map((item) => (
@@ -179,13 +241,13 @@ export default function Footer({id}:{id:string}) {
                 </div>
                 
                 {/* Status Indicator */}
-                <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2">
+                <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1.5 sm:px-4 sm:py-2">
                   <motion.div
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="w-2 h-2 bg-emerald-400 rounded-full"
+                    className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-400 rounded-full"
                   />
-                  <span className="text-emerald-400 text-sm font-medium">All Systems Operational</span>
+                  <span className="text-emerald-400 text-xs sm:text-sm font-medium">All Systems Operational</span>
                 </div>
               </div>
             </div>
@@ -195,11 +257,11 @@ export default function Footer({id}:{id:string}) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="text-center mt-8"
+              className="text-center mt-6 sm:mt-8"
             >
-              <p className="text-slate-400 text-sm flex items-center justify-center gap-2">
+              <p className="text-slate-400 text-xs sm:text-sm flex items-center justify-center gap-2">
                 <span>Built for</span>
-                <Image src="/solana.png" alt="Solana" width={20} height={20} />
+                <Image src="/solana.png" alt="Solana" width={16} height={16} className="sm:w-[20px] sm:h-[20px]" />
                 
               </p>
             </motion.div>
