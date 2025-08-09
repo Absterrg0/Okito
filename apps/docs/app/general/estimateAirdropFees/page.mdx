@@ -3,10 +3,13 @@ import PropsTable from '../..//PropsTable.jsx'
 
 ## `estimateAirdropFees`
 
-Estimates total cost for an SPL token airdrop, including rent for new recipient token accounts and an RPC-based fee estimate for a representative transfer message.
+Estimates total cost for an SPL token airdrop using local heuristics only. No transactions are sent and no RPC-dependent fee endpoints are called. The estimate includes:
+
+- rent for new recipient token accounts (fixed rent exemption for 165-byte ATA)
+- a local per-instruction fee model with a small buffer
 
 <Callout type="info">
-For large recipient lists, real airdrops are split across transactions. The estimate sizes a single representative message and applies a small buffer.
+For large recipient lists, actual airdrops are split across multiple transactions. The estimator uses a per-instruction heuristic per batch and sums across batches; values are conservative and may differ from on-chain execution.
 </Callout>
 
 ## Usage
@@ -29,7 +32,7 @@ const airdropFees = await estimateAirdropFee(connection, recipients, /* accounts
 <PropsTable
   rows={[
     { name: "connection", type: "Connection", description: "Solana connection instance." },
-    { name: "recipients", type: <a href="/general/airdropRecipient">AirdropRecipient[]</a>, description: "Recipient addresses and amounts (bigint recommended)." },
+    { name: "recipients", type: "AirdropRecipient[]", description: "Recipient addresses and amounts (bigint recommended)." },
     { name: "accountsToCreate", type: "number", description: "How many recipient ATAs are expected to be created." },
     { name: "priorityFee", type: "number", description: "Optional priority fee in micro‑lamports.", default: "—" },
   ]}

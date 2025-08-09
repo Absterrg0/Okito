@@ -30,28 +30,25 @@ describe('Token Operation Classes', () => {
 
     describe('BurnTokenOperation', () => {
         test('should create burn operation with valid parameters', async () => {
-            const operation = new BurnTokenOperation({
+            const operation = new BurnTokenOperation(
                 connection,
                 wallet,
-                mint: TEST_CONFIG.USDC_MINT,
-                amount: 1,
-                config: {
-                    enableLogging: true,
-                    confirmationStrategy: 'confirmed'
-                }
-            });
+                TEST_CONFIG.USDC_MINT,
+                BigInt(1),
+                { enableLogging: true, confirmationStrategy: 'confirmed' } as any
+            );
 
             expect(operation).toBeInstanceOf(BurnTokenOperation);
         });
 
         test('should validate burn operation data', async () => {
-            const operation = new BurnTokenOperation({
+            const operation = new BurnTokenOperation(
                 connection,
                 wallet,
-                mint: TEST_CONFIG.USDC_MINT,
-                amount: 1,
-                config: {}
-            });
+                TEST_CONFIG.USDC_MINT,
+                BigInt(1),
+                {} as any
+            );
 
             // Mock the validation method
             const validateSpy = jest.spyOn(operation as any, 'validateParameters');
@@ -66,16 +63,13 @@ describe('Token Operation Classes', () => {
         });
 
         test('should handle burn operation execution', async () => {
-            const operation = new BurnTokenOperation({
+            const operation = new BurnTokenOperation(
                 connection,
                 wallet,
-                mint: TEST_CONFIG.USDC_MINT,
-                amount: 1,
-                config: {
-                    enableLogging: false,
-                    confirmationStrategy: 'confirmed'
-                }
-            });
+                TEST_CONFIG.USDC_MINT,
+                BigInt(1),
+                { enableLogging: false, confirmationStrategy: 'confirmed' } as any
+            );
 
             // Mock the execute method to avoid actual blockchain calls
             const executeSpy = jest.spyOn(operation, 'execute');
@@ -92,13 +86,13 @@ describe('Token Operation Classes', () => {
         });
 
         test('should handle burn operation errors', async () => {
-            const operation = new BurnTokenOperation({
+            const operation = new BurnTokenOperation(
                 connection,
                 wallet,
-                mint: 'invalid-mint',
-                amount: 1,
-                config: {}
-            });
+                'invalid-mint',
+                BigInt(1),
+                {} as any
+            );
 
             const executeSpy = jest.spyOn(operation, 'execute');
             executeSpy.mockResolvedValue({
@@ -320,13 +314,13 @@ describe('Token Operation Classes', () => {
             // @ts-ignore - intentionally setting to null for test
             invalidWallet.publicKey = null;
 
-            const burnOp = new BurnTokenOperation({
+            const burnOp = new BurnTokenOperation(
                 connection,
-                wallet: invalidWallet,
-                mint: TEST_CONFIG.USDC_MINT,
-                amount: 1,
-                config: {}
-            });
+                invalidWallet as any,
+                TEST_CONFIG.USDC_MINT,
+                BigInt(1),
+                {} as any
+            );
 
             const executeSpy = jest.spyOn(burnOp, 'execute');
             executeSpy.mockResolvedValue({
@@ -373,15 +367,13 @@ describe('Token Operation Classes', () => {
             const confirmationStrategies = ['processed', 'confirmed', 'finalized'] as const;
 
             for (const strategy of confirmationStrategies) {
-                const operation = new BurnTokenOperation({
+                const operation = new BurnTokenOperation(
                     connection,
                     wallet,
-                    mint: TEST_CONFIG.USDC_MINT,
-                    amount: 1,
-                    config: {
-                        confirmationStrategy: strategy
-                    }
-                });
+                    TEST_CONFIG.USDC_MINT,
+                    BigInt(1),
+                    { confirmationStrategy: strategy } as any
+                );
 
                 expect(operation).toBeInstanceOf(BurnTokenOperation);
             }
@@ -405,13 +397,13 @@ describe('Token Operation Classes', () => {
 
         test('should support logging configuration', async () => {
             const operations = [
-                new BurnTokenOperation({
+                new BurnTokenOperation(
                     connection,
                     wallet,
-                    mint: TEST_CONFIG.USDC_MINT,
-                    amount: 1,
-                    config: { enableLogging: true }
-                }),
+                    TEST_CONFIG.USDC_MINT,
+                    BigInt(1),
+                    { enableLogging: true } as any
+                ),
                 new TransferTokenOperation({
                     connection,
                     wallet,
@@ -438,13 +430,13 @@ describe('Token Operation Classes', () => {
     describe('Operation Performance', () => {
         test('should handle concurrent operations', async () => {
             const operations = [
-                new BurnTokenOperation({
+                new BurnTokenOperation(
                     connection,
                     wallet,
-                    mint: TEST_CONFIG.USDC_MINT,
-                    amount: 1,
-                    config: {}
-                }),
+                    TEST_CONFIG.USDC_MINT,
+                    BigInt(1),
+                    {} as any
+                ),
                 new TransferTokenOperation({
                     connection,
                     wallet,
@@ -484,13 +476,13 @@ describe('Token Operation Classes', () => {
         });
 
         test('should complete operations within reasonable time', async () => {
-            const operation = new BurnTokenOperation({
+            const operation = new BurnTokenOperation(
                 connection,
                 wallet,
-                mint: TEST_CONFIG.USDC_MINT,
-                amount: 1,
-                config: {}
-            });
+                TEST_CONFIG.USDC_MINT,
+                BigInt(1),
+                {} as any
+            );
 
             const executeSpy = jest.spyOn(operation, 'execute');
             executeSpy.mockResolvedValue({
@@ -535,13 +527,13 @@ describe('Token Operation Classes', () => {
         });
 
         test('should handle operation reuse', async () => {
-            const operation = new BurnTokenOperation({
+            const operation = new BurnTokenOperation(
                 connection,
                 wallet,
-                mint: TEST_CONFIG.USDC_MINT,
-                amount: 1,
-                config: {}
-            });
+                TEST_CONFIG.USDC_MINT,
+                BigInt(1),
+                {} as any
+            );
 
             const executeSpy = jest.spyOn(operation, 'execute');
             executeSpy.mockResolvedValue({

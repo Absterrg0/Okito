@@ -4,13 +4,12 @@ import {
     getAssociatedTokenAddress,
     getAccount,
     TOKEN_PROGRAM_ID,
-    getOrCreateAssociatedTokenAccount,
 } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { BaseTokenOperation, ValidationResult, FeeEstimation } from '../core/BaseTokenOperation';
 import type { TransferTokensParams, TransferResult, TransferConfig } from '../../types/token/transfer';
 import { SignerWallet } from '../../types/custom-wallet-adapter';
-import { ErrorFactory, TokenLaunchErrorCode } from '../../types/errors';e
+import { ErrorFactory, TokenLaunchErrorCode } from '../../types/errors';
 import { validateAndNormalizePublicKey, validateAmount } from '../utils/sanitizers';
 
 interface TransferOperationData {
@@ -265,53 +264,19 @@ export class TransferTokenOperation extends BaseTokenOperation<any, TransferResu
     }
 
     protected async estimateFees(operationData: TransferOperationData): Promise<FeeEstimation> {
-        this.operationLogger.debug('Estimating transfer fees');
+        this.operationLogger.debug('Estimating transfer fees (local heuristic)');
         
-        // More accurate fee estimation based on actual instruction data
-        const baseFee = 5000; // Base transaction fee (~0.000005 SOL)
-        let transferInstructionFee = 0;
-        let accountCreationFee = 0;
-        
-        try {
-            // Get current fee structure
-            const { feeCalculator } = await this.connection.getRecentBlockhash();
-            transferInstructionFee = feeCalculator?.lamportsPerSignature || 5000;
-        } catch (error) {
-            // Fallback to conservative estimate
-            transferInstructionFee = 5000;
-            this.operationLogger.warn('Failed to get current fee calculator, using fallback', { error });
-        }
+        // Local-only heuristic: base tx fee + per-instruction + optional ATA rent
+        const BASE_TX_FEE = 5000; // lamports
+        const PER_INSTRUCTION_FEE = 2000; // lamports per instruction
+        const NUM_INSTRUCTIONS = 1 + (operationData.needsDestinationATA ? 1 : 0); // create ATA + transfer
 
-        // Account creation fee calculation
-        if (operationData.needsDestinationATA) {
-            try {
-                // More precise rent exemption calculation for token accounts
-                const tokenAccountSize = 165; // Standard token account size
-                accountCreationFee = await this.connection.getMinimumBalanceForRentExemption(tokenAccountSize);
-                
-                this.operationLogger.debug('Account creation fee calculated', {
-                    accountSize: tokenAccountSize,
-                    rentExemption: accountCreationFee
-                });
-            } catch (error) {
-                // Conservative fallback
-                accountCreationFee = 2039280; // ~0.002 SOL fallback
-                this.operationLogger.warn('Failed to calculate exact rent exemption, using fallback', { 
-                    error,
-                    fallbackFee: accountCreationFee 
-                });
-            }
-        }
-
-        // Priority fee handling
+        const accountCreationFee = operationData.needsDestinationATA ? 2039280 : 0; // lamports for 165-byte ATA
         const priorityFee = this.config.priorityFee || 0;
-        
-        // Special handling for native SOL transfers
-        let additionalFees = 0;
-        if (operationData.isNativeSOL) {
-            // Wrapped SOL transfers may require additional compute units
-            additionalFees = 1000; // Small additional fee for wSOL handling
-        }
+        const additionalFees = operationData.isNativeSOL ? 1000 : 0; // minor overhead for wSOL
+
+        const transferInstructionFee = PER_INSTRUCTION_FEE * NUM_INSTRUCTIONS;
+        const baseFee = BASE_TX_FEE;
 
         const breakdown = {
             baseFee,
@@ -320,7 +285,7 @@ export class TransferTokenOperation extends BaseTokenOperation<any, TransferResu
             priorityFee,
             additionalFees,
             total: baseFee + transferInstructionFee + accountCreationFee + priorityFee + additionalFees
-        };
+        } as const;
 
         const estimatedFee = breakdown.total;
 
@@ -587,27 +552,27 @@ export async function transferTokens(
  * Convenience function for transferring tokens with human-readable amounts
  * Automatically handles decimal conversion
  */
-export async function transferTokensWithDecimals(
-    connection: Connection,
-    wallet: SignerWallet,
-    mint: string,
-    humanAmount: number | string,
-    destination: string,
-    config?: TransferConfig
-): Promise<TransferResult> {
-    // Get mint info to determine decimals
-    const mintPubkey = new PublicKey(mint);
-    const mintInfo = await connection.getAccountInfo(mintPubkey);
+// export async function transferTokensWithDecimals(
+//     connection: Connection,
+//     wallet: SignerWallet,
+//     mint: string,
+//     humanAmount: number | string,
+//     destination: string,
+//     config?: TransferConfig
+// ): Promise<TransferResult> {
+//     // Get mint info to determine decimals
+//     const mintPubkey = new PublicKey(mint);
+//     const mintInfo = await connection.getAccountInfo(mintPubkey);
     
-    if (!mintInfo) {
-        throw ErrorFactory.invalidTokenData('mint', 'Token mint does not exist');
-    }
+//     if (!mintInfo) {
+//         throw ErrorFactory.invalidTokenData('mint', 'Token mint does not exist');
+//     }
     
-    // Parse mint data to get decimals (simplified - in production you'd use @solana/spl-token)
-    const decimals = 6; // Default to 6 decimals, should be parsed from mint data
+//     // Parse mint data to get decimals (simplified - in production you'd use @solana/spl-token)
+//     const decimals = 6; // Default to 6 decimals, should be parsed from mint data
     
-    // Convert human amount to raw token units
-    const rawAmount = BigInt(Math.floor(Number(humanAmount) * Math.pow(10, decimals)));
+//     // Convert human amount to raw token units
+//     const rawAmount = BigInt(Math.floor(Number(humanAmount) * Math.pow(10, decimals)));
     
-    return transferTokens(connection, wallet, mint, rawAmount, destination, config);
-} 
+//     return transferTokens(connection, wallet, mint, rawAmount, destination, config);
+// } 

@@ -220,31 +220,18 @@ export class BurnTokenOperation extends BaseTokenOperation<BurnTokenConfig, Burn
     }
 
     protected async estimateFees(operationData: BurnOperationData): Promise<FeeEstimation> {
-        this.operationLogger.debug('Estimating burn fees');
+        this.operationLogger.debug('Estimating burn fees (local heuristic)');
         
-        // More accurate fee estimation
-        const baseFee = 5000; // Base transaction fee
-        let burnInstructionFee = 0;
-        
-        try {
-            // Get current fee structure
-            const { feeCalculator } = await this.connection.getRecentBlockhash();
-            burnInstructionFee = feeCalculator?.lamportsPerSignature || 5000;
-        } catch (error) {
-            // Fallback to conservative estimate
-            burnInstructionFee = 5000;
-            this.operationLogger.warn('Failed to get current fee calculator, using fallback', { error });
-        }
+        // Local-only heuristic: base tx + one burn instruction + small wSOL overhead
+        const BASE_TX_FEE = 5000; // lamports
+        const PER_INSTRUCTION_FEE = 2000; // lamports per instruction
+        const NUM_INSTRUCTIONS = 1; // burn
 
-        // Priority fee handling
         const priorityFee = this.config.priorityFee || 0;
-        
-        // Special handling for native SOL burns
-        let additionalFees = 0;
-        if (operationData.isNativeSOL) {
-            // Wrapped SOL burns may require additional compute units
-            additionalFees = 500; // Small additional fee for wSOL handling
-        }
+        const additionalFees = operationData.isNativeSOL ? 500 : 0; // minor overhead for wSOL
+
+        const burnInstructionFee = PER_INSTRUCTION_FEE * NUM_INSTRUCTIONS;
+        const baseFee = BASE_TX_FEE;
 
         const breakdown = {
             baseFee,
@@ -252,7 +239,7 @@ export class BurnTokenOperation extends BaseTokenOperation<BurnTokenConfig, Burn
             priorityFee,
             additionalFees,
             total: baseFee + burnInstructionFee + priorityFee + additionalFees
-        };
+        } as const;
 
         const estimatedFee = breakdown.total;
 

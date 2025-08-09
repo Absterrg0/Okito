@@ -297,34 +297,25 @@ export class AirdropOperation extends BaseTokenOperation<AirdropConfig, AirdropR
      */
     protected async estimateFees(operationData: AirdropOperationData): Promise<FeeEstimation> {
         try {
-            // Build sample instructions to get accurate fee
+            // Build instructions locally and estimate based on count
             const instructions = await this.buildInstructions(operationData);
-            const { blockhash } = await this.connection.getLatestBlockhash();
-            
-            const message = new TransactionMessage({
-                payerKey: this.wallet.publicKey!,
-                recentBlockhash: blockhash,
-                instructions
-            }).compileToV0Message();
+            const BASE_TX_FEE = 5000; // lamports
+            const PER_INSTRUCTION_FEE = 2000; // heuristic per instruction
 
-            const feeResponse = await this.connection.getFeeForMessage(message);
-            const transactionFee = feeResponse.value || 5000;
+            const transactionFee = BASE_TX_FEE + PER_INSTRUCTION_FEE * instructions.length;
 
-            // Account creation rent costs
-            let accountCreationFees = 0;
-            if (operationData.accountsToCreate.length > 0) {
-                const rentExemption = await this.connection.getMinimumBalanceForRentExemption(165);
-                accountCreationFees = rentExemption * operationData.accountsToCreate.length;
-            }
+            // Account creation rent costs (local constant)
+            const RENT_EXEMPT_165 = 2039280; // lamports
+            const accountCreationFees = (operationData.accountsToCreate.length) * RENT_EXEMPT_165;
 
             const breakdown = {
                 transactionFee,
                 accountCreations: accountCreationFees,
                 priorityFee: this.config.priorityFee || 0
-            };
+            } as const;
 
             return {
-                estimatedFee: Object.values(breakdown).reduce((a, b) => a + b, 0),
+                estimatedFee: breakdown.transactionFee + breakdown.accountCreations + breakdown.priorityFee,
                 breakdown
             };
         } catch (error) {

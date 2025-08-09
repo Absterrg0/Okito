@@ -47,8 +47,7 @@ export default function Packages({id}:{id:string}) {
           className="container mx-auto px-4 lg:px-6 relative"
         >
           <motion.div variants={itemVariants} className="text-center mb-16">
-            <Badge className="bg-red-500/20 text-red-300 border-red-500/30 px-4 py-2 mb-6">
-              <Star className="h-4 w-4 mr-2" stroke="currentColor" fill="currentColor" />
+            <Badge className="rounded-full bg-red-500/20 text-red-300 border-red-500/30 px-4 py-2 mb-6">
               Alpha Release
             </Badge>
             <h2 className="text-4xl lg:text-5xl font-bold mb-8 text-white">Choose your development path</h2>

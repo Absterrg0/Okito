@@ -218,7 +218,7 @@ export const createTestKeypair = (): Keypair => {
 
 // Mock configuration for tests
 export const createTestConfig = () => ({
-    network: TEST_CONFIG.NETWORK,
+    network: TEST_CONFIG.NETWORK as 'devnet' | 'mainnet-beta',
     rpcUrl: TEST_CONFIG.RPC_URL,
     publicKey: createTestKeypair().publicKey,
     tokens: ['USDC', 'USDT'] as [OkitoToken, OkitoToken]

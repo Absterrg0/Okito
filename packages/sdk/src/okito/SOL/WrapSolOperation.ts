@@ -40,7 +40,7 @@ export class WrapSolOperation extends BaseTokenOperation<WrapSolConfig, WrapSolR
 
         // Validate amount
         try {
-            this.validateAmount(this.amountSol, 'wrap amount');
+            this.validateAmount(BigInt(this.amountSol), 'wrap amount');
         } catch (error: any) {
             errors.push(error.message);
         }
@@ -95,23 +95,23 @@ export class WrapSolOperation extends BaseTokenOperation<WrapSolConfig, WrapSolR
     }
 
     protected async estimateFees(operationData: WrapOperationData): Promise<FeeEstimation> {
-        const transferFee = 5000; // ~0.000005 SOL for SystemProgram.transfer
-        const syncFee = 5000; // ~0.000005 SOL for sync instruction
-        
-        let accountCreationFee = 0;
-        if (operationData.needsAccountCreation) {
-            // Standard ATA rent exemption (approx 0.002 SOL)
-            accountCreationFee = await this.connection.getMinimumBalanceForRentExemption(165);
-        }
+        // Local heuristic fees
+        const BASE_TX_FEE = 5000; // lamports
+        const PER_INSTRUCTION_FEE = 2000; // lamports per instruction
+        const NUM_INSTRUCTIONS = 2 + (operationData.needsAccountCreation ? 1 : 0); // create ATA (optional) + transfer + sync
 
+        const accountCreationFee = operationData.needsAccountCreation ? 2039280 : 0; // lamports for 165-byte ATA
+        const priorityFee = this.config.priorityFee || 0;
+
+        const instructionFees = PER_INSTRUCTION_FEE * NUM_INSTRUCTIONS;
         const breakdown = {
-            transfer: transferFee,
+            base: BASE_TX_FEE,
+            instructions: instructionFees,
             accountCreation: accountCreationFee,
-            sync: syncFee,
-            priorityFee: this.config.priorityFee
-        };
+            priorityFee
+        } as const;
 
-        const estimatedFee = breakdown.transfer + breakdown.accountCreation + breakdown.sync + breakdown.priorityFee;
+        const estimatedFee = breakdown.base + breakdown.instructions + breakdown.accountCreation + breakdown.priorityFee;
 
         return {
             estimatedFee,

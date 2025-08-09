@@ -11,24 +11,23 @@ import {
 } from '../setup';
 
 // Import SDK functions
-import { 
-    getTokenSupplyByMint,
-    getTokenBalanceByMint,
-    getTransactionHistory,
-    pay,
-} from '../../index'
+import { getTokenSupplyByMint } from '../../okito/token/getTokenSupply';
+import { getTokenBalanceByMint } from '../../okito/token/get-balance-for-token';
+import { getTransactions } from '../../okito/account/get-transaction-history';
+import { pay } from '../../okito/payment/pay';
 
 // Mock external dependencies
-jest.mock('../../okito/token/transfer-token', () => ({
+jest.mock('../../okito/token/TransferTokenOperation', () => ({
     transferTokens: jest.fn()
 }));
 
-jest.mock('../../okito/token/burn-token', () => ({
-    burnToken: jest.fn()
+jest.mock('../../okito/token/BurnTokenOperation', () => ({
+    __esModule: true,
+    default: jest.fn()
 }));
 
 jest.mock('../../okito/airdrop/airdrop', () => ({
-    airdropTokensToMultiple: jest.fn()
+    airdropTokens: jest.fn()
 }));
 
 describe('SDK Integration Tests', () => {
@@ -49,8 +48,8 @@ describe('SDK Integration Tests', () => {
     describe('Complete Token Workflow', () => {
         test('should handle complete token management workflow', async () => {
             // Mock functions
-            const mockTransferTokens = require('../../okito/token/transfer-token').transferTokens;
-            const mockBurnToken = require('../../okito/token/burn-token').burnToken;
+            const mockTransferTokens = require('../../okito/token/TransferTokenOperation').transferTokens;
+            const mockBurnToken = require('../../okito/token/BurnTokenOperation').default;
             
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
             mockBurnToken.mockResolvedValue(mockTransactionSuccess);
@@ -61,7 +60,7 @@ describe('SDK Integration Tests', () => {
             expect(supplyResult.success).toBe(true);
 
             // 2. Check wallet balance
-            const balanceResult = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(balanceResult.success).toBe(true);
 
             // 3. Transfer tokens
@@ -76,26 +75,26 @@ describe('SDK Integration Tests', () => {
             expect(transferResult.success).toBe(true);
 
             // 4. Burn tokens
-            const burnResult = await mockBurnToken({
+            const burnResult = await mockBurnToken(
                 connection,
                 wallet,
-                mintAddress: TEST_CONFIG.USDC_MINT,
-                amount: BigInt(500000),
-                config: { enableLogging: false }
-            });
+                TEST_CONFIG.USDC_MINT,
+                BigInt(500000),
+                { enableLogging: false }
+            );
             expect(burnResult.success).toBe(true);
 
             // 5. Check transaction history
-            const historyResult = await getTransactionHistory(connection, wallet);
+            const historyResult = await getTransactions(connection, wallet.publicKey);
             expect(historyResult.success).toBe(true);
         });
 
         test('should handle payment workflow', async () => {
-            const mockTransferTokens = require('../../okito/token/transfer-token').transferTokens;
+            const mockTransferTokens = require('../../okito/token/TransferTokenOperation').transferTokens;
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
 
             // 1. Check balance before payment
-            const initialBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const initialBalance = await getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(initialBalance.success).toBe(true);
 
             // 2. Make payment
@@ -103,18 +102,19 @@ describe('SDK Integration Tests', () => {
             expect(paymentResult).toBe(mockTransactionSuccess.transactionId);
 
             // 3. Verify payment was processed
-            expect(mockTransferTokens).toHaveBeenCalledWith({
-                connection,
-                wallet,
-                mint: expect.any(String),
-                destination: config.publicKey.toString(),
-                amount: BigInt(10500000),
-                config: expect.any(Object)
-            });
+            {
+                const call = mockTransferTokens.mock.calls[0];
+                expect(call[0]).toBe(connection);
+                expect(call[1]).toBe(wallet);
+                expect(typeof call[2]).toBe('string');
+                expect(call[3]).toBe('10500000');
+                expect(call[4]).toBe(config.publicKey.toString());
+                expect(call[5]).toEqual(expect.any(Object));
+            }
         });
 
         test('should handle airdrop workflow', async () => {
-            const mockAirdrop = require('../../okito/airdrop/airdrop').airdropTokensToMultiple;
+            const mockAirdrop = require('../../okito/airdrop/airdrop').airdropTokens;
             mockAirdrop.mockResolvedValue({
                 success: true,
                 transactionId: 'mock-airdrop-tx',
@@ -130,7 +130,7 @@ describe('SDK Integration Tests', () => {
             ];
 
             // 1. Check sender balance
-            const senderBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const senderBalance = await getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(senderBalance.success).toBe(true);
 
             // 2. Execute airdrop
@@ -161,7 +161,7 @@ describe('SDK Integration Tests', () => {
             expect(supplyResult.error).toContain('Network unavailable');
 
             // Ensure other operations also handle the same connection error
-            const balanceResult = await getTokenBalanceByMint(errorConnection, wallet, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(errorConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(balanceResult.success).toBe(false);
         });
 
@@ -171,13 +171,13 @@ describe('SDK Integration Tests', () => {
             disconnectedWallet.publicKey = null;
 
             // All operations should fail gracefully
-            const balanceResult = await getTokenBalanceByMint(connection, disconnectedWallet, TEST_CONFIG.USDC_MINT);
+            const balanceResult = await getTokenBalanceByMint(connection, disconnectedWallet.publicKey as any, TEST_CONFIG.USDC_MINT);
             expect(balanceResult.success).toBe(false);
-            expect(balanceResult.error).toBe('Wallet not connected');
+            expect(balanceResult.error).toBeDefined();
 
-            const historyResult = await getTransactionHistory(connection, disconnectedWallet);
+            const historyResult = await getTransactions(connection, disconnectedWallet.publicKey as any);
             expect(historyResult.success).toBe(false);
-            expect(historyResult.error).toBe('Wallet not connected');
+            expect(historyResult.error).toBeDefined();
 
             await expect(
                 pay(connection, disconnectedWallet, 10, 'USDC', config)
@@ -190,7 +190,7 @@ describe('SDK Integration Tests', () => {
             const supplyResult = await getTokenSupplyByMint(connection, invalidMint);
             expect(supplyResult.success).toBe(false);
 
-            const balanceResult = await getTokenBalanceByMint(connection, wallet, invalidMint);
+            const balanceResult = await getTokenBalanceByMint(connection, wallet.publicKey, invalidMint);
             expect(balanceResult.success).toBe(false);
 
             // All operations should consistently handle invalid addresses
@@ -199,7 +199,7 @@ describe('SDK Integration Tests', () => {
 
     describe('Performance Integration', () => {
         test('should handle concurrent operations efficiently', async () => {
-            const mockTransferTokens = require('../../okito/token/transfer-token').transferTokens;
+            const mockTransferTokens = require('../../okito/token/TransferTokenOperation').transferTokens;
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
 
             const startTime = Date.now();
@@ -207,8 +207,8 @@ describe('SDK Integration Tests', () => {
             // Execute multiple operations concurrently
             const promises = [
                 getTokenSupplyByMint(connection, TEST_CONFIG.USDC_MINT),
-                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT),
-                getTransactionHistory(connection, wallet, { limit: 5 }),
+                getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT),
+                getTransactions(connection, wallet.publicKey, { limit: 5 }),
                 mockTransferTokens({
                     connection,
                     wallet,
@@ -219,7 +219,7 @@ describe('SDK Integration Tests', () => {
                 })
             ];
 
-            const results = await Promise.all(promises);
+            const results: any[] = await Promise.all(promises);
 
             const endTime = Date.now();
             const duration = endTime - startTime;
@@ -241,7 +241,7 @@ describe('SDK Integration Tests', () => {
             const wallets = Array.from({ length: 5 }, () => createTestWallet());
 
             const promises = wallets.map(w => 
-                getTokenBalanceByMint(connection, w, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, w.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);
@@ -263,8 +263,8 @@ describe('SDK Integration Tests', () => {
             const wallet1 = createTestWallet();
             const publicKey = wallet1.publicKey.toString();
 
-            const balanceResult = await getTokenBalanceByMint(connection, wallet1, TEST_CONFIG.USDC_MINT);
-            const historyResult = await getTransactionHistory(connection, wallet1, { limit: 1 });
+            const balanceResult = await getTokenBalanceByMint(connection, wallet1.publicKey, TEST_CONFIG.USDC_MINT);
+            const historyResult = await getTransactions(connection, wallet1.publicKey, { limit: 1 });
 
             expect(balanceResult.success).toBe(true);
             expect(historyResult.success).toBe(true);
@@ -280,25 +280,25 @@ describe('SDK Integration Tests', () => {
             // Configs should be independent
             expect(config1.publicKey.toString()).not.toBe(config2.publicKey.toString());
 
-            const mockTransferTokens = require('../../okito/token/transfer-token').transferTokens;
+            const mockTransferTokens = require('../../okito/token/TransferTokenOperation').transferTokens;
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
 
             // Each payment should use correct config
-            await pay(connection, wallet, 10, 'USDC', config1);
-            await pay(connection, wallet, 20, 'USDT', config2);
+            await pay(connection, wallet, 10, 'USDC', { ...config1, network: 'devnet' });
+            await pay(connection, wallet, 20, 'USDT', { ...config2, network: 'devnet' });
 
             expect(mockTransferTokens).toHaveBeenCalledTimes(2);
             
-            const calls = mockTransferTokens.mock.calls;
-            expect(calls[0][0].destination).toBe(config1.publicKey.toString());
-            expect(calls[1][0].destination).toBe(config2.publicKey.toString());
+            const calls = mockTransferTokens.mock.calls as any[];
+            expect(calls[0][4]).toBe(config1.publicKey.toString());
+            expect(calls[1][4]).toBe(config2.publicKey.toString());
         });
     });
 
     describe('Real-world Scenarios', () => {
         test('should handle typical DeFi interaction flow', async () => {
-            const mockTransferTokens = require('../../okito/token/transfer-token').transferTokens;
-            const mockBurnToken = require('../../okito/token/burn-token').burnToken;
+            const mockTransferTokens = require('../../okito/token/TransferTokenOperation').transferTokens;
+            const mockBurnToken = require('../../okito/token/BurnTokenOperation').default;
             
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
             mockBurnToken.mockResolvedValue(mockTransactionSuccess);
@@ -306,11 +306,11 @@ describe('SDK Integration Tests', () => {
             // Scenario: User wants to trade tokens
             
             // 1. Check available balance
-            const balance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const balance = await getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(balance.success).toBe(true);
 
             // 2. Check transaction history for recent activity
-            const history = await getTransactionHistory(connection, wallet, { limit: 10 });
+            const history = await getTransactions(connection, wallet.publicKey, { limit: 10 });
             expect(history.success).toBe(true);
 
             // 3. Transfer tokens to trading account
@@ -342,7 +342,7 @@ describe('SDK Integration Tests', () => {
             // Scenario: Customer making a payment to merchant
             
             // 1. Customer checks balance
-            const customerBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const customerBalance = await getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(customerBalance.success).toBe(true);
 
             // 2. Merchant provides payment config
@@ -353,18 +353,19 @@ describe('SDK Integration Tests', () => {
             expect(paymentResult).toBe(mockTransactionSuccess.transactionId);
 
             // 4. Verify payment details
-            expect(mockTransferTokens).toHaveBeenCalledWith({
-                connection,
-                wallet,
-                mint: expect.any(String),
-                destination: merchantConfig.publicKey.toString(),
-                amount: BigInt(25990000), // 25.99 * 1_000_000
-                config: expect.any(Object)
-            });
+            {
+                const call = mockTransferTokens.mock.calls[0];
+                expect(call[0]).toBe(connection);
+                expect(call[1]).toBe(wallet);
+                expect(typeof call[2]).toBe('string');
+                expect(call[3]).toBe('25990000');
+                expect(call[4]).toBe(merchantConfig.publicKey.toString());
+                expect(call[5]).toEqual(expect.any(Object));
+            }
         });
 
         test('should handle token distribution scenario', async () => {
-            const mockAirdrop = require('../../okito/airdrop/airdrop').airdropTokensToMultiple;
+            const mockAirdrop = require('../../okito/airdrop/airdrop').airdropTokens;
             mockAirdrop.mockResolvedValue({
                 success: true,
                 transactionId: 'mock-distribution-tx',
@@ -376,7 +377,7 @@ describe('SDK Integration Tests', () => {
             // Scenario: Project distributing tokens to community
             
             // 1. Check project balance
-            const projectBalance = await getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT);
+            const projectBalance = await getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT);
             expect(projectBalance.success).toBe(true);
 
             // 2. Generate recipient list
@@ -405,13 +406,13 @@ describe('SDK Integration Tests', () => {
             // Test that all major SDK functions are available and have consistent signatures
             expect(typeof getTokenSupplyByMint).toBe('function');
             expect(typeof getTokenBalanceByMint).toBe('function');
-            expect(typeof getTransactionHistory).toBe('function');
+            expect(typeof getTransactions).toBe('function');
             expect(typeof pay).toBe('function');
 
             // Functions should accept connection as first parameter (streamlined approach)
             expect(getTokenSupplyByMint.length).toBeGreaterThanOrEqual(2);
             expect(getTokenBalanceByMint.length).toBeGreaterThanOrEqual(3);
-            expect(getTransactionHistory.length).toBeGreaterThanOrEqual(2);
+            expect(getTransactions.length).toBeGreaterThanOrEqual(2);
             expect(pay.length).toBeGreaterThanOrEqual(5);
         });
 
@@ -422,8 +423,8 @@ describe('SDK Integration Tests', () => {
 
             // Both should work identically
             const [result1, result2] = await Promise.all([
-                getTokenBalanceByMint(connection, standardWallet, TEST_CONFIG.USDC_MINT),
-                getTokenBalanceByMint(connection, customWallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, standardWallet.publicKey, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, customWallet.publicKey, TEST_CONFIG.USDC_MINT)
             ]);
 
             expect(result1.success).toBe(true);

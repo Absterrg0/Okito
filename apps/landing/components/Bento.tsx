@@ -1,10 +1,9 @@
 'use client'
+import React, { useState, useRef } from "react"
 import { motion, useInView } from "motion/react"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles } from "lucide-react" // Added Zap, BarChart3, Settings, Play, Shield
-
-import { useState, useRef } from "react"
-import { containerVariants, itemVariants } from "./variants" // Assuming these are correctly defined
+import { Sparkles } from "lucide-react"
+import { containerVariants, itemVariants } from "./variants"
 import Card1 from "./card-1"
 import Card2 from "./card-2"
 import Card3 from "./card-3"
@@ -13,7 +12,10 @@ import Card5 from "./card-5"
 
 export default function Bento({id}:{id:string}) {
   const featuresRef = useRef<HTMLDivElement>(null)
-  const isInViewFeatures = useInView(featuresRef) // Use useInView hook directly
+  const isInViewFeatures = useInView(featuresRef, { 
+    once: true, // Only trigger once
+    margin: "-100px 0px -100px 0px" // Trigger earlier
+  })
 
   const [activeTab, setActiveTab] = useState("create")
 
@@ -24,12 +26,11 @@ export default function Bento({id}:{id:string}) {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          animate={isInViewFeatures ? "visible" : "hidden"} // Trigger animation based on inView
+          animate={isInViewFeatures ? "visible" : "hidden"}
           className="container mx-auto px-4 lg:px-6 relative"
         >
           <motion.div variants={itemVariants} className="text-center mb-20">
-            <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 px-4 py-2 mb-6">
-              <Sparkles className="h-4 w-4 mr-2" />
+            <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 rounded-full px-4 py-2 mb-6">
               Powerful Features
             </Badge>
             <h2 className="text-4xl lg:text-5xl font-bold mb-8 text-white">Built for modern developers</h2>
@@ -37,24 +38,24 @@ export default function Bento({id}:{id:string}) {
               Every feature designed with performance, security, and developer experience in mind
             </p>
           </motion.div>
-          {/* Enhanced 3x3 Bento Grid Layout with Animated Components */}
+          
           <div className="mx-auto w-[82rem] grid grid-cols-6 gap-4">
-        <div className="col-span-3">
-            <Card1 />
-        </div>
-        <div className="col-span-3">
-            <Card2 />
-        </div>
-        <div className="col-span-2">
-            <Card3 />
-        </div>
-        <div className="col-span-2">
-            <Card4 />
-        </div>
-        <div className="col-span-2">
-            <Card5 />
-        </div>
-    </div>
+            <div className="col-span-3">
+              <Card1 />
+            </div>
+            <div className="col-span-3">
+              <Card2 />
+            </div>
+            <div className="col-span-2">
+              <Card3 />
+            </div>
+            <div className="col-span-2">
+              <Card4 />
+            </div>
+            <div className="col-span-2">
+              <Card5 />
+            </div>
+          </div>
         </motion.div>
       </section>
     </div>

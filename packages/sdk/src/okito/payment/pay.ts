@@ -1,6 +1,6 @@
 import { Connection } from "@solana/web3.js";
 import { getMintAddress } from "../get-mint-address";
-import { transferTokens } from "../token/transfer-token";
+import { transferTokens } from "../token/TransferTokenOperation";
 
 import type { OkitoResolvedConfig } from "../../types/config";
 import type { SignerWallet } from "../../types/custom-wallet-adapter";
@@ -32,20 +32,20 @@ export async function pay(
   // Convert human-readable amount to raw token amount (6 decimals for USDC/USDT)
   const rawAmount = BigInt(Math.floor(amount * 1_000_000));
 
-  const result = await transferTokens({
+  const result = await transferTokens(
     connection,
     wallet,
-    mint: mint.toString(),
-    destination: config.publicKey.toString(),
-    amount: rawAmount,
-    config: {
+    mint.toString(),
+    rawAmount.toString(),
+    config.publicKey.toString(),
+    {
       enableLogging: false,
       enableSimulation: true,
       validateBalance: true,
       createDestinationATA: true,
       confirmationStrategy: "confirmed"
     }
-  });
+  );
 
   if (!result.success) {
     throw new Error(result.error || "Payment failed");

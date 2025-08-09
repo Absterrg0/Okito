@@ -3,10 +3,10 @@ import PropsTable from '../../PropsTable.jsx'
 
 # `estimateTokenCreationFee`
 
-Estimates rent and fees for creating a new token.
+Estimates rent and fees for creating a new token using local heuristics only. No transactions are sent and the estimator does not call RPC fee endpoints.
 
 <Callout type="info">
-The estimate includes rent for the mint + metadata account and an RPC-provided fee estimate for a representative transaction message (create mint, init metadata pointer, init mint, init metadata, create ATA, mint initial supply).
+Included costs: rent for the mint + metadata account(s), rent for a 165-byte ATA, and a local per-instruction fee model for a representative creation flow (create account, init metadata pointer, init mint, init metadata, create ATA, mintTo).
 </Callout>
 
 ## Usage

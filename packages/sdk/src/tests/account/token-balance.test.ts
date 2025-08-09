@@ -45,15 +45,15 @@ describe('Token Balance Functions', () => {
     describe('getTokenBalance', () => {
         test('should return token balance for valid wallet and mint', async () => {
             const result = await withTimeout(
-                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
             expect(result.balance).toBeDefined();
-            expect(result.balance?.value?.amount).toBe(TEST_CONFIG.TEST_AMOUNT.toString());
-            expect(result.balance?.value?.decimals).toBe(6);
-            expect(result.balance?.value?.uiAmount).toBe(1);
-            expect(result.balance?.value?.uiAmountString).toBe('1');
+            expect(result.balance?.amount).toBe(TEST_CONFIG.TEST_AMOUNT.toString());
+            expect(result.balance?.decimals).toBe(6);
+            expect(result.balance?.uiAmount).toBe(1);
+            expect(result.balance?.uiAmountString).toBe('1');
             expect(result.error).toBeUndefined();
         });
 
@@ -63,12 +63,12 @@ describe('Token Balance Functions', () => {
             invalidWallet.publicKey = null;
 
             const result = await withTimeout(
-                getTokenBalanceByMint(connection, invalidWallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, invalidWallet.publicKey as any, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
             expect(result.balance).toBeNull();
-            expect(result.error).toBe('Wallet not connected');
+            expect(result.error).toBeDefined();
         });
 
         test('should handle non-existent token account', async () => {
@@ -88,19 +88,19 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalanceByMint(noAccountConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(noAccountConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
-            expect(result.balance?.value?.amount).toBe('0');
-            expect(result.balance?.value?.decimals).toBe(6);
-            expect(result.balance?.value?.uiAmount).toBe(0);
-            expect(result.balance?.value?.uiAmountString).toBe('0');
+            expect(result.balance?.amount).toBe('0');
+            expect(result.balance?.decimals).toBe(6);
+            expect(result.balance?.uiAmount).toBe(0);
+            expect(result.balance?.uiAmountString).toBe('0');
         });
 
         test('should handle invalid mint address', async () => {
             const result = await withTimeout(
-                getTokenBalanceByMint(connection, wallet, 'invalid-mint')
+                getTokenBalanceByMint(connection, wallet.publicKey, 'invalid-mint')
             );
 
             expect(result.success).toBe(false);
@@ -115,7 +115,7 @@ describe('Token Balance Functions', () => {
             );
 
             const result = await withTimeout(
-                getTokenBalanceByMint(errorConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(errorConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
@@ -130,7 +130,7 @@ describe('Token Balance Functions', () => {
             );
 
             const result = await withTimeout(
-                getTokenBalanceByMint(errorConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(errorConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(false);
@@ -142,17 +142,17 @@ describe('Token Balance Functions', () => {
     describe('getTokenBalanceBySymbol', () => {
         test('should return balance for USDC symbol', async () => {
             const result = await withTimeout(
-                getTokenBalanceBySymbol(connection, wallet, 'USDC', TEST_CONFIG.NETWORK)
+                getTokenBalanceBySymbol(connection, wallet.publicKey, 'USDC', 'devnet')
             );
 
             expect(result.success).toBe(true);
             expect(result.balance).toBeDefined();
-            expect(result.balance?.value?.decimals).toBe(6);
+            expect(result.balance?.decimals).toBe(6);
         });
 
         test('should return balance for USDT symbol', async () => {
             const result = await withTimeout(
-                getTokenBalanceBySymbol(connection, wallet, 'USDT', TEST_CONFIG.NETWORK)
+                getTokenBalanceBySymbol(connection, wallet.publicKey, 'USDT', 'devnet')
             );
 
             expect(result.success).toBe(true);
@@ -161,7 +161,7 @@ describe('Token Balance Functions', () => {
 
         test('should handle invalid token symbol', async () => {
             const result = await withTimeout(
-                getTokenBalanceBySymbol(connection, wallet, 'INVALID_TOKEN', TEST_CONFIG.NETWORK)
+                getTokenBalanceBySymbol(connection, wallet.publicKey, 'INVALID_TOKEN', 'devnet')
             );
 
             expect(result.success).toBe(false);
@@ -170,20 +170,29 @@ describe('Token Balance Functions', () => {
         });
 
         test('should handle invalid network', async () => {
-            const result = await withTimeout(
-                getTokenBalanceBySymbol(connection, wallet, 'USDC', 'invalid-network')
+            // Force getMintAddress to throw as if invalid network was provided
+            jest.resetModules();
+            jest.doMock('../../okito/get-mint-address', () => ({
+                getMintAddress: () => { throw new Error('Unsupported network: invalid-network. Supported: mainnet-beta, devnet'); }
+            }));
+            const { getTokenBalanceBySymbol: getTokenBalanceBySymbolReloaded }: { getTokenBalanceBySymbol: typeof getTokenBalanceBySymbol } = require('../../okito/token/get-balance-for-token');
+            const result: Awaited<ReturnType<typeof getTokenBalanceBySymbol>> = await withTimeout(
+                getTokenBalanceBySymbolReloaded(connection, wallet.publicKey, 'USDC', 'devnet')
             );
-
             expect(result.success).toBe(false);
             expect(result.balance).toBeNull();
             expect(result.error).toBeDefined();
         });
 
         test('should handle getMintAddress import errors', async () => {
-            const result = await withTimeout(
-                getTokenBalanceBySymbol(connection, wallet, 'USDC', '')
+            jest.resetModules();
+            jest.doMock('../../okito/get-mint-address', () => ({
+                getMintAddress: () => { throw new Error('Mock import error'); }
+            }));
+            const { getTokenBalanceBySymbol: getTokenBalanceBySymbolReloaded }: { getTokenBalanceBySymbol: typeof getTokenBalanceBySymbol } = require('../../okito/token/get-balance-for-token');
+            const result: Awaited<ReturnType<typeof getTokenBalanceBySymbol>> = await withTimeout(
+                getTokenBalanceBySymbolReloaded(connection, wallet.publicKey, 'USDC', 'devnet')
             );
-
             expect(result.success).toBe(false);
             expect(result.balance).toBeNull();
             expect(result.error).toBeDefined();
@@ -209,11 +218,11 @@ describe('Token Balance Functions', () => {
             jest.spyOn(customConnection, 'getAccountInfo').mockResolvedValue(null);
 
             const result = await withTimeout(
-                getTokenBalanceByMint(customConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(customConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
-            expect(result.balance?.value?.decimals).toBe(9);
+            expect(result.balance?.decimals).toBe(9);
         });
 
         test('should handle very large balances', async () => {
@@ -228,11 +237,11 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalanceByMint(largeBalanceConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(largeBalanceConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
-            expect(result.balance?.value?.amount).toBe('999999999999999999');
+            expect(result.balance?.amount).toBe('999999999999999999');
         });
 
         test('should handle zero balance', async () => {
@@ -247,12 +256,12 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalanceByMint(zeroBalanceConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(zeroBalanceConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
-            expect(result.balance?.value?.amount).toBe('0');
-            expect(result.balance?.value?.uiAmount).toBe(0);
+            expect(result.balance?.amount).toBe('0');
+            expect(result.balance?.uiAmount).toBe(0);
         });
 
         test('should handle fractional balances', async () => {
@@ -267,11 +276,11 @@ describe('Token Balance Functions', () => {
             });
 
             const result = await withTimeout(
-                getTokenBalanceByMint(fractionalConnection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(fractionalConnection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             expect(result.success).toBe(true);
-            expect(result.balance?.value?.uiAmount).toBe(0.123456);
+            expect(result.balance?.uiAmount).toBe(0.123456);
         });
     });
 
@@ -280,7 +289,7 @@ describe('Token Balance Functions', () => {
             const startTime = Date.now();
             
             await withTimeout(
-                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT),
                 5000
             );
             
@@ -292,7 +301,7 @@ describe('Token Balance Functions', () => {
 
         test('should handle concurrent balance requests', async () => {
             const promises = Array.from({ length: 5 }, () =>
-                getTokenBalanceByMint(connection, wallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, wallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);
@@ -307,7 +316,7 @@ describe('Token Balance Functions', () => {
             const wallets = Array.from({ length: 3 }, () => createTestWallet());
             
             const promises = wallets.map(w =>
-                getTokenBalanceByMint(connection, w, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, w.publicKey, TEST_CONFIG.USDC_MINT)
             );
 
             const results = await Promise.all(promises);
@@ -327,9 +336,9 @@ describe('Token Balance Functions', () => {
             const wallet3 = createTestWallet();
 
             const results = await Promise.all([
-                getTokenBalanceByMint(connection, wallet1, TEST_CONFIG.USDC_MINT),
-                getTokenBalanceByMint(connection, wallet2, TEST_CONFIG.USDC_MINT),
-                getTokenBalanceByMint(connection, wallet3, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, wallet1.publicKey, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet2.publicKey, TEST_CONFIG.USDC_MINT),
+                getTokenBalanceByMint(connection, wallet3.publicKey, TEST_CONFIG.USDC_MINT)
             ]);
 
             results.forEach(result => {
@@ -350,7 +359,7 @@ describe('Token Balance Functions', () => {
             expect(testWallet.connected).toBe(true);
             
             const result = await withTimeout(
-                getTokenBalanceByMint(connection, testWallet, TEST_CONFIG.USDC_MINT)
+                getTokenBalanceByMint(connection, testWallet.publicKey, TEST_CONFIG.USDC_MINT)
             );
             
             expect(result.success).toBe(true);

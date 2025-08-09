@@ -1,5 +1,5 @@
 import { AirdropRecipient } from "../../types/airdrop/drop";
-import { PublicKey, TransactionMessage } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { Connection } from "@solana/web3.js";
 import { log } from "../utils/logger";
 import { AirdropFeeEstimation } from "../../types/airdrop/drop";
@@ -101,7 +101,7 @@ export function validateAirdropParams(
  * @returns A Promise resolving to an object containing the fee estimation or an error.
  */
 export async function estimateAirdropFee(
-    connection: Connection,
+    _connection: Connection,
     recipients: AirdropRecipient[],
     accountsToCreate: number,
     priorityFee: number = 0
@@ -118,54 +118,17 @@ export async function estimateAirdropFee(
             };
         }
 
-        // --- 1. Calculate Total Rent for New Accounts ---
-        let accountCreationRent = 0;
-        if (accountsToCreate > 0) {
-            const rentExemptionPerAccount = await connection.getMinimumBalanceForRentExemption(165);
-            accountCreationRent = rentExemptionPerAccount * accountsToCreate;
-        }
+        // --- 1. Calculate Total Rent for New Accounts (local heuristic) ---
+        const RENT_EXEMPT_165 = 2039280; // lamports
+        const accountCreationRent = Math.max(0, accountsToCreate) * RENT_EXEMPT_165;
 
-        // --- 2. Accurately Estimate Transaction Fees ---
-
-        // Build a representative transaction to size instruction count.
-        // Note: In practice, large airdrops run across multiple txs, so
-        // this gives a lower-bound per-tx estimate; we add a small buffer.
-        const dummyPayer = PublicKey.default;
-        const dummyMint = PublicKey.default;
-        const dummySourceAta = PublicKey.default;
-
-        const instructions = [];
-        for (const recipient of recipients) {
-            // Fix: Ensure recipient.amount is a bigint for createTransferInstruction
-            let amountBigInt: bigint;
-            try {
-                amountBigInt = typeof recipient.amount === "bigint"
-                    ? recipient.amount
-                    : BigInt(recipient.amount);
-            } catch {
-                amountBigInt = BigInt(0);
-            }
-            instructions.push(
-                createTransferInstruction(
-                    dummySourceAta,
-                    new PublicKey(recipient.address), // Using a real address helps sizing
-                    dummyPayer,
-                    amountBigInt
-                )
-            );
-        }
-
-        // Use getFeeForMessage for an accurate transaction fee estimate.
-        const latestBlockhash = await connection.getLatestBlockhash();
-        const message = new TransactionMessage({
-            payerKey: dummyPayer,
-            recentBlockhash: latestBlockhash.blockhash,
-            instructions,
-        }).compileToV0Message();
-
-        let transactionFee = (await connection.getFeeForMessage(message)).value || 0;
-        // Add a 10% buffer to account for splitting across multiple transactions
-        transactionFee = Math.floor(transactionFee * 1.1);
+        // --- 2. Estimate Transaction Fees locally ---
+        // Assume transfers will be split; estimate per-instruction cost with buffer
+        const BASE_TX_FEE = 5000; // lamports
+        const PER_INSTRUCTION_FEE = 2000; // lamports per transfer instruction
+        const estimatedInstructionCount = Math.max(1, recipients.length);
+        let transactionFee = BASE_TX_FEE + PER_INSTRUCTION_FEE * estimatedInstructionCount;
+        transactionFee = Math.floor(transactionFee * 1.1); // 10% buffer
 
         // --- 3. Combine Costs and Return ---
 

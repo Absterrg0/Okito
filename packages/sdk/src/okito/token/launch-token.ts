@@ -71,9 +71,6 @@ export async function buildToken(
         priorityFee = 0,
         enableSimulation = true,
         enableLogging = true, // Default to true for production monitoring
-        strictValidation = true,
-        enableMetrics = true,
-        logLevel = 'info'
     } = config;
 
     // Configure logger for this operation

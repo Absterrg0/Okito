@@ -1,7 +1,7 @@
 'use client'
+import React, { useState } from "react"
 import { Settings, ChevronDown, Zap, Database, Timer } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import { useState } from "react"
 
 export default function OkitoConfigManager() {
   const [isCardHovered, setIsCardHovered] = useState(false)
@@ -9,17 +9,15 @@ export default function OkitoConfigManager() {
   const [selectedStrategy, setSelectedStrategy] = useState("Confirmed")
   const [retryCount, setRetryCount] = useState("3")
 
-  // Enhanced card variants with depth and glow
+  // Simplified card variants
   const cardVariants = {
     paused: {
       rotateY: 0,
       rotateX: 0,
-      boxShadow: "0_4px_12px_rgba(16,185,129,0.07)",
     },
     animate: {
       rotateY: 2,
       rotateX: 1,
-      boxShadow: "0_12px_32px_rgba(16,185,129,0.15), 0_0_20px_rgba(16,185,129,0.1)",
       transition: {
         duration: 0.6,
         ease: [0.25, 0.1, 0.25, 1] as const,
@@ -27,17 +25,15 @@ export default function OkitoConfigManager() {
     },
   }
 
-  // Smooth dropdown variants
+  // Simplified dropdown variants
   const dropdownVariants = {
     hidden: {
       opacity: 0,
       y: -8,
-      filter: "blur(2px)",
     },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
         duration: 0.3,
         ease: [0.25, 0.1, 0.25, 1] as const,
@@ -46,26 +42,9 @@ export default function OkitoConfigManager() {
     exit: {
       opacity: 0,
       y: -8,
-      filter: "blur(2px)",
       transition: {
         duration: 0.2,
         ease: [0.4, 0, 1, 1] as const,
-      },
-    },
-  }
-
-  // Enhanced dropdown item variants
-  const dropdownItemVariants = {
-    idle: {
-      backgroundColor: "transparent",
-      x: 0,
-    },
-    hover: {
-      backgroundColor: "rgba(16, 185, 129, 0.08)",
-      x: 4,
-      transition: {
-        duration: 0.2,
-        ease: [0.25, 0.1, 0.25, 1] as const,
       },
     },
   }
@@ -94,7 +73,7 @@ export default function OkitoConfigManager() {
       className="px-6 py-6 bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-slate-900/95 backdrop-blur-xl rounded-2xl relative overflow-hidden w-[26rem] h-[24rem] border border-emerald-500/20 shadow-2xl shadow-emerald-500/10"
       style={{ transformStyle: "preserve-3d" }}
     >
-      {/* Subtle background accents */}
+      {/* Simplified background accents */}
       <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/20 via-transparent to-teal-950/20"></div>
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-emerald-500/5 to-transparent blur-2xl"></div>
 
@@ -181,14 +160,11 @@ export default function OkitoConfigManager() {
                   {rpcProviders.map((provider) => (
                     <motion.div
                       key={provider.name}
-                      variants={dropdownItemVariants}
-                      initial="idle"
-                      whileHover="hover"
-                      className="px-3 py-3 cursor-pointer border-b border-gray-700/30 last:border-b-0"
+                      className="px-3 py-3 cursor-pointer border-b border-gray-700/30 last:border-b-0 hover:bg-emerald-500/10 transition-colors"
                       onClick={() => setSelectedRPC(provider.name)}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50`}></div>
+                        <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <div className="text-sm font-medium text-gray-100">{provider.name}</div>
@@ -248,10 +224,7 @@ export default function OkitoConfigManager() {
                   {confirmationStrategies.map((strategy) => (
                     <motion.div
                       key={strategy.name}
-                      variants={dropdownItemVariants}
-                      initial="idle"
-                      whileHover="hover"
-                      className="px-3 py-3 cursor-pointer border-b border-gray-700/30 last:border-b-0"
+                      className="px-3 py-3 cursor-pointer border-b border-gray-700/30 last:border-b-0 hover:bg-emerald-500/10 transition-colors"
                       onClick={() => setSelectedStrategy(strategy.name)}
                     >
                       <div className="flex items-center gap-3">
@@ -280,7 +253,6 @@ export default function OkitoConfigManager() {
         className="w-full mt-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-bold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/35 transition-all duration-300 relative overflow-hidden group"
         transition={{ duration: 0.2 }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="flex items-center justify-center gap-2 relative z-10">
           <Zap className="w-4 h-4" />
           Apply Configuration

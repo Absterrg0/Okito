@@ -10,7 +10,7 @@ import { PublicKey } from "@solana/web3.js";
  */
 export function getMintAddress(
   token: string,
-  network: "mainnet-beta" | "devnet" = 'mainnet-beta'
+  network: 'mainnet-beta' | 'devnet' = 'mainnet-beta'
 ): PublicKey {
   // Generalized mapping: add more tokens as needed
   const MINTS: Record<string, Record<string, string>> = {
@@ -36,7 +36,7 @@ export function getMintAddress(
 
   if (!(network in MINTS)) {
     throw new Error(
-      `Unsupported network: ${network}. Supported: ${Object.keys(MINTS).join(", ")} or custom`
+      `Unsupported network: ${network}. Supported: ${Object.keys(MINTS).join(', ')}`
     );
   }
 

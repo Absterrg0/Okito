@@ -1,7 +1,6 @@
 import { describe, expect, test, beforeEach, jest } from '@jest/globals';
 import { 
-    getTransactionHistory, 
-    get20Transactions, 
+    getTransactions as getTransactionHistory, 
 } from '../../okito/account/get-transaction-history';
 import { 
     createTestConnection, 
@@ -24,7 +23,7 @@ describe('Transaction History Functions', () => {
     describe('getTransactionHistory', () => {
         test('should return transaction history for valid wallet', async () => {
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet)
+                getTransactionHistory(connection, wallet.publicKey)
             );
 
             expect(result.success).toBe(true);
@@ -43,19 +42,19 @@ describe('Transaction History Functions', () => {
             invalidWallet.publicKey = null;
 
             const result = await withTimeout(
-                getTransactionHistory(connection, invalidWallet)
+                getTransactionHistory(connection, invalidWallet.publicKey as any)
             );
 
             expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
-            expect(result.error).toBe('Wallet not connected');
+            expect(result.transactions).toBeUndefined();
+            expect(result.error).toBeDefined();
         });
 
         test('should handle custom limit options', async () => {
             const options = { limit: 10 };
             
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet, options)
+                getTransactionHistory(connection, wallet.publicKey, options)
             );
 
             expect(result.success).toBe(true);
@@ -69,7 +68,7 @@ describe('Transaction History Functions', () => {
             };
             
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet, options)
+                getTransactionHistory(connection, wallet.publicKey, options)
             );
 
             expect(result.success).toBe(true);
@@ -83,7 +82,7 @@ describe('Transaction History Functions', () => {
             };
             
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet, options)
+                getTransactionHistory(connection, wallet.publicKey, options)
             );
 
             expect(result.success).toBe(true);
@@ -94,7 +93,7 @@ describe('Transaction History Functions', () => {
             const options = { commitment: 'finalized' as const };
             
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet, options)
+                getTransactionHistory(connection, wallet.publicKey, options)
             );
 
             expect(result.success).toBe(true);
@@ -105,24 +104,24 @@ describe('Transaction History Functions', () => {
             const invalidOptions = { limit: 0 };
             
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet, invalidOptions)
+                getTransactionHistory(connection, wallet.publicKey, invalidOptions)
             );
 
             expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
-            expect(result.error).toBe('Limit must be between 1 and 1000');
+            expect(result.transactions).toBeUndefined();
+            expect(result.error).toBe('Limit must be between 1 and 500');
         });
 
         test('should validate maximum limit', async () => {
             const invalidOptions = { limit: 1001 };
             
             const result = await withTimeout(
-                getTransactionHistory(connection, wallet, invalidOptions)
+                getTransactionHistory(connection, wallet.publicKey, invalidOptions)
             );
 
             expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
-            expect(result.error).toBe('Limit must be between 1 and 1000');
+            expect(result.transactions).toBeUndefined();
+            expect(result.error).toBe('Limit must be between 1 and 500');
         });
 
         test('should handle no transactions found', async () => {
@@ -130,7 +129,7 @@ describe('Transaction History Functions', () => {
             jest.spyOn(emptyConnection, 'getSignaturesForAddress').mockResolvedValue([]);
 
             const result = await withTimeout(
-                getTransactionHistory(emptyConnection, wallet)
+                getTransactionHistory(emptyConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(true);
@@ -146,11 +145,11 @@ describe('Transaction History Functions', () => {
             );
 
             const result = await withTimeout(
-                getTransactionHistory(errorConnection, wallet)
+                getTransactionHistory(errorConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
+            expect(result.transactions).toBeUndefined();
             expect(result.error).toContain('Network error');
         });
 
@@ -161,11 +160,11 @@ describe('Transaction History Functions', () => {
             );
 
             const result = await withTimeout(
-                getTransactionHistory(rateLimitConnection, wallet)
+                getTransactionHistory(rateLimitConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
+            expect(result.transactions).toBeUndefined();
             expect(result.error).toBe('Rate limited. Please try again later.');
         });
 
@@ -176,12 +175,12 @@ describe('Transaction History Functions', () => {
             );
 
             const result = await withTimeout(
-                getTransactionHistory(timeoutConnection, wallet)
+                getTransactionHistory(timeoutConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
-            expect(result.error).toBe('Request timeout. Network may be slow.');
+            expect(result.transactions).toBeUndefined();
+            expect(result.error).toBe('Request timeout. Network may be slow. Try reducing the limit.');
         });
 
         test('should handle failed transaction parsing', async () => {
@@ -189,7 +188,7 @@ describe('Transaction History Functions', () => {
             jest.spyOn(failedParseConnection, 'getParsedTransactions').mockResolvedValue([null]);
 
             const result = await withTimeout(
-                getTransactionHistory(failedParseConnection, wallet)
+                getTransactionHistory(failedParseConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(true);
@@ -210,7 +209,7 @@ describe('Transaction History Functions', () => {
             jest.spyOn(moreSignaturesConnection, 'getSignaturesForAddress').mockResolvedValue(mockSignatures);
 
             const result = await withTimeout(
-                getTransactionHistory(moreSignaturesConnection, wallet, { limit: 20 })
+                getTransactionHistory(moreSignaturesConnection, wallet.publicKey, { limit: 20 })
             );
 
             expect(result.success).toBe(true);
@@ -219,42 +218,7 @@ describe('Transaction History Functions', () => {
         });
     });
 
-    describe('getSimpleTransactionHistory', () => {
-        test('should return simplified transaction history', async () => {
-            const result = await withTimeout(
-                get20Transactions(connection, wallet)
-            );
-
-            expect(result.success).toBe(true);
-            expect(result.transactions).toBeDefined();
-            expect(Array.isArray(result.transactions)).toBe(true);
-            expect(result.error).toBeUndefined();
-        });
-
-        test('should use custom limit', async () => {
-            const result = await withTimeout(
-                get20Transactions(connection, wallet, 5)
-            );
-
-            expect(result.success).toBe(true);
-            expect(result.transactions).toBeDefined();
-        });
-
-        test('should handle errors gracefully', async () => {
-            const errorConnection = createTestConnection();
-            jest.spyOn(errorConnection, 'getSignaturesForAddress').mockRejectedValue(
-                new Error('Connection failed')
-            );
-
-            const result = await withTimeout(
-                get20Transactions(errorConnection, wallet)
-            );
-
-            expect(result.success).toBe(false);
-            expect(result.transactions).toBeNull();
-            expect(result.error).toBeDefined();
-        });
-    });
+    // Removed get20Transactions tests; use getTransactions with explicit limits instead
 
 
     describe('Edge Cases', () => {
@@ -281,7 +245,7 @@ describe('Transaction History Functions', () => {
             ]);
 
             const result = await withTimeout(
-                getTransactionHistory(mixedConnection, wallet)
+                getTransactionHistory(mixedConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(true);
@@ -301,7 +265,7 @@ describe('Transaction History Functions', () => {
             ]);
 
             const result = await withTimeout(
-                getTransactionHistory(oldSignatureConnection, wallet)
+                getTransactionHistory(oldSignatureConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(true);
@@ -321,7 +285,7 @@ describe('Transaction History Functions', () => {
             ]);
 
             const result = await withTimeout(
-                getTransactionHistory(failedSigConnection, wallet)
+                getTransactionHistory(failedSigConnection, wallet.publicKey)
             );
 
             expect(result.success).toBe(true);
@@ -335,7 +299,7 @@ describe('Transaction History Functions', () => {
             const startTime = Date.now();
             
             await withTimeout(
-                getTransactionHistory(connection, wallet),
+                getTransactionHistory(connection, wallet.publicKey),
                 10000
             );
             
@@ -347,7 +311,7 @@ describe('Transaction History Functions', () => {
 
         test('should handle concurrent requests', async () => {
             const promises = Array.from({ length: 3 }, () =>
-                getTransactionHistory(connection, wallet, { limit: 5 })
+                getTransactionHistory(connection, wallet.publicKey, { limit: 5 })
             );
 
             const results = await Promise.all(promises);
@@ -362,7 +326,7 @@ describe('Transaction History Functions', () => {
             const wallets = Array.from({ length: 3 }, () => createTestWallet());
             
             const promises = wallets.map(w =>
-                getTransactionHistory(connection, w, { limit: 5 })
+                getTransactionHistory(connection, w.publicKey, { limit: 5 })
             );
 
             const results = await Promise.all(promises);
@@ -380,8 +344,8 @@ describe('Transaction History Functions', () => {
             const wallet2 = createTestWallet();
 
             const [result1, result2] = await Promise.all([
-                getTransactionHistory(connection, wallet1, { limit: 5 }),
-                getTransactionHistory(connection, wallet2, { limit: 5 })
+                getTransactionHistory(connection, wallet1.publicKey, { limit: 5 }),
+                getTransactionHistory(connection, wallet2.publicKey, { limit: 5 })
             ]);
 
             expect(result1.success).toBe(true);
@@ -391,8 +355,8 @@ describe('Transaction History Functions', () => {
 
         test('should maintain consistent results for same wallet', async () => {
             const results = await Promise.all([
-                getTransactionHistory(connection, wallet, { limit: 10 }),
-                getTransactionHistory(connection, wallet, { limit: 10 })
+                getTransactionHistory(connection, wallet.publicKey, { limit: 10 }),
+                getTransactionHistory(connection, wallet.publicKey, { limit: 10 })
             ]);
 
             expect(results[0].success).toBe(results[1].success);

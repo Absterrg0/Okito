@@ -448,43 +448,28 @@ export class AirdropOperation extends BaseTokenOperation<AirdropConfig, AirdropR
         try {
             const { batches } = operationData;
             
-            // Get latest blockhash for fee calculation
-            const { blockhash } = await this.connection.getLatestBlockhash();
-            
+            // Local heuristic: base + per instruction per batch
+            const BASE_TX_FEE = 5000; // lamports
+            const PER_INSTRUCTION_FEE = 2000; // lamports per instruction
+
             let totalTransactionFees = 0;
-            
-            // Calculate fees for each batch
             for (const batch of batches) {
-                try {
-                    const message = new TransactionMessage({
-                        payerKey: this.wallet.publicKey!,
-                        recentBlockhash: blockhash,
-                        instructions: batch
-                    }).compileToV0Message();
-
-                    const feeResponse = await this.connection.getFeeForMessage(message);
-                    totalTransactionFees += feeResponse.value || 5000; // Fallback fee
-                } catch (error) {
-                    // Fallback calculation if fee estimation fails
-                    totalTransactionFees += 5000 * batch.length;
-                }
+                const instructionCount = batch.length;
+                totalTransactionFees += BASE_TX_FEE + PER_INSTRUCTION_FEE * instructionCount;
             }
 
-            // Account creation rent costs
-            let accountCreationFees = 0;
-            if (operationData.accountsToCreate.length > 0) {
-                const rentExemption = await this.connection.getMinimumBalanceForRentExemption(165);
-                accountCreationFees = rentExemption * operationData.accountsToCreate.length;
-            }
+            // Account creation rent costs (local constant)
+            const RENT_EXEMPT_165 = 2039280; // lamports
+            const accountCreationFees = RENT_EXEMPT_165 * operationData.accountsToCreate.length;
 
             const breakdown = {
                 transactionFees: totalTransactionFees,
                 accountCreations: accountCreationFees,
                 priorityFees: (this.config.priorityFee || 0) * batches.length
-            };
+            } as const;
 
             return {
-                estimatedFee: Object.values(breakdown).reduce((a, b) => a + b, 0),
+                estimatedFee: breakdown.transactionFees + breakdown.accountCreations + breakdown.priorityFees,
                 breakdown
             };
         } catch (error) {

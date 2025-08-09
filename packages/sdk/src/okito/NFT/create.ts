@@ -1,6 +1,6 @@
 import { Connection } from "@solana/web3.js";
 import { NFTData, NFTConfig } from "../../types/NFT/create";
-import { TokenLaunchData, TokenResult } from "../../types/token/launch";
+import { TokenData, TokenResult } from "../../types/token/launch";
 import { TokenLaunchError, TokenLaunchErrorCode } from "../../types/errors";
 import { SignerWallet } from "../../types/custom-wallet-adapter";
 import { log } from "../utils/logger";
@@ -64,7 +64,7 @@ export async function createNFT(
         }
 
         // 2. Transform NFT data to TokenLaunchData format with NFT constraints
-        const tokenData: TokenLaunchData = {
+        const tokenData: TokenData = {
             name: data.name,
             symbol: data.symbol,
             imageUrl: data.imageUrl,

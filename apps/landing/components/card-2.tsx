@@ -1,6 +1,6 @@
 'use client'
+import React, { useState } from "react"
 import { motion, Variants } from "motion/react"
-import { useState } from "react"
 import { Code2, Zap, Coins, Rocket, GitBranch, Database, Shield, Users } from "lucide-react"
 
 interface ActivityCardData {
@@ -111,14 +111,11 @@ export default function OkitoActivityShowcase() {
     }
   ];
 
-  const cardVariants:Variants = {
+  // Simplified variants with reduced complexity
+  const cardVariants: Variants = {
     paused: {
       scale: 1,
       y: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
     },
     animate: {
       scale: 1.02,
@@ -130,7 +127,7 @@ export default function OkitoActivityShowcase() {
     },
   }
 
-  const row1Variants:Variants = {
+  const row1Variants: Variants = {
     paused: { x: -192 },
     animate: {
       x: -768,
@@ -142,7 +139,7 @@ export default function OkitoActivityShowcase() {
     },
   }
   
-  const row2Variants:Variants = {
+  const row2Variants: Variants = {
     paused: { x: -576 },
     animate: {
       x: 192,
@@ -154,7 +151,7 @@ export default function OkitoActivityShowcase() {
     },
   }
   
-  const row3Variants:Variants = {
+  const row3Variants: Variants = {
     paused: { x: -96 },
     animate: {
       x: -1152,
@@ -173,7 +170,7 @@ export default function OkitoActivityShowcase() {
       whileHover="animate"
       variants={cardVariants}
     >
-      {/* Subtle background accents */}
+      {/* Simplified background accents */}
       <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/20 via-transparent to-teal-950/20"></div>
       <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-emerald-500/5 to-transparent blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-teal-500/4 to-transparent blur-3xl"></div>
@@ -229,7 +226,7 @@ export default function OkitoActivityShowcase() {
         </motion.div>
       </motion.div>
 
-      {/* Enhanced Title Section */}
+      {/* Title Section */}
       <motion.div 
         className="absolute bottom-4 left-4 right-4 z-20"
         initial={{ opacity: 0, y: 20 }}

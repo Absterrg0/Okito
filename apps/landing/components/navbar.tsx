@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { Code2, Sparkles, ArrowRight, Github } from 'lucide-react';
+import { ArrowRight, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
@@ -22,7 +22,7 @@ export default function Navbar() {
       duration: 1,
       scrollTo: `#${id}`,
       ease: "power2.inOut",
-      offsetY: 60, // Adjust this offset based on your navbar's height
+      offsetY: 60, 
     });
   };
 
@@ -36,12 +36,10 @@ export default function Navbar() {
       className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-4xl px-4"
     >
       <div className="liquid-glass-nav rounded-full px-6 py-3 relative overflow-hidden">
-        {/* Liquid glass background layers */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-white/10 to-white/5 backdrop-blur-xl rounded-full"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-green-500/10 rounded-full"></div>
         <div className="absolute inset-0 border border-white/20 rounded-full shadow-2xl shadow-black/20"></div>
 
-        {/* Animated glass reflection */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-full"
           animate={{ x: ['-100%', '100%'] }}

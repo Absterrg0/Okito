@@ -14,11 +14,11 @@ import {
 } from '../setup';
 
 // Mock the transferTokens function
-jest.mock('../../okito/token/transfer-token', () => ({
+jest.mock('../../okito/token/TransferTokenOperation', () => ({
     transferTokens: jest.fn()
 }));
 
-import { transferTokens } from '../../okito/token/transfer-token';
+import { transferTokens } from '../../okito/token/TransferTokenOperation';
 import { OkitoToken } from '../../types/config';
 const mockTransferTokens = transferTokens as jest.MockedFunction<typeof transferTokens>;
 
@@ -46,19 +46,18 @@ describe('Payment Functions', () => {
             );
 
             expect(result).toBe(mockTransactionSuccess.transactionId);
-            expect(mockTransferTokens).toHaveBeenCalledWith({
-                connection,
-                wallet,
-                mint: expect.any(String),
-                destination: config.publicKey.toString(),
-                amount: BigInt(10500000), // 10.5 * 1_000_000
-                config: {
-                    enableLogging: false,
-                    enableSimulation: true,
-                    validateBalance: true,
-                    createDestinationATA: true,
-                    confirmationStrategy: "confirmed"
-                }
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[0]).toBe(connection);
+            expect(call[1]).toBe(wallet);
+            expect(typeof call[2]).toBe('string');
+            expect(call[3]).toBe('10500000');
+            expect(call[4]).toBe(config.publicKey.toString());
+            expect(call[5]).toEqual({
+                enableLogging: false,
+                enableSimulation: true,
+                validateBalance: true,
+                createDestinationATA: true,
+                confirmationStrategy: 'confirmed'
             });
         });
 
@@ -70,14 +69,13 @@ describe('Payment Functions', () => {
             );
 
             expect(result).toBe(mockTransactionSuccess.transactionId);
-            expect(mockTransferTokens).toHaveBeenCalledWith({
-                connection,
-                wallet,
-                mint: expect.any(String),
-                destination: config.publicKey.toString(),
-                amount: BigInt(5250000), // 5.25 * 1_000_000
-                config: expect.any(Object)
-            });
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[0]).toBe(connection);
+            expect(call[1]).toBe(wallet);
+            expect(typeof call[2]).toBe('string');
+            expect(call[3]).toBe('5250000');
+            expect(call[4]).toBe(config.publicKey.toString());
+            expect(call[5]).toEqual(expect.any(Object));
         });
 
         test('should handle wallet without public key', async () => {
@@ -141,11 +139,8 @@ describe('Payment Functions', () => {
                 
                 await pay(connection, wallet, testCase.amount, 'USDC', config);
                 
-                expect(mockTransferTokens).toHaveBeenCalledWith(
-                    expect.objectContaining({
-                        amount: testCase.expected
-                    })
-                );
+                const call = mockTransferTokens.mock.calls[0];
+                expect(call[3]).toBe(testCase.expected.toString());
             }
         });
 
@@ -159,11 +154,8 @@ describe('Payment Functions', () => {
 
             await pay(connection, wallet, 10, 'USDT', customConfig);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    mint: expect.any(String)
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(typeof call[2]).toBe('string');
         });
 
         test('should handle zero amount', async () => {
@@ -171,11 +163,8 @@ describe('Payment Functions', () => {
 
             await pay(connection, wallet, 0, 'USDC', config);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    amount: BigInt(0)
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[3]).toBe('0');
         });
 
         test('should handle fractional amounts correctly', async () => {
@@ -183,11 +172,8 @@ describe('Payment Functions', () => {
 
             await pay(connection, wallet, 0.123456, 'USDC', config);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    amount: BigInt(123456) // 0.123456 * 1_000_000
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[3]).toBe('123456');
         });
 
         test('should handle very small amounts', async () => {
@@ -195,11 +181,8 @@ describe('Payment Functions', () => {
 
             await pay(connection, wallet, 0.000001, 'USDC', config);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    amount: BigInt(1) // Minimum unit
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[3]).toBe('1');
         });
 
         test('should handle transfer function throwing error', async () => {
@@ -218,11 +201,8 @@ describe('Payment Functions', () => {
             const largeAmount = 999999999;
             await pay(connection, wallet, largeAmount, 'USDC', config);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    amount: BigInt(largeAmount * 1000000)
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[3]).toBe(String(largeAmount * 1000000));
         });
 
         test('should handle negative amounts (edge case)', async () => {
@@ -231,11 +211,8 @@ describe('Payment Functions', () => {
             // Note: This is an edge case - in real usage you'd want to validate amounts
             await pay(connection, wallet, -10, 'USDC', config);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    amount: BigInt(-10000000)
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[3]).toBe(String(-10000000));
         });
 
         test('should handle config with different token order', async () => {
@@ -255,7 +232,7 @@ describe('Payment Functions', () => {
             mockTransferTokens.mockResolvedValue(mockTransactionSuccess);
 
             const minimalConfig = {
-                network: TEST_CONFIG.NETWORK,
+                network: 'devnet' as const,
                 rpcUrl: TEST_CONFIG.RPC_URL,
                 publicKey: config.publicKey,
                 tokens: ['USDC','USDT'] as [OkitoToken, OkitoToken]
@@ -263,11 +240,8 @@ describe('Payment Functions', () => {
 
             await pay(connection, wallet, 10, 'USDC', minimalConfig);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    destination: minimalConfig.publicKey.toString()
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[4]).toBe(minimalConfig.publicKey.toString());
         });
     });
 
@@ -335,9 +309,9 @@ describe('Payment Functions', () => {
             expect(mockTransferTokens).toHaveBeenCalledTimes(2);
             
             // Verify each call used the correct config
-            const calls = mockTransferTokens.mock.calls;
-            expect(calls[0][0].destination).toBe(config1.publicKey.toString());
-            expect(calls[1][0].destination).toBe(config2.publicKey.toString());
+            const calls = mockTransferTokens.mock.calls as any[];
+            expect(calls[0][4]).toBe(config1.publicKey.toString());
+            expect(calls[1][4]).toBe(config2.publicKey.toString());
         });
     });
 
@@ -347,17 +321,14 @@ describe('Payment Functions', () => {
 
             await pay(connection, wallet, 10, 'USDC', config);
 
-            expect(mockTransferTokens).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    config: {
-                        enableLogging: false,
-                        enableSimulation: true,
-                        validateBalance: true,
-                        createDestinationATA: true,
-                        confirmationStrategy: "confirmed"
-                    }
-                })
-            );
+            const call = mockTransferTokens.mock.calls[0];
+            expect(call[5]).toEqual({
+                enableLogging: false,
+                enableSimulation: true,
+                validateBalance: true,
+                createDestinationATA: true,
+                confirmationStrategy: 'confirmed'
+            });
         });
 
         test('should maintain transfer config consistency', async () => {
@@ -370,7 +341,7 @@ describe('Payment Functions', () => {
             ]);
 
             const calls = mockTransferTokens.mock.calls;
-            expect(calls[0][0].config).toEqual(calls[1][0].config);
+            expect(calls[0][5]).toEqual(calls[1][5]);
         });
     });
 }); 

@@ -627,52 +627,35 @@ export class AirdropInBatchesOperation extends BaseTokenOperation<AirdropInBatch
      * Enhanced fee estimation for batched operations
      */
     protected async estimateFees(operationData: AirdropInBatchesOperationData): Promise<FeeEstimation> {
-        this.logInfo('Estimating fees for large-scale operation...');
+        this.logInfo('Estimating fees for large-scale operation (local heuristic)...');
         
         try {
+            // Local per-batch heuristic: base tx fee + per-instruction fee
+            const BASE_TX_FEE = 5000; // lamports
+            const PER_INSTRUCTION_FEE = 2000; // lamports per instruction
+            
             let totalTransactionFees = 0;
-            let totalAccountCreationFees = 0;
             let totalPriorityFees = 0;
 
-            // Sample a few batches for fee estimation
-            const sampleBatches = operationData.batches.slice(0, Math.min(3, operationData.batches.length));
-            const { blockhash } = await this.connection.getLatestBlockhash();
-
-            for (const batch of sampleBatches) {
-                // Build instructions for this batch
-                const instructions = await this.buildBatchInstructions(batch, operationData);
-                
-                const message = new TransactionMessage({
-                    payerKey: this.wallet.publicKey!,
-                    recentBlockhash: blockhash,
-                    instructions
-                }).compileToV0Message();
-
-                const feeResponse = await this.connection.getFeeForMessage(message);
-                const batchTransactionFee = feeResponse.value || 15000;
-                
+            for (const batch of operationData.batches) {
+                // Estimate instructions for this batch based on counts
+                const instructionCount = (this.config.priorityFee ? 1 : 0)
+                    + batch.accountsToCreate.length
+                    + batch.recipients.length;
+                const batchTransactionFee = BASE_TX_FEE + PER_INSTRUCTION_FEE * instructionCount;
                 totalTransactionFees += batchTransactionFee;
                 totalPriorityFees += this.config.priorityFee || 0;
             }
 
-            // Average the sample and extrapolate
-            const avgTransactionFee = totalTransactionFees / sampleBatches.length;
-            const avgPriorityFee = totalPriorityFees / sampleBatches.length;
-            
-            const estimatedTransactionFees = avgTransactionFee * operationData.batches.length;
-            const estimatedPriorityFees = avgPriorityFee * operationData.batches.length;
-
-            // Account creation costs
-            const totalAccountsToCreate = operationData.batches.reduce((sum, batch) => sum + batch.accountsToCreate.length, 0);
-            if (totalAccountsToCreate > 0) {
-                const rentExemption = await this.connection.getMinimumBalanceForRentExemption(165);
-                totalAccountCreationFees = rentExemption * totalAccountsToCreate;
-            }
+            // Account creation costs (local constant per ATA)
+            const RENT_EXEMPT_165 = 2039280; // lamports
+            const totalAccountsToCreate = operationData.batches.reduce((sum, b) => sum + b.accountsToCreate.length, 0);
+            const totalAccountCreationFees = totalAccountsToCreate * RENT_EXEMPT_165;
 
             const breakdown = {
-                transactionFees: Math.ceil(estimatedTransactionFees),
+                transactionFees: Math.ceil(totalTransactionFees),
                 accountCreations: totalAccountCreationFees,
-                priorityFees: Math.ceil(estimatedPriorityFees),
+                priorityFees: Math.ceil(totalPriorityFees),
                 batchCount: operationData.batches.length
             };
 

@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import { motion, Variants } from 'motion/react';
 import { X, ArrowUpRight, CheckCircle, Clock, Wallet } from 'lucide-react';
@@ -5,7 +6,7 @@ import { X, ArrowUpRight, CheckCircle, Clock, Wallet } from 'lucide-react';
 export default function PaymentCard() {
   const [isCardOpen, setIsCardOpen] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState('pending'); // 'pending', 'processing', 'completed'
+  const [paymentStatus, setPaymentStatus] = useState('pending');
 
   const handleClose = () => {
     setIsCardOpen(false);
@@ -26,23 +27,21 @@ export default function PaymentCard() {
       setPaymentStatus('completed');
       setTimeout(() => {
         setPaymentStatus('pending');
-      }, 1000); // Wait 1 second after 'pending'
-    }, 1000); // Wait 1 second to change to 'pending'
+      }, 1000);
+    }, 1000);
   };
 
-  // Card variants for enhanced animations
-  const cardVariants:Variants = {
+  // Simplified card variants
+  const cardVariants: Variants = {
     initial: { 
       scale: 1, 
       rotateY: 0, 
       rotateX: 0,
-      boxShadow: "0 4px 12px rgba(16, 185, 129, 0.07), 0 -2px 3px rgba(16, 185, 129, 0.1)"
     },
     hover: {
       scale: 1.03,
       rotateY: 2,
       rotateX: 1,
-      boxShadow: "0 12px 40px rgba(16, 185, 129, 0.15), 0 -4px 8px rgba(20, 184, 166, 0.2), 0 0 30px rgba(16, 185, 129, 0.1)",
       transition: {
         duration: 0.8,
         ease: [0.23, 1, 0.32, 1],
@@ -50,21 +49,17 @@ export default function PaymentCard() {
     },
   };
 
-  // Payment panel variants
-  const panelVariants:Variants = {
+  // Simplified panel variants
+  const panelVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0.92,
       y: 25,
-      rotateX: -12,
-      rotateY: -3,
     },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      rotateX: 0,
-      rotateY: 0,
       transition: {
         duration: 0.9,
         ease: [0.23, 1, 0.32, 1],
@@ -76,8 +71,6 @@ export default function PaymentCard() {
       opacity: 0,
       scale: 0.88,
       y: 20,
-      rotateX: -8,
-      rotateY: -2,
       transition: {
         duration: 0.6,
         ease: [0.4, 0, 0.2, 1],
@@ -85,29 +78,19 @@ export default function PaymentCard() {
         staggerDirection: -1,
       },
     },
-    floating: {
-      y: [0, -2, 0],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: [0.4, 0, 0.6, 1],
-      },
-    },
   };
 
-  // Individual item variants
-  const itemVariants:Variants = {
+  // Simplified item variants
+  const itemVariants: Variants = {
     hidden: { 
       opacity: 0, 
       x: -15, 
       scale: 0.9,
-      filter: "blur(4px)"
     },
     visible: {
       opacity: 1,
       x: 0,
       scale: 1,
-      filter: "blur(0px)",
       transition: {
         duration: 0.7,
         ease: [0.23, 1, 0.32, 1],
@@ -123,8 +106,8 @@ export default function PaymentCard() {
     },
   };
 
-  // Button variants based on payment status
-  const buttonVariants:Variants = {
+  // Simplified button variants
+  const buttonVariants: Variants = {
     pending: {
       backgroundColor: "rgb(16, 185, 129)",
       scale: 1,
@@ -156,7 +139,7 @@ export default function PaymentCard() {
       onHoverEnd={handleMouseLeave}
       style={{ transformStyle: "preserve-3d" }}
     >
-      {/* Header content with enhanced animations */}
+      {/* Header content */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -178,17 +161,17 @@ export default function PaymentCard() {
         </motion.div>
       </motion.div>
 
-      {/* Enhanced payment panel */}
+      {/* Payment panel */}
       <motion.div
         className="absolute bg-gradient-to-b from-slate-800/90 via-slate-900/90 to-slate-800/90 backdrop-blur-sm w-[20rem] h-[20rem] left-8 rounded-xl mt-8 px-6 py-4 border border-emerald-500/20"
         variants={panelVariants}
         initial="hidden"
-        animate={isCardOpen ? (isHovered ? ["visible", "floating"] : "visible") : "closed"}
+        animate={isCardOpen ? "visible" : "closed"}
         style={{ 
           transformStyle: "preserve-3d",
           boxShadow: isHovered ? 
-            "0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)" : 
-            "0 6px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)"
+            "0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(16, 185, 129, 0.15)" : 
+            "0 6px 25px rgba(0,0,0,0.3)"
         }}
       >
         {/* Header with close button */}
@@ -310,21 +293,6 @@ export default function PaymentCard() {
           {paymentStatus === 'completed' ? 'Webhook sent to dashboard' : 'Webhook ready'}
         </motion.div>
       </motion.div>
-
-      {/* Subtle breathing border effect */}
-      <motion.div 
-        className="absolute inset-0 rounded-xl pointer-events-none border border-emerald-400/20"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ 
-          opacity: isHovered ? [0, 0.6, 0] : 0,
-          scale: isHovered ? [0.95, 1.02, 0.98] : 0.95
-        }}
-        transition={{ 
-          duration: 2,
-          repeat: isHovered ? Infinity : 0,
-          ease: [0.4, 0, 0.6, 1]
-        }}
-      />
     </motion.div>
   );
 }

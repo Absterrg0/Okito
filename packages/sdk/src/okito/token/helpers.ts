@@ -1,6 +1,6 @@
 import { TokenData, FeeEstimation } from "../../types/token/launch";
 import { TransferFeeEstimation } from "../../types/token/transfer";
-import { Connection, TransactionMessage, SystemProgram, PublicKey } from "@solana/web3.js";
+import { Connection, SystemProgram, PublicKey } from "@solana/web3.js";
 import {
   getMintLen,
   ExtensionType,
@@ -34,12 +34,13 @@ export function validateTokenData(tokenData: TokenData): { isValid: boolean; err
  * Estimates fees for token creation
  */
 export async function estimateTokenCreationFee(
-  connection: Connection,
+  _connection: Connection,
   tokenData: TokenData,
   priorityFee: number = 0
 ): Promise<FeeEstimation> {
   try {
-    // 1) Calculate account sizes and rent
+    // Heuristic, local-only estimation (no RPC calls)
+    // 1) Calculate account sizes and approximate rent with static cluster defaults
     const mintLen = getMintLen([ExtensionType.MetadataPointer]);
     const metadataPackedLen = pack({
       // Minimal metadata just for sizing
@@ -50,80 +51,23 @@ export async function estimateTokenCreationFee(
       additionalMetadata: [],
     } as any).length;
     const metadataLen = TYPE_SIZE + LENGTH_SIZE + metadataPackedLen;
-
-    const rentForMintWithMetadata = await connection.getMinimumBalanceForRentExemption(
-      mintLen + metadataLen
+    // Static rent approximations (avoid RPC):
+    // - 165-byte ATA rent exemption on mainnet-beta is ~2039280 lamports
+    // - Mint+metadata rent varies with metadata size; approximate proportionally
+    const RENT_EXEMPT_165 = 2039280; // lamports
+    const approxRentPerByte = 2 * 1e9 / (128 * 1024); // very rough: ~2 SOL per 128KB → ~15625 lamports/byte
+    const rentForMintWithMetadata = Math.max(
+      Math.floor((mintLen + metadataLen) * approxRentPerByte),
+      RENT_EXEMPT_165
     );
+    const rentForAta = RENT_EXEMPT_165;
 
-    // ATA rent for payer
-    const dummyMint = new PublicKey(1);
-    const payer = PublicKey.default;
-    const ata = getAssociatedTokenAddressSync(dummyMint, payer, false, TOKEN_2022_PROGRAM_ID);
-    const rentForAta = await connection.getMinimumBalanceForRentExemption(165);
-
-    // 2) Build a representative transaction and get fee from RPC
-    const latest = await connection.getLatestBlockhash();
-    const instructions = [
-      // Create mint account
-      SystemProgram.createAccount({
-        fromPubkey: payer,
-        newAccountPubkey: dummyMint,
-        lamports: rentForMintWithMetadata,
-        space: mintLen,
-        programId: TOKEN_2022_PROGRAM_ID,
-      }),
-      // Init metadata pointer
-      createInitializeMetadataPointerInstruction(
-        dummyMint,
-        payer,
-        dummyMint,
-        TOKEN_2022_PROGRAM_ID
-      ),
-      // Init mint
-      createInitializeMint2Instruction(
-        dummyMint,
-        tokenData.decimals,
-        payer,
-        null,
-        TOKEN_2022_PROGRAM_ID
-      ),
-      // Init metadata
-      createMetadataInitializeInstruction({
-        programId: TOKEN_2022_PROGRAM_ID,
-        mint: dummyMint,
-        metadata: dummyMint,
-        name: tokenData.name,
-        symbol: tokenData.symbol,
-        uri: tokenData.imageUrl,
-        mintAuthority: payer,
-        updateAuthority: payer,
-      }),
-      // Create ATA
-      createAssociatedTokenAccountInstruction(
-        payer,
-        ata,
-        payer,
-        dummyMint,
-        TOKEN_2022_PROGRAM_ID
-      ),
-      // Mint initial supply (amount value does not affect fee sizing)
-      createMintToInstruction(
-        dummyMint,
-        ata,
-        payer,
-        BigInt(1),
-        [],
-        TOKEN_2022_PROGRAM_ID
-      ),
-    ];
-
-    const message = new TransactionMessage({
-      payerKey: payer,
-      recentBlockhash: latest.blockhash,
-      instructions,
-    }).compileToV0Message();
-
-    const transactionFee = (await connection.getFeeForMessage(message)).value || 0;
+    // 2) Local heuristic transaction fee estimation (no network)
+    // Count representative instructions and apply per-instruction fee on top of base tx fee
+    const representativeInstructionCount = 6; // createAccount, init metadata pointer, init mint, init metadata, create ATA, mintTo
+    const BASE_TX_FEE = 5000; // lamports
+    const PER_INSTRUCTION_FEE = 2000; // heuristic
+    const transactionFee = BASE_TX_FEE + representativeInstructionCount * PER_INSTRUCTION_FEE;
 
     const accountCreation = rentForMintWithMetadata + rentForAta;
     const breakdown = {
@@ -222,26 +166,22 @@ export function validateProductionTokenData(tokenData: TokenData): ValidationRes
  * Estimates fees for token transfer
  */
 export async function estimateTransferFee(
-    connection: Connection,
+    _connection: Connection,
     needsDestinationATA: boolean,
     priorityFee: number = 0
 ): Promise<TransferFeeEstimation> {
     try {
-        // Base transfer instruction fee
-        const hash = await connection.getLatestBlockhash();
-        const dummyMessage = new TransactionMessage({
-            payerKey: PublicKey.default,
-            recentBlockhash: hash.blockhash,
-            instructions: []
-        }).compileToV0Message();
-        const feeCalculator = await connection.getFeeForMessage(dummyMessage);
-        const transferFee = feeCalculator.value ?? 0;
+        // Local heuristic: base tx fee + transfer instruction fee
+        const BASE_TX_FEE = 5000; // lamports per signature
+        const PER_INSTRUCTION_FEE = 2000; // heuristic for compute load
+        const NUM_INSTRUCTIONS = 1; // simple transfer only
+        const transferFee = BASE_TX_FEE + PER_INSTRUCTION_FEE * NUM_INSTRUCTIONS;
         
-        // ATA creation fee if needed
+        // ATA creation fee if needed (use static rent estimate to avoid RPC)
         let accountCreationFee = 0;
         if (needsDestinationATA) {
-            // Standard ATA rent exemption
-            accountCreationFee = await connection.getMinimumBalanceForRentExemption(165);
+            const RENT_EXEMPT_165 = 2039280; // lamports
+            accountCreationFee = RENT_EXEMPT_165;
         }
         
         const estimatedFee = transferFee + priorityFee + accountCreationFee;
