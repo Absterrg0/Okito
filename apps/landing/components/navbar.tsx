@@ -48,7 +48,7 @@ export default function Navbar() {
         />
 
         <div className="relative flex items-center justify-between">
-          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center space-x-3 cursor-pointer">
+          <motion.div  className="flex items-center space-x-3 cursor-pointer">
             <motion.div
               initial={{ scale: 0, }}
               animate={{ scale: 1, }}

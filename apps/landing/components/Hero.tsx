@@ -125,14 +125,12 @@ export default function Hero({id}:{id:string}) {
             >
               <motion.span 
                 className="bg-gradient-to-r from-white via-gray-50 to-white bg-clip-text text-transparent block"
-                whileHover={{ scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 Build dApps
               </motion.span>
               <motion.span 
                 className="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent block mt-2"
-                whileHover={{ scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 without limits
@@ -190,7 +188,7 @@ export default function Hero({id}:{id:string}) {
             {/* Refined Code Preview Terminal */}
           <motion.div variants={itemVariants} className="max-w-4xl mx-auto">
               <motion.div 
-                whileHover={{ scale: 1.01, y: -1 }}
+                whileHover={{  y: -1 }}
                 className="relative group"
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >

@@ -67,7 +67,6 @@ export default function Footer({id}:{id:string}) {
               {/* Brand Section */}
               <div className="lg:col-span-2 space-y-6">
                 <motion.div 
-                  whileHover={{ scale: 1.02 }} 
                   className="flex items-center space-x-3"
                 >
                   <Image
