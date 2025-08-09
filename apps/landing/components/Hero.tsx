@@ -174,6 +174,7 @@ export default function Hero({id}:{id:string}) {
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >
+                <Link href="https://github.com/Absterrg0/Okito">
                 <Button
                   size="lg"
                   variant="outline"
@@ -182,6 +183,7 @@ export default function Hero({id}:{id:string}) {
                   <Github className="h-5 w-5 mr-2" />
                   View Source
                 </Button>
+                </Link>
               </motion.div>
             </motion.div>
 

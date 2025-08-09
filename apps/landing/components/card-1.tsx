@@ -11,9 +11,17 @@ export default function SolanaTokenCard() {
     setTimeout(() => setIsComplete(false), 1000)
   }
 
+  const cardVariants = {
+    paused: { y: 0 },
+    animate: { y: -4, transition: { duration: 0.3, ease: "easeOut" as const } },
+  }
+
   return (
-    <div
-      className="group px-4 py-6 bg-gradient-to-br from-slate-900/90 via-gray-900/80 to-slate-900/90 rounded-xl relative overflow-hidden w-[40rem] h-[24rem] border border-emerald-500/20 shadow-[0_4px_12px_rgba(16,185,129,0.07)] hover:shadow-[0_16px_48px_rgba(16,185,129,0.15)] hover:border-emerald-500/30 transition-all duration-500"
+    <motion.div
+      variants={cardVariants}
+      initial="paused"
+      whileHover="animate"
+      className="group px-4 py-6 bg-gradient-to-br from-slate-900/90 via-gray-900/80 to-slate-900/90 rounded-xl relative overflow-hidden w-[40rem] h-[24rem] border border-emerald-500/20 shadow-[0_4px_12px_rgba(16,185,129,0.07)] hover:shadow-[0_16px_48px_rgba(16,185,129,0.15)] hover:border-emerald-500/30 "
     >
       {/* Simplified background effects */}
       <div className="absolute inset-0">
@@ -99,7 +107,6 @@ export default function SolanaTokenCard() {
 
             <motion.button
               onClick={handleCreateToken}
-              whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -231,6 +238,6 @@ export default function SolanaTokenCard() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

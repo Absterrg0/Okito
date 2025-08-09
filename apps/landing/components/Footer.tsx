@@ -6,6 +6,7 @@ import { Code2, Github, Twitter, MessageCircle, ArrowRight, Heart, Zap } from 'l
 import Link from 'next/link';
 import Image from 'next/image';
 import { TextHoverEffect } from './ui/text-hover-effect';
+import { FaXTwitter } from 'react-icons/fa6';
 
 export default function Footer({id}:{id:string}) {
   return (
@@ -85,14 +86,13 @@ export default function Footer({id}:{id:string}) {
                 {/* Social Links */}
                 <div className="flex space-x-3">
                   {[
-                    { icon: Github, href: "#", label: "GitHub", color: "hover:text-white" },
-                    { icon: Twitter, href: "#", label: "Twitter", color: "hover:text-blue-400" },
-                    { icon: MessageCircle, href: "#", label: "Discord", color: "hover:text-purple-400" },
+                    { icon: Github, href: "https://github.com/Absterrg0/Okito", label: "GitHub", color: "hover:text-white" },
+                    { icon: FaXTwitter, href: "https://x.com/OkitoLabs", label: "X", color: "hover:text-gray-200" },
                   ].map((social, index) => (
                     <motion.a
                       key={social.label}
                       href={social.href}
-                      whileHover={{ scale: 1.1, y: -2 }}
+                      whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.9 }}
                       className={`w-12 h-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl flex items-center justify-center text-slate-400 ${social.color} transition-all duration-300 hover:border-emerald-500/30`}
                       aria-label={social.label}
@@ -108,10 +108,9 @@ export default function Footer({id}:{id:string}) {
                 <h4 className="text-white font-semibold text-xl">Quick Links</h4>
                 <ul className="space-y-4">
                   {[
-                    { name: "Documentation", href: "#documentation" },
-                    { name: "Get Started", href: "#packages" },
-                    { name: "Examples", href: "#" },
-                    { name: "API Reference", href: "#" },
+                    { name: "Documentation", href: "https://docs.okito.dev" },
+                    { name: "Get Started", href: "https://docs.okito.dev/gettingStarted" },
+                    { name: "Packages", href: "https://docs.okito.dev/sdk" },
                   ].map((link, index) => (
                     <motion.li
                       key={link.name}
@@ -136,10 +135,9 @@ export default function Footer({id}:{id:string}) {
                 <h4 className="text-white font-semibold text-xl">Resources</h4>
                 <ul className="space-y-4">
                   {[
-                    { name: "Community", href: "#" },
+                    { name: "Community", href: "https://x.com/OkitoLabs" },
                     { name: "Blog", href: "#" },
-                    { name: "Tutorials", href: "#" },
-                    { name: "Support", href: "#faq" },
+                    { name: "Support", href: "https://x.com/notabbytwt" },
                   ].map((link, index) => (
                     <motion.li
                       key={link.name}
@@ -201,15 +199,9 @@ export default function Footer({id}:{id:string}) {
               className="text-center mt-8"
             >
               <p className="text-slate-400 text-sm flex items-center justify-center gap-2">
-                <span>Built with</span>
-                <motion.span
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-red-400"
-                >
-                  <Heart className="h-4 w-4 fill-current" />
-                </motion.span>
-                <span>for the Solana community</span>
+                <span>Built for</span>
+                <Image src="/solana.png" alt="Solana" width={20} height={20} />
+                
               </p>
             </motion.div>
           </div>

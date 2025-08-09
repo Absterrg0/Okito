@@ -9,44 +9,20 @@ export default function OkitoConfigManager() {
   const [selectedStrategy, setSelectedStrategy] = useState("Confirmed")
   const [retryCount, setRetryCount] = useState("3")
 
-  // Simplified card variants
+  // Simplified card variants: raise by 4px on hover
   const cardVariants = {
-    paused: {
-      rotateY: 0,
-      rotateX: 0,
-    },
+    paused: { y: 0 },
     animate: {
-      rotateY: 2,
-      rotateX: 1,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.1, 0.25, 1] as const,
-      },
+      y: -4,
+      transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] as const },
     },
   }
 
   // Simplified dropdown variants
   const dropdownVariants = {
-    hidden: {
-      opacity: 0,
-      y: -8,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-        ease: [0.25, 0.1, 0.25, 1] as const,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -8,
-      transition: {
-        duration: 0.2,
-        ease: [0.4, 0, 1, 1] as const,
-      },
-    },
+    hidden: { opacity: 0, y: -8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] as const } },
+    exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: [0.4, 0, 1, 1] as const } },
   }
 
   const rpcProviders = [

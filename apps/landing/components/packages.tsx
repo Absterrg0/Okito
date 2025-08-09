@@ -22,6 +22,7 @@ import {
 } from "lucide-react"
 import { useState, useRef } from "react"
 import { containerVariants, itemVariants } from "./variants" // Assuming these are correctly defined
+import Link from "next/link"
 
 export default function Packages({id}:{id:string}) {
   const packagesRef = useRef<HTMLDivElement>(null)
@@ -213,9 +214,9 @@ export default function Packages({id}:{id:string}) {
                   >
                     {[
                       { icon: Coins, title: "Token Creation", desc: "SPL token deployment", delay: 0 },
-                      { icon: Wallet, title: "Wallet Ops", desc: "Secure key management", delay: 0.1 },
+                      { icon: Wallet, title: "Airdrop", desc: "Airdrop tokens to users", delay: 0.1 },
                       { icon: Database, title: "Transactions", desc: "Smart execution", delay: 0.2 },
-                      { icon: Lock, title: "Security", desc: "Enterprise-grade", delay: 0.3 },
+                      { icon: Lock, title: "Customisation", desc: "Customise your transactions", delay: 0.3 },
                     ].map((feature, index) => (
                       <motion.div
                         key={feature.title}
@@ -246,12 +247,13 @@ export default function Packages({id}:{id:string}) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
                   >
+                    <Link href="https://docs.okito.dev">
                     <Button className="w-full bg-green-500/20 text-green-100 border border-green-500/30 py-6 text-md hover:bg-green-500/30 relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 "></div>
                       <BookOpen className="h-5 w-5 mr-2 relative z-10" />
                       <span className="relative z-10 text-sm">Explore Docs</span>
-                    
                     </Button>
+                    </Link>
                   </motion.div>
                 </div>
 

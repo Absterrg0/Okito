@@ -37,7 +37,7 @@ export default function FAQ({id}:{id:string}) {
     {
       id: "what-is-okito",
       question: "What is Okito and how does it work?",
-      answer: "Okito is a comprehensive development platform for Solana blockchain applications. It provides two main packages: @okito/sdk for core blockchain functions like token creation and wallet management, and @okito/ui (coming soon) for pre-built React components. Our SDK abstracts complex Solana operations into simple, elegant APIs that developers can use to build powerful dApps quickly.",
+      answer: "Okito is a comprehensive development platform for Solana blockchain applications. It provides two main packages: @okito/sdk for core blockchain functions like token creation and  and @okito/ui (coming soon) for pre-built React components. Our SDK abstracts complex Solana operations into simple, elegant APIs that developers can use to build powerful dApps quickly.",
     },
     {
       id: "is-it-really-free",
@@ -65,11 +65,7 @@ export default function FAQ({id}:{id:string}) {
       question: "Is Okito production-ready and secure?",
       answer: "Yes! Okito is built with production use in mind. We implement enterprise-grade security practices, comprehensive error handling, intelligent retry logic, and extensive testing. The SDK includes features like connection pooling, automatic failover, transaction confirmation, and detailed logging. Many developers are already using Okito in production applications.",
     },
-    {
-      id: "support-community",
-      question: "What kind of support and community does Okito have?",
-      answer: "Okito has a growing community of developers building on Solana. You can get support through our GitHub issues, join discussions in our community forums, and contribute to the project. We also provide comprehensive documentation, video tutorials, and example projects. As an open-source project, community contributions and feedback help make Okito better for everyone.",
-    }
+    
   ];
 
   const toggleItem = (id:string) => {
@@ -218,7 +214,7 @@ export default function FAQ({id}:{id:string}) {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link href={"https://x.com/OkitoLabs"}>
                 <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black font-semibold px-6 py-3 rounded-xl transition-all duration-300 flex items-center group"
                   >
@@ -226,13 +222,15 @@ export default function FAQ({id}:{id:string}) {
                   Ask Questions 
                 </motion.button>
                   </Link>
+                <Link href="https://docs.okito.dev">  
                 <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileHover={{  y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-emerald-500/30 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
                 >
                   View Documentation
                 </motion.button>
+                  </Link>
               </div>
             </div>
           </motion.div>

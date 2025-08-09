@@ -114,11 +114,10 @@ export default function OkitoActivityShowcase() {
   // Simplified variants with reduced complexity
   const cardVariants: Variants = {
     paused: {
-      scale: 1,
       y: 0,
     },
     animate: {
-      scale: 1.02,
+
       y: -4,
       transition: {
         duration: 0.3,

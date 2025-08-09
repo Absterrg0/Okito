@@ -2,8 +2,9 @@
 import React, { useRef, useState } from 'react';
 import { motion, useInView, Variants } from 'motion/react';
 import { 
-  Github, ArrowRight, Star, Heart
+  Github, ArrowRight, Star, Heart,
 } from 'lucide-react';
+import Link from 'next/link';
 
 const containerVariants:Variants = {
   hidden: { opacity: 0 },
@@ -172,6 +173,7 @@ export default function EnhancedPricing({id}:{id:string}) {
                     ))}
                   </div>
 
+                  <Link href="https://docs.okito.dev">
                   <motion.button
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
@@ -184,6 +186,7 @@ export default function EnhancedPricing({id}:{id:string}) {
                       <ArrowRight className="h-5 w-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                     </div>
                   </motion.button>
+                    </Link>
                 </div>
 
                 {/* Right Side - Value Props */}

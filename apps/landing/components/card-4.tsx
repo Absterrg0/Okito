@@ -701,12 +701,13 @@ export default function OkitoMobilePower() {
       onHoverStart={() => setIsCardHovered(true)}
       onHoverEnd={() => setIsCardHovered(false)}
       variants={cardVariants}
-      className="px-6 py-6 bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-slate-900/95 backdrop-blur-xl rounded-2xl relative overflow-hidden w-[26rem] h-[24rem] border border-emerald-500/20 shadow-2xl shadow-emerald-500/10"
+      className="px-6 py-6 bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-slate-900/95 backdrop-blur-xl rounded-2xl relative overflow-hidden w-[26rem] h-[24rem] border border-emerald-500/20 shadow-2xl shadow-emerald-500/10 mt-1"
       style={{ transformStyle: "preserve-3d" }}
     >
       {/* Subtle background accents */}
       <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/20 via-transparent to-teal-950/20"></div>
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-emerald-500/5 to-transparent blur-2xl"></div>
+
 
       {/* Phone Container - Larger with overflow */}
       <motion.div

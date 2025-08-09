@@ -6,6 +6,7 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { ArrowRight, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import Link from 'next/link';
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -92,12 +93,13 @@ export default function Navbar() {
             className="flex items-center space-x-4"
           >
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">
+              <Link href="https://github.com/Absterrg0/Okito" className="text-gray-300 hover:text-white transition-colors duration-300">
                 <Github className="h-5 w-5" />
-              </a>
+              </Link>
             </motion.div>
 
             <motion.div whileTap={{ scale: 0.95 }}>
+              <Link href="https://docs.okito.dev">
               <Button className="group relative overflow-hidden bg-gradient-to-t from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-bold shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/30 transition-all duration-300 text-sm px-6 py-3 rounded-full border border-emerald-700/90">
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/10 to-white/0"
@@ -109,6 +111,7 @@ export default function Navbar() {
                   <ArrowRight className="h-4 w-4 transition-transform duration-300" />
                 </span>
               </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
