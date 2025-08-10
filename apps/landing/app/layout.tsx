@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 import { Inter } from "next/font/google";
-import { DM_Sans } from "next/font/google";
+
 
 export const metadata: Metadata = {
   // Basic metadata
@@ -71,11 +71,6 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dm-sans",
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -88,7 +83,7 @@ export default function RootLayout({
 
       </head>
       <body
-        className={`${dmSans.className} antialiased`}
+        className={`${inter.className} antialiased`}
       >
         {children}
       </body>

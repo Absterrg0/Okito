@@ -6,6 +6,8 @@ import './globals.css'
 import { FaSquareXTwitter } from "react-icons/fa6"; 
 import Image from 'next/image'
 import Script from 'next/script'
+import { Analytics } from "@vercel/analytics/next"
+
  
 // Enhanced metadata - Nextra will merge this with page-level metadata
 export const metadata = {
@@ -15,7 +17,7 @@ export const metadata = {
   },
   description: 'Complete documentation for Okito  - the one stop solution to developer problems in Solana ecosystem.',
   keywords: ['Okito', 'SDK', 'documentation', 'developer tools', 'API', 'JavaScript', 'TypeScript'],
-  authors: [{ name: 'Okito Team', url: 'https://okito.cc' }],
+  authors: [{ name: 'Okito Team', url: 'https://okito.dev' }],
   openGraph: {
     type: 'website',
     siteName: 'Okito Documentation',
@@ -26,7 +28,7 @@ export const metadata = {
     site: '@OkitoLabs',
     creator: '@notabbytwt',
   },
-  metadataBase: new URL('https://docs.okito.cc'), // Replace with your domain
+  metadataBase: new URL('https://docs.okito.dev'), // Replace with your domain
 }
 
 
@@ -53,7 +55,7 @@ const navbar = (
         />
       </>
     }
-    logoLink={"https://okito.cc"}
+    logoLink={"https://okito.dev"}
     projectLink={"https://github.com/Absterrg0/Okito"}
     chatLink={'https://x.com/OkitoLabs'}
     chatIcon = {<FaSquareXTwitter size={30} className='greyscale' aria-label="Follow us on X"/>}
@@ -156,19 +158,7 @@ export default async function RootLayout({ children }:{
       </Head>
       
       <body>
-        {/* Google Analytics - Replace YOUR_GA_ID with your actual ID */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=YOUR_GA_ID"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'YOUR_GA_ID');
-          `}
-        </Script>
+        <Analytics />
         
         <Layout
           navbar={navbar}
