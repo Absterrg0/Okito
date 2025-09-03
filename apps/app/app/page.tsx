@@ -1,7 +1,6 @@
 'use client'
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 export default function Home() {
-  const router = useRouter();
-  router.push('/signin')
+  redirect('/signin')
   return <div></div>;
 }

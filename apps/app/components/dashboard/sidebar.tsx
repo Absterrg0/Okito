@@ -1,12 +1,9 @@
-"use client"
-
-import { usePathname } from "next/navigation"
+'use client'
 import {
   Calendar,
   Home,
   Inbox,
   Search,
-
   FileText,
   Mail,
   ShoppingCart,
@@ -29,20 +26,32 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 import Image from "next/image"  
+import Link from "next/link"
 import { UserProfilePopover } from "./user-profile-popover"
 import ProjectSelector from "./project-selector"
+import { User } from "better-auth";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { unstable_ViewTransition as ViewTransition, startTransition, unstable_addTransitionType as addTransitionType } from "react";
+
 const menuItems = [
   {
-    title: "Overview",
+    title: "Home",
     url: "/dashboard/home",
     icon: Home,
     id: "home",
   },
   {
-    title: "Todo",
-    url: "/dashboard/todo",
+    title: "Overview",
+    url: "/dashboard/overview",
+    icon: FileText,
+    id: "overview",
+  },
+  {
+    title: "Events",
+    url: "/dashboard/events",
     icon: Inbox,
-    id: "todo",
+    id: "events",
   },
   {
     title: "Calendar",
@@ -106,101 +115,140 @@ const communicationItems = [
   },
 ]
 
-export function AppSidebar() {
-  const pathname = usePathname()
+export function AppSidebar({user}:{user:User}) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleNavigate = (url: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    startTransition(() => {
+      try { 
+        addTransitionType("navigation-forward"); 
+      } catch {}
+      router.push(url);
+    });
+  };
 
   return (
-    <Sidebar variant="inset">
-      <SidebarHeader>
-        <div className="px-2 pt-4 flex items-center justify-center">
-        <Image
-            src="/Okito-light.png"
-            alt="Okito logo"
-            width={64}
-            height={64}
-            className="dark:hidden"
-          />
-          <Image
-            src="/Okito-dark.png"
-            alt="Okito logo"
-            width={64}
-            height={64}
-            className="hidden dark:block"
-          />
-        </div>
-    </SidebarHeader>
+    <ViewTransition>
+      <Sidebar variant="inset">
+        <SidebarHeader>
+          <div className="px-2 pt-4 flex items-center justify-center">
+            <Image
+              src="/Okito-light.png"
+              alt="Okito logo"
+              width={64}
+              height={64}
+              className="dark:hidden"
+            />
+            <Image
+              src="/Okito-dark.png"
+              alt="Okito logo"
+              width={64}
+              height={64}
+              className="hidden dark:block"
+            />
+          </div>
+        </SidebarHeader>
+        
+        <SidebarContent>
+          <ProjectSelector />
+          
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {menuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      asChild 
+                      className={pathname.startsWith(item.url) ? "relative text-foreground" : undefined}
+                    >
+                      <Link href={item.url} onClick={handleNavigate(item.url)} className="relative block w-full">
+                        {pathname.startsWith(item.url) && (
+                          <div 
+                            className="absolute inset-0 w-full h-full rounded-md crypto-glass-static pointer-events-none" 
+                            style={{ 
+                              viewTransitionName: 'sidebar-active',
+                              padding: '0',
+                              zIndex: 0
+                            }}
+                          />
+                        )}
+                        <div className="relative flex items-center gap-2" style={{ zIndex: 1 }}>
+                          <item.icon className="w-4 h-4" />
+                          <span>{item.title}</span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-      <SidebarContent>
-        <ProjectSelector />
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={pathname === item.url}
-                    className={pathname === item.url ? "!bg-primary/20 !text-primary " : ""}
-                  >
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Business</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {businessItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      asChild 
+                      className={pathname.startsWith(item.url) ? "relative text-foreground" : undefined}
+                    >
+                      <Link href={item.url} onClick={handleNavigate(item.url)} className="relative z-0 block w-full">
+                        {pathname.startsWith(item.url) && (
+                          <div 
+                            className="absolute inset-0 z-0 w-full h-full rounded-md crypto-input p-0 pointer-events-none" 
+                            style={{ viewTransitionName: 'sidebar-active' }}
+                          />
+                        )}
+                        <div className="relative z-10 flex items-center gap-2">
+                          <item.icon className="w-4 h-4" />
+                          <span>{item.title}</span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Business</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {businessItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={pathname === item.url}
-                    className={pathname === item.url ? "!bg-primary/20 !text-primary-foreground border border-primary/30" : ""}
-                  >
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Communication</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {communicationItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      asChild 
+                      className={pathname.startsWith(item.url) ? "relative text-foreground" : undefined}
+                    >
+                      <Link href={item.url} onClick={handleNavigate(item.url)} className="relative z-0 block w-full">
+                        {pathname.startsWith(item.url) && (
+                          <div 
+                            className="absolute inset-0 z-0 w-full h-full rounded-md crypto-input p-0 pointer-events-none" 
+                            style={{ viewTransitionName: 'sidebar-active' }}
+                          />
+                        )}
+                        <div className="relative z-10 flex items-center gap-2">
+                          <item.icon className="w-4 h-4" />
+                          <span>{item.title}</span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Communication</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {communicationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={pathname === item.url}
-                    className={pathname === item.url ? "!bg-primary/20 !text-primary-foreground border border-primary/30" : ""}
-                  >
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter className="border-t border-sidebar-border p-4">
-        <UserProfilePopover></UserProfilePopover>
-          </SidebarFooter>
-    </Sidebar>
+        <SidebarFooter className="border-t border-sidebar-border p-4">
+          <UserProfilePopover user={user} />
+        </SidebarFooter>
+      </Sidebar>
+    </ViewTransition>
   )
 }

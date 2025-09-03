@@ -1,4 +1,5 @@
-import React from 'react';
+'use client'
+import React, { useState, useEffect } from 'react';
 
 interface BanterLoaderProps {
   /**
@@ -28,7 +29,27 @@ export const Loader: React.FC<BanterLoaderProps> = ({
   className = '',
   centered = false,
 }) => {
-  const uniqueId = React.useId();
+  const [isClient, setIsClient] = useState(false);
+  const [uniqueId, setUniqueId] = useState('');
+
+  useEffect(() => {
+    setIsClient(true);
+    setUniqueId(Math.random().toString(36).substring(2, 9));
+  }, []);
+
+  // Return a simple div during SSR to prevent hydration mismatch
+  if (!isClient) {
+    return (
+      <div 
+        className={`inline-block ${className}`}
+        style={{
+          width: `${72 * size}px`,
+          height: `${72 * size}px`,
+          backgroundColor: 'transparent'
+        }}
+      />
+    );
+  }
   
   return (
     <>
@@ -553,4 +574,4 @@ export const Loader: React.FC<BanterLoaderProps> = ({
   );
 };
 
-export default Loader
+export default Loader;

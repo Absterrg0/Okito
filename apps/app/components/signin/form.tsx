@@ -15,8 +15,8 @@ export const SignInForm = () => {
           startLoading();
             signIn.social({
                 provider: "google",
-                callbackURL: "/dashboard",
-                newUserCallbackURL: "/onboarding",
+                callbackURL: "/dashboard/overview",
+                newUserCallbackURL: "/verify",
             })
           
         } catch (error) {

@@ -8,7 +8,9 @@ interface Response{
     msg:string,
     project:{
         name:string,
-        id:string
+        id:string,
+        createdAt:Date,
+        updatedAt:Date
     },
 
 }

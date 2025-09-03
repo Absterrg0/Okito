@@ -390,7 +390,8 @@ body {
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Remove transitions to avoid border/outline flashing */
+  transition: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   outline: none;
   color: hsl(var(--foreground));
@@ -417,6 +418,7 @@ body {
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   color: hsl(var(--foreground));
+  transition: none;
 }
 
 .dark .crypto-input:hover {
@@ -533,6 +535,7 @@ button.crypto-glass {
   position: relative;
   overflow: hidden;
   border-radius: 1.5rem;
+  color: hsl(var(--foreground));
 }
 
 .crypto-glass button::before, 
@@ -550,6 +553,80 @@ button.crypto-glass::before {
 .crypto-glass button:hover::before, 
 button.crypto-glass:hover::before {
   left: 100%;
+}
+
+/* Ensure readable text color in dark mode for glass buttons */
+.dark .crypto-glass button,
+.dark button.crypto-glass {
+  color: hsl(var(--foreground));
+}
+
+/* Static glass on buttons: enforce readable text */
+.crypto-glass-static button,
+button.crypto-glass-static {
+  color: hsl(var(--foreground));
+}
+.dark .crypto-glass-static button,
+.dark button.crypto-glass-static {
+  color: hsl(var(--foreground));
+}
+
+/* Disabled state tweaks to avoid overly dimmed look */
+.crypto-glass button:disabled,
+button.crypto-glass:disabled,
+.crypto-glass-static button:disabled,
+button.crypto-glass-static:disabled,
+.crypto-button:disabled {
+  opacity: 0.6;
+  color: hsl(var(--foreground));
+  cursor: not-allowed;
+  filter: saturate(0.8);
+  box-shadow: none;
+}
+.crypto-glass button:disabled::before,
+button.crypto-glass:disabled::before {
+  display: none;
+}
+.crypto-glass button:disabled:hover,
+button.crypto-glass:disabled:hover,
+.crypto-glass-static button:disabled:hover,
+button.crypto-glass-static:disabled:hover,
+.crypto-button:disabled:hover {
+  background: inherit;
+  border-color: inherit;
+}
+
+/* New utility: crypto-button for consistent button styling */
+.crypto-button {
+  position: relative;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: hsl(var(--foreground));
+  border-radius: 0.75rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.crypto-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+.dark .crypto-button {
+  background: rgba(255, 255, 255, 0.06);
+  color: hsl(var(--foreground));
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.dark .crypto-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.crypto-button:disabled {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(148, 163, 184, 0.2);
+}
+.dark .crypto-button:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Utilities */

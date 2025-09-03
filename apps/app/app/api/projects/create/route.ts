@@ -64,7 +64,9 @@ export async function POST(request: NextRequest) {
       msg: "Project created successfully",
       project: {
         name: project.name,
-        id:project.id
+        id:project.id,
+        createdAt:project.createdAt,
+        updatedAt:project.updatedAt
       },
       
     }, {

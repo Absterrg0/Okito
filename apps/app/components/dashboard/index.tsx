@@ -175,7 +175,7 @@ export default function DashboardPage() {
           Monitor all the events like payments and token creations here.
         </p>
        </div>
-       <div className="gap-6 flex items-center">
+       <div className="gap-4 flex items-center">
         <Environment></Environment>
         <ModeToggle></ModeToggle>
        </div>

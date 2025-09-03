@@ -2,6 +2,7 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
@@ -17,6 +18,8 @@ import CustomWalletModal from './custom-modal';
 export default function CustomWallet() {
     const { publicKey, disconnect, connected } = useWallet();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const pathname = usePathname();
+    const isVerifyPage = pathname === '/verify';
 
     const handleConnect = () => {
         setIsModalOpen(true);
@@ -84,20 +87,23 @@ export default function CustomWallet() {
                 align="end" 
                 className="w-48 crypto-glass bg-popover/95 backdrop-blur-xl border-border/50"
             >
-        
                 <DropdownMenuItem onClick={copyAddress} className="cursor-pointer">
                     <Copy className="w-4 h-4" />
                     Copy Address
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                    onClick={handleDisconnect} 
-                    variant="destructive"
-                    className="cursor-pointer"
-                >
-                    <LogOut className="w-4 h-4" />
-                    Disconnect
-                </DropdownMenuItem>
+                {isVerifyPage && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                            onClick={handleDisconnect} 
+                            variant="destructive"
+                            className="cursor-pointer "
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Disconnect
+                        </DropdownMenuItem>
+                    </>
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     );

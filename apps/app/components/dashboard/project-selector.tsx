@@ -20,9 +20,12 @@ import { useProjectsQuery } from "@/hooks/projects/useProjectQuery"
 import { useSelectedProjectStore } from "@/store/projectStore"
 
 interface Project {
-  id: string
-  name: string
+  id: string;
+  name: string;
+  createdAt:Date;
+  updatedAt:Date;
 }
+
 
 export default function ProjectSelector() {
   const [newProjectName, setNewProjectName] = useState('')
@@ -45,7 +48,7 @@ export default function ProjectSelector() {
     }
   }, [projects, setSelectedProject]) // Removed selectedProject from dependencies
 
-  const handleProjectSelect = (project: Project) => {
+  const handleProjectSelect = (project:Project) => {
     setSelectedProject(project)
     // Here you can integrate with your Zustand store
     // Example: useProjectStore.getState().setSelectedProject(project)
@@ -106,7 +109,7 @@ export default function ProjectSelector() {
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline" 
-              className="flex-1 justify-between h-10 crypto-glass-static border-0 hover:bg-white/5"
+              className="flex-1 justify-between h-10 crypto-glass border-0 hover:bg-white/5"
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium truncate">

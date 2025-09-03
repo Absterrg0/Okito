@@ -23,6 +23,8 @@ model User {
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
+  walletAddress String?
+  verifiedAt    DateTime?
   sessions      Session[]
   accounts      Account[]
   projects      Project[]
@@ -116,7 +118,7 @@ model ApiToken {
   name        String // User-friendly name
   environment TokenEnvironment @default(DEVELOPMENT)
   
-  // Security
+  // Security 
   allowedDomains String[] // Array of allowed domains
   
   // Usage tracking

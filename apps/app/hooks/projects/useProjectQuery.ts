@@ -4,6 +4,8 @@ import axios from "axios";
 interface Project {
   id: string;
   name: string;
+  createdAt:Date;
+  updatedAt:Date;
 }
 
 export function useProjectsQuery() {

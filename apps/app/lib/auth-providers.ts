@@ -1,26 +1,23 @@
+import { createAuthClient } from 'better-auth/client';
 
+const authClient = createAuthClient({
+  fetchOptions: {
+    credentials: 'include',
+  },
+  plugins: [],
+});
 
-
-
-
-export interface ProviderConfig {
-    id: string;
-    name: string;
-    reqEnvVars: string[]
-  }
-  
-
-
-
-export const AuthProviders: ProviderConfig[] = [
-    {
-        id:'google',
-        name:'Google',
-        reqEnvVars:['GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET']
+export const authProxy = {
+  api: {
+    getSession: async ({ headers }: { headers: Headers }) => {
+      const session = await authClient.getSession({
+        fetchOptions: { headers, credentials: 'include' },
+      });
+      if (session.error) {
+        console.error(`Failed to get session: ${session.error}`, session);
+        return null;
+      }
+      return session.data;
     },
-    {
-        id:'github',
-        name:'Github',
-        reqEnvVars:['GITHUB_CLIENT_ID','GITHUB_CLIENT_SECRET']
-    }
-]
+  },
+};
