@@ -17,8 +17,8 @@ export default async function HomeLayout({
     headers: await headers()
   })
 
+const user = session?.user
 
-  const user = session?.user
 
   return (
         <SessionProvider session={session}>

@@ -1,34 +1,41 @@
-import {  useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { useQueryClient } from "@tanstack/react-query";
-import {toast} from 'sonner';
-
-
-interface Response{
-    msg:string,
-    project:{
-        name:string,
-        id:string,
-        createdAt:Date,
-        updatedAt:Date
-    },
-
-}
+import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 
 export function useCreateProjectMutation() {
-    const queryClient = useQueryClient();
-  
-    return useMutation({
-        mutationFn: async (projectName:string) => {
-            const response = await axios.post<Response>('/api/projects/create', { projectName })
-          return response.data
-        },
-        onSuccess: () => {
-          queryClient.invalidateQueries({queryKey:['projects']})
-          queryClient.invalidateQueries({queryKey:['apiTokens']})
-        },
-        onError: () => {
-          toast.error("Failed to create project. Please try again.")
-        }
-      })
-  }
+  const utils = trpc.useUtils();
+
+  return trpc.project.create.useMutation({
+    onMutate: async (newProject) => {
+      if (!newProject) return;
+
+      await utils.project.list.cancel();
+
+      const prevProjects = utils.project.list.getData();
+
+      utils.project.list.setData(undefined, (old) => [
+        ...(old ?? []),
+        { id: "temp-id", name: newProject.name },
+      ]);
+
+      return { prevProjects };
+    },
+
+    onSuccess: (data) => {
+      utils.project.list.setData(undefined, (old) =>
+        old
+          ? old.map((proj) =>
+              proj.id === "temp-id" ? { ...proj, id: data.id, name: data.name } : proj
+            )
+          : [data]
+      );
+      toast.success(`Project "${data.name}" created successfully!`);
+    },
+
+    onError: (error, _newProject, context) => {
+      if (context?.prevProjects) {
+        utils.project.list.setData(undefined, context.prevProjects);
+      }
+      toast.error(error.message || "Failed to create project. Please try again.");
+    },
+  });
+}

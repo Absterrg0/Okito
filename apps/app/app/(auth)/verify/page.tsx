@@ -9,10 +9,12 @@ import { redirect } from "next/navigation";
 
 export default async function VerifyWallet(){
     const session = await auth.api.getSession({
-        headers:await headers()
+        headers: await headers()
     })
 
-
+    if(session?.user.walletAddress){
+        redirect('/onboarding')
+    }
 
     return <VerifyWalletPage></VerifyWalletPage>
 }

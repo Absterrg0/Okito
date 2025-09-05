@@ -1,43 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-const PUBLIC_PATHS = new Set([
-	"/",
-	"/signin",
-	"/api/auth/callback",
-]);
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-function isPublicPath(pathname: string) {
-	if (PUBLIC_PATHS.has(pathname)) return true;
-	// Skip Next.js internals and static assets
-	if (
-		pathname.startsWith("/_next") ||
-		pathname.startsWith("/static") ||
-		pathname.startsWith("/favicon") ||
-		pathname.startsWith("/assets") ||
-		pathname.startsWith("/public") ||
-		pathname.startsWith("/api/auth") // allow better-auth endpoints
-	) {
-		return true;
-	}
-	return false;
-}
+  if (!pathname.startsWith("/dashboard")) {
+    return NextResponse.next();
+  }
 
-export async function middleware(request: NextRequest) {
-	const { pathname } = request.nextUrl;
-	if (isPublicPath(pathname)) {
-		return NextResponse.next();
-	}
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
+    const signinUrl = new URL("/signin", request.url);
+    return NextResponse.redirect(signinUrl);
+  }
 
-	const sessionCookie = getSessionCookie(request);
-	if (!sessionCookie) {
-		const signinUrl = new URL("/signin", request.url);
-		return NextResponse.redirect(signinUrl);
-	}
-
-	return NextResponse.next();
+  return NextResponse.next();
 }
 
 export const config = {
-	matcher: ["/:path*"],
+  matcher: ["/dashboard/:path*"],
 };

@@ -11,8 +11,8 @@ export const generateRandomName = () => {
   
 
   // Helper function to generate secure API tokens
-export function generateApiToken(environment: 'DEVELOPMENT' | 'PRODUCTION'): string {
-    const prefix = environment === 'DEVELOPMENT' ? 'pk_test_' : 'pk_live_'
+export function generateApiToken(environment: 'TEST' | 'LIVE'): string {
+    const prefix = environment === 'TEST' ? 'pk_test_' : 'pk_live_'
     const randomBytes = crypto.randomBytes(32).toString('hex')
     return prefix + randomBytes
   }
@@ -31,21 +31,24 @@ export  function hashValue(value: string): string {
 
 
 
-const password = process.env.WEBHOOK_PASSWORD!;
-
-if (!password || password.length <  32) {
-  throw new Error('Missing or insecure SECRET_COOKIE_PASSWORD. It must be at least 32 characters long.');
+function getWebhookPassword(): string {
+  const pwd = process.env.WEBHOOK_PASSWORD;
+  if (!pwd || pwd.length < 32) {
+    throw new Error('Missing or insecure WEBHOOK_PASSWORD. It must be at least 32 characters long.');
+  }
+  return pwd;
 }
+
 export async function encryptData(data: string | object): Promise<string> {
   return sealData(data, {
-    password,
+    password: getWebhookPassword(),
     ttl: 0, // 0 means the data never expires
   });
 }
 
 export async function decryptData<T>(sealedData: string): Promise<T> {
   return unsealData(sealedData, {
-    password,
+    password: getWebhookPassword(),
     ttl: 0,
   });
 }

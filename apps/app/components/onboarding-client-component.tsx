@@ -30,9 +30,8 @@ export default function OnboardingPage() {
       return
     }
     
-    createProject(projectName, {
+    createProject({name:projectName}, {
       onSuccess: () => {
-        toast.success(`Project ${projectName} created successfully!`)
          router.push('/dashboard/home')
       },
       onError: () => {

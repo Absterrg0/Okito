@@ -103,9 +103,7 @@ export default function OverviewPage() {
 
   const closeCreatePopover = () => {
     setIsCreateOpen(false)
-    setTimeout(()=>{
-      webhookForm.reset()
-    },200)
+  
   }
 
   const copyToClipboard = async (text: string, label: string) => {
@@ -363,7 +361,11 @@ export default function OverviewPage() {
                       <Plus className="w-4 h-4 mr-2" /> Add
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[480px] p-0 crypto-base border-0" align="end" side="bottom">
+                  <PopoverContent onAnimationEnd={()=>{
+                    if(!isCreateOpen){
+                      webhookForm.reset()
+                    }
+                  }} className="w-[480px] p-0 crypto-base border-0" align="end" side="bottom">
                   <form
                       onSubmit={(e) => {
                         e.preventDefault()

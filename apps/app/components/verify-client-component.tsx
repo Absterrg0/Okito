@@ -2,13 +2,10 @@
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from '@/components/ui/button'
-import CustomWallet from '@/components/ui/custom-wallet'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useVerifyWallet } from '@/hooks/useVerifyWallet'
 import Loader from '@/components/ui/loader'
-import { useSession } from '@/lib/auth-client'
-import { useEffect } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Info } from 'lucide-react'
 
@@ -18,7 +15,7 @@ export default  function VerifyWalletPage() {
   const { publicKey, signMessage, connected } = useWallet()
 
 
-  const { mutate, isPending:isLoading} = useVerifyWallet({
+  const { mutate, isLoading } = useVerifyWallet({
     publicKey: publicKey?.toString() ?? null,
     connected,
     signMessage,
@@ -27,7 +24,11 @@ export default  function VerifyWalletPage() {
       router.push('/onboarding')
     },
     onError: (err) => {
-      toast.error((err as any)?.message || 'Verification cancelled')
+      const message =
+        (err as any)?.message ||
+        (err as any)?.data?.message ||
+        'Verification failed'
+      toast.error(message)
     },
   })
 

@@ -1,20 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-
-interface Project {
-  id: string;
-  name: string;
-  createdAt:Date;
-  updatedAt:Date;
-}
-
+import { trpc } from "@/lib/trpc";
 export function useProjectsQuery() {
-  return useQuery({
-    queryKey: ['projects'],
-    queryFn: async () => {
-      const response = await axios.get<Project[]>('/api/projects');
-      return response.data;
-    },
-    staleTime:1000*60*10
+  return trpc.project.list.useQuery(undefined,{
+    staleTime:1000*60*10,
   });
 }

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from "react"
-import { ChevronDown, Building2, Plus, X } from "lucide-react"
+import { ChevronDown,  Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -18,19 +18,13 @@ import { toast } from "sonner"
 import { useCreateProjectMutation } from "@/hooks/projects/useProjectMutation"
 import { useProjectsQuery } from "@/hooks/projects/useProjectQuery"
 import { useSelectedProjectStore } from "@/store/projectStore"
-
-interface Project {
-  id: string;
-  name: string;
-  createdAt:Date;
-  updatedAt:Date;
-}
+import type { SelectedProject as Project } from "@/store/projectStore"
 
 
 export default function ProjectSelector() {
   const [newProjectName, setNewProjectName] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const {mutate:createProject,isPending:isCreating}= useCreateProjectMutation();
+  const {mutate:createProject,isPending:isCreating} = useCreateProjectMutation();
   const {data:projects,isLoading} = useProjectsQuery();
   const selectedProject = useSelectedProjectStore(s=>s.selectedProject);
   const setSelectedProject = useSelectedProjectStore(s=>s.setSelectedProject);
@@ -46,12 +40,10 @@ export default function ProjectSelector() {
         }
       }
     }
-  }, [projects, setSelectedProject]) // Removed selectedProject from dependencies
+  }, [projects]) 
 
   const handleProjectSelect = (project:Project) => {
     setSelectedProject(project)
-    // Here you can integrate with your Zustand store
-    // Example: useProjectStore.getState().setSelectedProject(project)
   }
 
   const handleCreateProject = async () => {
@@ -59,24 +51,25 @@ export default function ProjectSelector() {
       toast.error("Please enter a project name")
       return
     }
-    
-    createProject(newProjectName, {
-      onSuccess: (data) => {
-        toast.success(`Project ${newProjectName} created successfully!`)
-        setSelectedProject(data.project)
-        closeCreatePopover() // Close popover after successful creation
-      },
+    createProject({name:newProjectName},{
+      onSuccess: (newProject)=>{
+        setSelectedProject(newProject)
+        closeCreatePopover()
+      }
     })
+
+    
+    
   }
 
 
   const closeCreatePopover = () => {
     setIsCreateOpen(false)
-    setNewProjectName('')
+  
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !isCreating) {
+    if (e.key === 'Enter' ) {
       handleCreateProject()
     }
     if (e.key === 'Escape') {
@@ -142,7 +135,7 @@ export default function ProjectSelector() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Popover open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <Popover open={isCreateOpen}   onOpenChange={setIsCreateOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -153,6 +146,11 @@ export default function ProjectSelector() {
             </Button>
           </PopoverTrigger>
           <PopoverContent 
+          onAnimationEnd={()=>{
+            if(!isCreateOpen){
+              setNewProjectName('')
+            }
+          }}
             className="w-80 p-0 crypto-base bg-neutral-100 border-0" 
             align="end"
             side="bottom"

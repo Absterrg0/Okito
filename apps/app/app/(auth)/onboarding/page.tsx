@@ -7,9 +7,15 @@ import OnboardingPage from "@/components/onboarding-client-component";
 
 export default async function Onboarding(){
   
-  const projects = await userHasProjects();
-  if(projects){
-    redirect('/dashboard/home')
+  try{
+
+    const projects = await userHasProjects();
+    if(projects){
+      redirect('/dashboard/home')
+    }
+  }
+  catch{
+    redirect('/signin')
   }
 
   return <OnboardingPage></OnboardingPage>

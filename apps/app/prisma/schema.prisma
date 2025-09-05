@@ -82,12 +82,6 @@ model Verification {
 
 
 
-
-enum userType {
-  ADMIN
-  MERCHANT
-}
-
 model Project {
   id        String   @id @default(uuid())
   name      String
@@ -95,11 +89,8 @@ model Project {
   updatedAt DateTime  @updatedAt
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   apiTokens ApiToken[]
   payments  Payment[]
-  
-  // Event-driven architecture
   events           Event[]
   webhookEndpoints WebhookEndpoint[]
   
@@ -111,26 +102,15 @@ model Project {
 model ApiToken {
   id        String @id @default(uuid())
   projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  
-  // Token details
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade) 
   tokenHash   String @unique // SHA-256 hash of actual token
-  name        String // User-friendly name
-  environment TokenEnvironment @default(DEVELOPMENT)
-  
-  // Security 
+  environment TokenEnvironment @default(TEST)
   allowedDomains String[] // Array of allowed domains
-  
-  // Usage tracking
   lastUsedAt   DateTime?
   requestCount Int @default(0)
-  
-  // Lifecycle
   createdAt DateTime @default(now())
   revokedAt DateTime?
   status    TokenStatus @default(ACTIVE)
-  
-  // Relations
   payments Payment[]
   events   Event[] @relation("TokenEvent")
   
@@ -143,61 +123,36 @@ model Payment {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   tokenId   String?
   token     ApiToken? @relation(fields: [tokenId], references: [id], onDelete: SetNull)
-  
-  // Payment details
   amount           BigInt
-  currency         String
+  currency         AllowedCurrency
   recipientAddress String?
-  
   txHash       String @unique
   blockNumber  BigInt?
-  confirmations Int @default(0)
-  
-  // Status
   status        PaymentStatus @default(PENDING)
   failureReason String?
-  
-  // Metadata from merchant
-  metadata   Json?
-  webhookUrl String
-  
-  // Monitoring timestamps
   monitoringStartedAt DateTime @default(now())
   confirmedAt         DateTime?
-  
-  // Lifecycle
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  // Relations
-  // Optional link to generic events generated for this payment
   events Event[] @relation("PaymentEvent")
   
   @@map("payment")
 }
 
 
+
 model WebhookEndpoint {
   id          String   @id @default(uuid())
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  
-  // Endpoint configuration
   url         String
   description String?
   secret      String
   status      WebhookEndpointStatus @default(ACTIVE)
-  eventTypes  String[] // If empty => receive all events for the project
-  apiVersion  String?
-  
-  // Usage
-  lastUsedAt  DateTime?
-  
-  // Lifecycle
+  eventTypes  EventType[] // If empty => receive all events for the project
+  lastTimeHit  DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  // Relations
   deliveries  EventDelivery[]
   
   @@map("webhook_endpoint")
@@ -208,28 +163,17 @@ model Event {
   id          String   @id @default(cuid())
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  
-  // Event metadata
-  type        String   // e.g. payment.pending, payment.confirmed, token.revoked
-  apiVersion  String?
-  source      String?  // e.g. "system", "api", "dashboard"
-  
-  // Event subject (optional, polymorphic via specific relations or identifiers)
+  type        EventType   // e.g. payment.pending, payment.confirmed, token.revoked
   paymentId   String?
   payment     Payment? @relation(name: "PaymentEvent", fields: [paymentId], references: [id], onDelete: SetNull)
   tokenId     String?
   token       ApiToken? @relation(name: "TokenEvent", fields: [tokenId], references: [id], onDelete: SetNull)
   subjectId   String?
   subjectType String?
-  
-  // Payload
-  data        Json
-  
-  // Lifecycle
+  metadata   Json?
+  webhookUrl String  
   occurredAt  DateTime @default(now())
   createdAt   DateTime @default(now())
-  
-  // Relations
   deliveries  EventDelivery[]
   
   @@map("event")
@@ -237,21 +181,19 @@ model Event {
   @@index([paymentId])
 }
 
+
+
 model EventDelivery {
   id               String          @id @default(cuid())
   eventId          String
   event            Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
   endpointId       String
   endpoint         WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
-  
-  // Delivery tracking
   attemptNumber    Int @default(1)
   deliveryStatus   DeliveryStatus @default(PENDING)
   httpStatusCode   Int?
   errorMessage     String?
   responseBody     String?
-  
-  // Timestamps
   createdAt        DateTime @default(now())
   deliveredAt      DateTime?
   
@@ -261,21 +203,27 @@ model EventDelivery {
 }
 
 
+enum AllowedCurrency {
+  USDC
+  USDT
+}
 
-// =============================================
-// ENUMS
-// =============================================
+enum EventType {
+  PAYMENT_COMPLETED
+  PAYMENT_FAILED
+  PAYMENT_PENDING
+}
+
 
 enum TokenEnvironment {
-  DEVELOPMENT
-  PRODUCTION
+  TEST
+  LIVE
   
   @@map("token_environment")
 }
 
 enum TokenStatus {
   ACTIVE
-  SUSPENDED
   REVOKED
   
   @@map("token_status")

@@ -2,11 +2,9 @@ import {create} from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 // Define the shape of the project object stored in the state
-interface SelectedProject {
+export interface SelectedProject {
     id: string;
     name: string;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 // Define the shape of the entire store, including state and actions

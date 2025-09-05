@@ -1,7 +1,6 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
-import axios from 'axios'
+import { trpc } from '@/lib/trpc'
 
 type Params = {
   publicKey: string | null
@@ -11,23 +10,15 @@ type Params = {
   onError?: (err: any) => void
 }
 
-async function requestWalletNonce(publicKey: string) {
-  const res = await axios.post('/api/auth/link-wallet', { publicKey })
-  return res.data as { message: string; timestamp: number }
-}
-
-async function verifyWalletSignature(input: {
-  publicKey: string
-  signature: number[]
-  timestamp: number
-}) {
-  const res = await axios.post('/api/auth/link-wallet', input)
-  return res.data
-}
-
 export function useVerifyWallet({ publicKey, connected, signMessage, onSuccess, onError }: Params) {
-  return useMutation({
-    mutationFn: async () => {
+  const getNonce = trpc.user.getWalletNonce.useMutation()
+  const confirmWallet = trpc.user.confirmWallet.useMutation({
+    onSuccess,
+    onError,
+  })
+
+  return {
+    mutate: async () => {
       if (!connected || !publicKey) {
         throw new Error('Please connect your wallet first')
       }
@@ -35,26 +26,26 @@ export function useVerifyWallet({ publicKey, connected, signMessage, onSuccess, 
         throw new Error('Your wallet does not support message signing. Please use a compatible wallet.')
       }
 
-      const { message, timestamp } = await requestWalletNonce(publicKey)
+      // Step 1: Request nonce
+      const { message, timestamp } = await getNonce.mutateAsync({ publicKey })
 
-      const encodedMessage = new TextEncoder().encode(message)
+      // Step 2: Sign the message
       let signature: Uint8Array
       try {
-        signature = await signMessage(encodedMessage)
+        signature = await signMessage(new TextEncoder().encode(message))
       } catch {
         throw new Error('Message signing was cancelled or failed')
       }
 
-      await verifyWalletSignature({
+      // Step 3: Confirm wallet with signature (base58 encoded)
+      await confirmWallet.mutateAsync({
         publicKey,
-        signature: Array.from(signature),
+        signature: Array.from(signature), // server expects string
         timestamp,
       })
     },
-    onSuccess,
-    onError,
-  })
-
+    isLoading: getNonce.isPending || confirmWallet.isPending,
+    error: getNonce.error || confirmWallet.error,
+    isSuccess: confirmWallet.isSuccess,
+  }
 }
-
-
