@@ -1,38 +1,35 @@
-import { useQueryClient } from "@tanstack/react-query";
-import axios from 'axios';
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-
-
-interface ApiToken {
-    id: string;
-    rawToken: string;
-    name: string;
-    environment: string;
-}
-
-interface Response{
-    msg:string,
-    apiToken:ApiToken
-}
-
+import { trpc } from "@/lib/trpc";
 
 
 export const useApiTokenMutation = (projectId: string | undefined) => {
-    const queryClient = useQueryClient();
+    const utils = trpc.useUtils();
 
-    return useMutation({
-        mutationFn: async (environment: string) => {
-            const response = await axios.post<Response>(`/api/projects/${projectId}/api-token`, { environment });
-            return response.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey:['project-details', projectId]})
-            toast.success("Api token created successfully")
+    return trpc.apiToken.create.useMutation({
+        onSuccess: (data) => {
+            if(!projectId) return;
+
+            const {rawToken, ...safeData} = data;
+
+            if(rawToken){
+                toast.success("API token created successfully");
+            }
+
+            // Update the project details cache with the new token
+            utils.project.details.setData({id: projectId}, (old) => {
+                if(!old) return old;
+
+                return {
+                    ...old,
+                    apiTokens: [
+                        ...(old.apiTokens ?? []),
+                        safeData
+                    ]
+                };
+            });
         },
         onError: () => {
-            toast.error("Failed to create API token. Please try again.")
+            toast.error("Failed to create API token. Please try again.");
         }
-    })
+    });
 }

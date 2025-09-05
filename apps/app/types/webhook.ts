@@ -4,7 +4,7 @@ export const webhookSchema = z.object({
     id: z.uuid({message:'Invalid webhook ID'}),
     projectId: z.uuid({message:'Invalid project ID'}),
     url: z.url({message:'Invalid URL format'}).transform(val=> val.replace(/\/$/,'')),
-    description: z.string().max(100,{message:'Description must be less than 100 characters'}).nullable().optional().transform(val=>(val==""? null : val)),
+    description: z.string().max(100,{message:'Description must be less than 100 characters'}).nullable().optional(),
     secret: z.string(),
     status: z.enum(['ACTIVE', 'INACTIVE']),
     lastTimeHit: z.date().nullable().optional(),

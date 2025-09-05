@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { sealData, unsealData } from 'iron-session';
+import { toast } from 'sonner';
 
 export const generateRandomName = () => {
     const adjectives = ['Swift', 'Bright', 'Dynamic', 'Elite', 'Prime', 'Core', 'Peak', 'Zen', 'Nova', 'Pulse']
@@ -51,4 +52,23 @@ export async function decryptData<T>(sealedData: string): Promise<T> {
     password: getWebhookPassword(),
     ttl: 0,
   });
+}
+
+export const copyToClipboard = async (text: string, label: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    toast.success(`${label} copied to clipboard`)
+  } catch (error) {
+    toast.error('Failed to copy to clipboard')
+  }
+}
+
+
+
+export const formatDate = (date: Date | string) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
 }

@@ -32,7 +32,7 @@ export default function OnboardingPage() {
     
     createProject({name:projectName}, {
       onSuccess: () => {
-         router.push('/dashboard/home')
+         router.push('/dashboard/overview')
       },
       onError: () => {
         toast.error("Failed to create project. Please try again.")

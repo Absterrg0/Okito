@@ -62,6 +62,23 @@ input(fetchProjectDetailsSchema)
             where:{
                 id:id,
                 userId:ctx.session.user.id
+            },
+            include:{
+                apiTokens:{
+                    where:{
+                        status:"ACTIVE"
+                    },
+                    select:{
+                        id:true,
+                        environment:true,
+                        allowedDomains:true,
+                        lastUsedAt:true,
+                        createdAt:true,
+                        status:true,
+                        requestCount:true
+                    }
+                },
+                webhookEndpoints:true,
             }
         })
 

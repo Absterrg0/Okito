@@ -4,7 +4,6 @@ import { paymentSchema } from './payment'
 import { eventSchema } from './event'
 import { webhookSchema } from './webhook'
 import { userSchema } from './user'
-import { trpc } from '@/lib/trpc'
 export const projectSchema = z.object({
     id: z.string(),
     name: z.string(),
@@ -35,9 +34,12 @@ export const fetchProjectDetailsSchema = projectSchema.pick({
 
 export const fetchProjectDetailsSchemaResponse = projectSchema.omit({
     user:true,
-    payments:true,
-    events:true
+}).extend({
+    apiTokens: z.array(apiTokenSchema.omit({ projectId: true })).optional().default([]),
 });
+
+
+export type ProjectDetails = z.infer<typeof fetchProjectDetailsSchemaResponse>
 
 
 

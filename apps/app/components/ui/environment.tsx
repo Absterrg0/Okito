@@ -19,7 +19,7 @@ export default function Environment() {
       <Switch 
         checked={isLive} 
         onCheckedChange={toggleEnvironment}
-        className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-400"
+        className="data-[state=checked]:bg-green-500  data-[state=unchecked]:bg-red-400"
       />
       
       <span className={`text-sm font-medium transition-colors ${
