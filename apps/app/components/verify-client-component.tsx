@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { useVerifyWallet } from '@/hooks/useVerifyWallet'
 import Loader from '@/components/ui/loader'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Info } from 'lucide-react'
+import { InfoIcon } from '@phosphor-icons/react'
 
 
 export default  function VerifyWalletPage() {
@@ -83,7 +83,7 @@ export default  function VerifyWalletPage() {
                   {(!connected || !publicKey || !signMessage) && (
                     <TooltipContent className="max-w-xs bg-foreground ">
                       <div className="flex items-center  gap-2">
-                        <Info className="w-4 h-4 text-blue-500" />
+                        <InfoIcon className="w-4 h-4 text-blue-500" />
                         <div className="text-sm">
                           {!connected ? "Please connect your wallet first" :
                            !publicKey ? "No wallet address detected" :

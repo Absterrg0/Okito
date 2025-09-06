@@ -10,7 +10,6 @@ export const useWebhookMutation = (projectId: string | undefined) => {
 
       toast.success("Webhook created successfully")
 
-      // Update the project details cache with the new webhook
       utils.project.details.setData({ id: projectId }, (old) => {
         if (!old) return old
 

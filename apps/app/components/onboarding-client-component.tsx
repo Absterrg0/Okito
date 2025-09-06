@@ -5,11 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { 
-  Building2, 
-  ArrowRight,
-  RefreshCw
-} from "lucide-react"
+
+import { BuildingIcon,ArrowRightIcon,ArrowClockwiseIcon } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import {useCreateProjectMutation} from "@/hooks/projects/useProjectMutation"
 import { generateRandomName } from "@/lib/helpers"
@@ -101,7 +98,7 @@ export default function OnboardingPage() {
                       onClick={handleGenerateNewName}
                       className="crypto-glass border-0"
                     >
-                      <RefreshCw className="w-4 h-4" />
+                      <ArrowClockwiseIcon  className="w-4 h-4" />
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground text-center">
@@ -123,9 +120,9 @@ export default function OnboardingPage() {
                     </div>
                   ) : (
                     <div className="flex items-center text-foreground">
-                      <Building2 className="w-4 h-4 mr-2" aria-hidden="true" />
+                      <BuildingIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                       Create Project
-                      <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+                      <ArrowRightIcon className="w-4 h-4 ml-2" aria-hidden="true" />
                     </div>
                   )}
                 </Button>

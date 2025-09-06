@@ -130,9 +130,9 @@ export function AppSidebar({user}:{user:User}) {
   };
 
   return (
-    <ViewTransition>
       <Sidebar variant="inset">
-        <SidebarHeader>
+          <ViewTransition>
+          <SidebarHeader>
           <div className="px-2 pt-4 flex items-center justify-center">
             <Image
               src="/Okito-light.png"
@@ -248,7 +248,7 @@ export function AppSidebar({user}:{user:User}) {
         <SidebarFooter className="border-t border-sidebar-border p-4">
           <UserProfilePopover user={user} />
         </SidebarFooter>
+          </ViewTransition>
       </Sidebar>
-    </ViewTransition>
   )
 }

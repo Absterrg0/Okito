@@ -36,6 +36,7 @@ export const fetchProjectDetailsSchemaResponse = projectSchema.omit({
     user:true,
 }).extend({
     apiTokens: z.array(apiTokenSchema.omit({ projectId: true })).optional().default([]),
+    webhookEndpoints: z.array(webhookSchema.omit({ secret: true })).optional().default([]),
 });
 
 

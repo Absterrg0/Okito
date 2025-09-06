@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Copy, RefreshCw, Search, Eye, Globe } from 'lucide-react'
+import { CopyIcon, ArrowClockwiseIcon, MagnifyingGlassIcon, EyeIcon, GlobeIcon } from '@phosphor-icons/react'
 import Environment from '@/components/ui/environment'
 import { ModeToggle } from '@/components/ui/theme-toggle'
 import { toast } from 'sonner'
@@ -123,7 +123,7 @@ export default function EventsPage() {
       <div className="mb-4 flex flex-col md:flex-row md:items-center gap-3">
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <MagnifyingGlassIcon className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
               onChange={e => setQuery(e.target.value)}
@@ -132,7 +132,7 @@ export default function EventsPage() {
             />
           </div>
           <Button variant="outline" className="crypto-button" onClick={refresh}>
-            <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+            <ArrowClockwiseIcon className="w-4 h-4 mr-2" /> Refresh
           </Button>
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function EventsPage() {
                           onClick={() => setOpenId(e.id)}
                           title="View details"
                         >
-                          <Eye className="w-4 h-4" />
+                          <EyeIcon className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -202,7 +202,7 @@ export default function EventsPage() {
                           onClick={() => copyToClipboard(JSON.stringify(e.payload, null, 2), 'Payload')}
                           title="Copy payload"
                         >
-                          <Copy className="w-4 h-4" />
+                          <CopyIcon className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -284,7 +284,7 @@ export default function EventsPage() {
                       className="crypto-button-ghost h-8 w-8 p-0"
                       onClick={() => copyToClipboard(openEvent.endpointUrl, 'Endpoint URL')}
                     >
-                      <Copy className="w-4 h-4" />
+                      <CopyIcon className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -301,7 +301,7 @@ export default function EventsPage() {
                       className="crypto-button"
                       onClick={() => copyToClipboard(JSON.stringify(openEvent.payload), 'Payload JSON')}
                     >
-                      <Copy className="w-4 h-4 mr-2" /> Copy JSON
+                      <CopyIcon className="w-4 h-4 mr-2" /> Copy JSON
                     </Button>
                   </div>
                 </div>

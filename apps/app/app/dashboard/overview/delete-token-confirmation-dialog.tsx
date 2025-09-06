@@ -29,10 +29,10 @@ export function DeleteTokenConfirmationDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive brightness-125">
             <AlertTriangle className="w-5 h-5" />
-            Revoke API Token
+            Delete API Token
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            This action cannot be undone. This will permanently revoke your API token and remove it from your project.
+            This action cannot be undone. This will permanently delete your API token and remove it from your project.
           </DialogDescription>
         </DialogHeader>
         

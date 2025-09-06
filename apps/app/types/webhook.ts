@@ -6,7 +6,7 @@ export const webhookSchema = z.object({
     url: z.url({message:'Invalid URL format'}).transform(val=> val.replace(/\/$/,'')),
     description: z.string().max(100,{message:'Description must be less than 100 characters'}).nullable().optional(),
     secret: z.string(),
-    status: z.enum(['ACTIVE', 'INACTIVE']),
+    status: z.enum(['ACTIVE', 'INACTIVE','REVOKED']),
     lastTimeHit: z.date().nullable().optional(),
     createdAt: z.date(),
 })
@@ -44,6 +44,18 @@ export const getSecretForWebhookSchema = webhookSchema.pick({
 export const getSecretForWebhookSchemaResponse = webhookSchema.pick({
     secret:true
 })
+export const updateWebhookSchema = webhookSchema.pick({
+    id:true,
+    status:true
+})
+
+
+export const updateWebhookSchemaResponse = webhookSchema.pick({
+    id:true,
+    status:true,
+})
+
+
 
 
 

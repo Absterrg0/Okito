@@ -78,7 +78,22 @@ input(fetchProjectDetailsSchema)
                         requestCount:true
                     }
                 },
-                webhookEndpoints:true,
+                webhookEndpoints:{
+                    where:{
+                        status:{
+                            not:"REVOKED"
+                        }
+                    },
+                    select:{
+                        id:true,
+                        url:true,
+                        projectId:true,
+                        description:true,
+                        status:true,
+                        createdAt:true,
+                        lastTimeHit:true
+                    }
+                },
             }
         })
 
@@ -88,7 +103,6 @@ input(fetchProjectDetailsSchema)
                 message:"Project not found for the user"
             })
         }
-
 
         return details;
     }

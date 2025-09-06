@@ -16,10 +16,10 @@ import {
   PaginationLink, 
   PaginationNext, 
   PaginationPrevious,
+  PaginationEllipsis 
 } from "@/components/ui/pagination"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { DeleteTokenConfirmationDialog } from "./delete-token-confirmation-dialog"
-import { useTableStateStore } from "@/store/tableStateStore"
 
 
 
@@ -31,19 +31,16 @@ interface ApiTokenCreationProps{
 }
 
 
+type SortField = 'environment' | 'createdAt' | 'lastUsedAt' | 'status' | 'requestCount'
+type SortDirection = 'asc' | 'desc'
+
 export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCreatedToken}:ApiTokenCreationProps){
+    const [currentPage, setCurrentPage] = useState(1)
+    const [sortField, setSortField] = useState<SortField>('createdAt')
+    const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+    const itemsPerPage = 5
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [tokenIdToDelete, setTokenIdToDelete] = useState<string | null>(null)
-    const itemsPerPage = 5
-    
-    // Use Zustand store for persistent state
-    const {
-        apiTokenCurrentPage: currentPage,
-        apiTokenSortField: sortField,
-        apiTokenSortDirection: sortDirection,
-        setApiTokenCurrentPage: setCurrentPage,
-        handleApiTokenSort
-    } = useTableStateStore()
     
     const {mutate:createApiToken,isPending:isCreatingApiToken} = useApiTokenMutation(project?.id)
     const {mutate:deleteApiToken,isPending:isDeletingApiToken} = useApiTokenDeletion(project?.id)
@@ -79,48 +76,57 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
     })
   }
 
-    // Sort and paginate tokens (react-compiler will optimize this)
-    const sortedAndPaginatedTokens = (() => {
-        if (!project?.apiTokens) return { tokens: [], totalPages: 0 }
+     const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+    setCurrentPage(1) // Reset to first page when sorting
+  }
 
-        // Sort tokens
-        const sorted = [...project.apiTokens].sort((a, b) => {
-          let aValue: any = a[sortField as keyof typeof a]
-          let bValue: any = b[sortField as keyof typeof b]
+    const sortedAndPaginatedTokens = useMemo(() => {
+    if (!project?.apiTokens) return { tokens: [], totalPages: 0 }
 
-          // Handle date fields
-          if (sortField === 'createdAt' || sortField === 'lastUsedAt') {
-            aValue = aValue ? new Date(aValue).getTime() : 0
-            bValue = bValue ? new Date(bValue).getTime() : 0
-          }
+    // Sort tokens
+    const sorted = [...project.apiTokens].sort((a, b) => {
+      let aValue: any = a[sortField]
+      let bValue: any = b[sortField]
 
-          // Handle null/undefined values for lastUsedAt
-          if (sortField === 'lastUsedAt') {
-            if (!aValue && !bValue) return 0
-            if (!aValue) return 1
-            if (!bValue) return -1
-          }
+      // Handle date fields
+      if (sortField === 'createdAt' || sortField === 'lastUsedAt') {
+        aValue = aValue ? new Date(aValue).getTime() : 0
+        bValue = bValue ? new Date(bValue).getTime() : 0
+      }
 
-          if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
-          if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
-          return 0
-        })
+      // Handle null/undefined values for lastUsedAt
+      if (sortField === 'lastUsedAt') {
+        if (!aValue && !bValue) return 0
+        if (!aValue) return 1
+        if (!bValue) return -1
+      }
 
-        // Paginate
-        const totalPages = Math.ceil(sorted.length / itemsPerPage)
-        const startIndex = (currentPage - 1) * itemsPerPage
-        const endIndex = startIndex + itemsPerPage
-        const paginatedTokens = sorted.slice(startIndex, endIndex)
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
 
-        return { tokens: paginatedTokens, totalPages }
-    })()
+    // Paginate
+    const totalPages = Math.ceil(sorted.length / itemsPerPage)
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedTokens = sorted.slice(startIndex, endIndex)
 
-  const SortButton = ({ field, children }: { field: any; children: React.ReactNode }) => (
+    return { tokens: paginatedTokens, totalPages }
+  }, [project?.apiTokens, sortField, sortDirection, currentPage, itemsPerPage])
+
+  const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <Button
       variant="ghost"
       size="sm"
       className="h-auto p-0 font-semibold text-foreground hover:text-primary"
-      onClick={() => handleApiTokenSort(field)}
+      onClick={() => handleSort(field)}
     >
       <div className="flex items-center gap-1">
         {children}
@@ -155,8 +161,8 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
     </CardHeader>
     <CardContent>
       {project?.apiTokens.length === 0 ? (
-        <div className="flex flex-col items-center   justify-center py-12 text-center gap-4">
-          <div className="p-4 rounded-full">
+        <div className="flex flex-col items-center justify-center py-12 text-center gap-4">
+          <div className="p-4 rounded-full crypto-base">
             <Key className="w-8 h-8 text-muted-foreground" />
           </div>
           <div className="space-y-2">
@@ -167,7 +173,7 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
           </div>
         </div>
       ) : (
-        <div className="crypto-glass-static rounded-lg">
+        <div className="crypto-base rounded-lg">
           <Table className=''>
             <TableHeader>
               <TableRow className=" crypto-glass-static border-b border-border/10">
@@ -206,13 +212,7 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
                   <TableCell className="text-center">{formatDate(t.createdAt)}</TableCell>
                   <TableCell className="text-center">{t.lastUsedAt ? formatDate(t.lastUsedAt) : '—'}</TableCell>
                   <TableCell className="text-center">
-                  <Badge 
-                      variant="outline" 
-                      className={t.status === 'ACTIVE' 
-                        ? 'text-green-600 dark:text-green-400 border-green-200 dark:border-green-800' 
-                        : 'text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800'
-                      }
-                    >
+                    <Badge>
                       {t.status}
                     </Badge>
                   </TableCell>
@@ -237,7 +237,7 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
           
           {/* Pagination Controls */}
           {sortedAndPaginatedTokens.totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center justify-between crypto-base px-4 py-3">
               
               <Pagination>
                 <PaginationContent >

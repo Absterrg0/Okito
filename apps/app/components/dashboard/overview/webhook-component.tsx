@@ -1,14 +1,14 @@
 'use client'
 import { Card,CardTitle,CardHeader,CardContent } from "@/components/ui/card"
-import { Webhook, Plus, ChevronUp, ChevronDown } from "lucide-react"
+import { Webhook, Plus, ChevronUp, ChevronDown, AlertTriangle } from "lucide-react"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table"
 import { useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogOverlay } from "@/components/ui/dialog"
 import { z } from "zod"
 import { useWebhookMutation } from "@/hooks/webhook/useWebhookMutation"
 import { ProjectDetails } from "@/types/project"
@@ -16,10 +16,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Loader from "@/components/ui/loader"
 import { Badge } from "@/components/ui/badge"
-import { Globe } from "lucide-react"
 import { formatDate } from "@/lib/helpers"
-import { copyToClipboard } from "@/lib/helpers"
-import { Pause, Play, Copy, Shield, Trash2, ExternalLink } from "lucide-react"
+import { Pause, Play, Trash2, ExternalLink } from "lucide-react"
 import { 
   Pagination, 
   PaginationContent, 
@@ -29,10 +27,14 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination"
 import { useTableStateStore } from "@/store/tableStateStore"
+import { useWebhookUpdate } from "@/hooks/webhook/useWebhookUpdate"
+import WebhookSecretPopover from "./webhook-secret-popover"
 
 export default function WebhookCreation({project}:{project:ProjectDetails}){
 
     const [isCreateOpen, setIsCreateOpen] = useState(false)
+    const [revokeDialogOpen, setRevokeDialogOpen] = useState(false)
+    const [webhookToRevoke, setWebhookToRevoke] = useState<{id: string, url: string} | null>(null)
     const itemsPerPage = 5
     
     // Use Zustand store for persistent state
@@ -45,6 +47,43 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
     } = useTableStateStore()
     
     const {mutate:createWebhook,isPending:isCreatingWebhook} = useWebhookMutation(project?.id)
+    const {mutate:updateWebhook,isPending:isUpdatingWebhook} = useWebhookUpdate(project.id)
+
+
+
+    const handleUpdateWebhook = async (id:string, status:'ACTIVE' | 'INACTIVE'| 'REVOKED', url?: string)=>{
+      if (!project?.id) {
+        toast.info("Please select a project to update webhook")
+        return
+      }
+
+      if (status === 'REVOKED') {
+        setWebhookToRevoke({id, url: url || ''})
+        setRevokeDialogOpen(true)
+        return
+      }
+
+      updateWebhook({id, status}, {
+        onSuccess: () => {
+          toast.success(status === 'ACTIVE' ? "Webhook activated successfully" : "Webhook paused successfully")
+        },
+        onError: (error) => {
+          toast.error(error.message)
+        }
+      })
+    }
+
+    const confirmRevokeWebhook = () => {
+      if (!webhookToRevoke) return
+
+      updateWebhook({id: webhookToRevoke.id, status: 'REVOKED'}, {
+        onSuccess: () => {
+          toast.success("Webhook revoked successfully")
+          setRevokeDialogOpen(false)
+          setWebhookToRevoke(null)
+        }
+      })
+    }
 
     const handleCreateWebhook = async(url: string, description: string) => {
         if (!project?.id) {
@@ -61,9 +100,6 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
           onSuccess: () => {
             setIsCreateOpen(false)
             webhookForm.reset()
-          },
-          onError: (error) => {
-            toast.error(error.message || "Failed to create webhook. Please try again.")
           }
         })
     }
@@ -174,6 +210,8 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
             Configure webhook endpoints to receive real-time event notifications from our platform
           </p>
         </div>
+
+        <div className="flex items-start gap-4">
         <Popover open={isCreateOpen} onOpenChange={(open) => {
           if (!open) {
             setIsCreateOpen(false)
@@ -195,7 +233,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
             className="w-[480px] p-0 crypto-base border-0" 
             align="end" 
             side="bottom"
-          >
+            >
             <form
               onSubmit={(e) => {
                 e.preventDefault()
@@ -225,7 +263,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
                       )}
                     </>
                   )}
-                />
+                  />
               </div>
               
               <div className="space-y-2">
@@ -259,7 +297,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
                       </div>
                     </>
                   )}
-                />
+                  />
               </div>
           
               <div className="flex justify-end gap-2 pt-2">
@@ -268,7 +306,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
                   type="submit"
                   className="crypto-button"
                   size="sm"
-                >
+                  >
                   {isCreatingWebhook ? (
                     <Loader size={0.1} className="w-4 h-4 mr-2" />
                   ) : (
@@ -281,9 +319,9 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
           </PopoverContent>
         </Popover>
       </div>
+      </div>
     </CardHeader>
     <CardContent className="space-y-6">
-      <Separator />
 
       {/* Webhook List */}
       {project?.webhookEndpoints.length === 0 ? (
@@ -302,20 +340,10 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
         </div>
       ) : (
         <div className="crypto-base rounded-lg">
-          <div className="flex items-center justify-between p-6 pb-4">
-            <div>
-              <h3 className="font-semibold text-lg text-foreground">Configured Endpoints</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {project?.webhookEndpoints.length} endpoint{project?.webhookEndpoints.length !== 1 ? 's' : ''} configured
-              </p>
-            </div>
-            <Badge variant="outline" className="text-green-600 dark:text-green-400 border-green-200 dark:border-green-800">
-              {project?.webhookEndpoints.filter(w => w.status === 'ACTIVE').length} Active
-            </Badge>
-          </div>
+     
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-border/50">
+              <TableRow className="crypto-input">
                 <TableHead className="font-semibold text-foreground text-center">
                   <SortButton field="url">URL</SortButton>
                 </TableHead>
@@ -331,9 +359,9 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
                 <TableHead className="w-[1%] whitespace-nowrap text-center font-semibold text-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {sortedAndPaginatedWebhooks.webhooks.map((w, index) => (
-                <TableRow key={w.id} className={index < sortedAndPaginatedWebhooks.webhooks.length - 1 ? 'border-b border-border/20' : ''}>
+            <TableBody className="crypto-glass-static">
+            {sortedAndPaginatedWebhooks.webhooks.map((w, index) => (
+                <TableRow key={w.id} >
                   <TableCell className="max-w-[360px] text-center">
                     <div className="flex items-center justify-center min-w-0">
                       <a 
@@ -387,42 +415,48 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
                     )}
                   </TableCell>
                   <TableCell className="text-center">{formatDate(w.createdAt)}</TableCell>
-           
                   <TableCell className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => {}} 
-                        className="crypto-button-ghost h-8 w-8 p-0"
-                      >
-                        {w.status === 'ACTIVE' ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => copyToClipboard(w.url, 'Webhook URL')} 
-                        className="crypto-button-ghost h-8 w-8 p-0"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => copyToClipboard(w.secret, 'Webhook secret')} 
-                        className="crypto-button-ghost h-8 w-8 p-0"
-                      >
-                        <Shield className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() =>{}} 
-                        className="crypto-button-ghost h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <WebhookSecretPopover webhookId={w.id} />
+                        
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => handleUpdateWebhook(w.id, w.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE', w.url)} 
+                                disabled={isUpdatingWebhook}
+                                className="crypto-button h-8 w-8 p-0"
+                              >
+                                {w.status === 'ACTIVE' ? <Pause  className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="crypto-tooltip border-0">
+                              <p>{w.status === 'ACTIVE' ? 'Pause ' : 'Resume '}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => handleUpdateWebhook(w.id, 'REVOKED', w.url)} 
+                                disabled={isUpdatingWebhook}
+                                className="crypto-button h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="crypto-tooltip border-0">
+                              <p>Revoke </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -430,53 +464,45 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
           </Table>
           
           {/* Pagination Controls */}
-          {sortedAndPaginatedWebhooks.totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        if (currentPage > 1) setCurrentPage(currentPage - 1)
-                      }}
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  
-                  {Array.from({ length: sortedAndPaginatedWebhooks.totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          setCurrentPage(page)
-                        }}
-                        isActive={currentPage === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        if (currentPage < sortedAndPaginatedWebhooks.totalPages) setCurrentPage(currentPage + 1)
-                      }}
-                      className={currentPage === sortedAndPaginatedWebhooks.totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+         
         </div>
       )}
     </CardContent>
+    
+    {/* Revoke Confirmation Dialog */}
+    <Dialog open={revokeDialogOpen} onOpenChange={setRevokeDialogOpen}>
+      <DialogOverlay className="backdrop-blur-sm"></DialogOverlay>
+      <DialogContent className="sm:max-w-[425px] crypto-base border-0">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-destructive brightness-125">
+            <AlertTriangle className="w-5 h-5" />
+            Revoke Webhook
+          </DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            This action cannot be undone. This will permanently revoke your webhook endpoint and stop all event deliveries.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <DialogFooter className="gap-2">
+          <Button
+            variant="destructive"
+            onClick={confirmRevokeWebhook}
+            disabled={isUpdatingWebhook}
+            className="bg-destructive crypto-button hover:bg-destructive/90"
+          >
+            {isUpdatingWebhook ? (
+              <>
+                <Loader size={0.1} />
+              </>
+            ) : (
+              <>
+                Revoke Webhook
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
   </Card>
 }

@@ -249,6 +249,6 @@ enum DeliveryStatus {
 enum WebhookEndpointStatus {
   ACTIVE
   INACTIVE
-  
+  REVOKED
   @@map("webhook_endpoint_status")
 }

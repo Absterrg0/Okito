@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { unstable_ViewTransition as ViewTransition } from "react"
+import { User } from "better-auth";
 
 export default async function HomeLayout({
   children,
@@ -17,15 +18,13 @@ export default async function HomeLayout({
     headers: await headers()
   })
 
-const user = session?.user
+const user = session?.user as User
 
 
   return (
         <SessionProvider session={session}>
           <SidebarProvider>
-            <ViewTransition>
-            {user && <AppSidebar user={user} />}
-            </ViewTransition>
+            <AppSidebar user={user} />
             <SidebarInset>
               {children}
             </SidebarInset>

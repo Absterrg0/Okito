@@ -1,5 +1,5 @@
 import { protectedProcedure, router } from "../trpc";
-import { createWebhookSchema, createWebhookSchemaResponse, getSecretForWebhookSchema, getSecretForWebhookSchemaResponse, listWebhooksByProjectSchema, listWebhooksByProjectSchemaResponse } from "@/types/webhook";
+import { createWebhookSchema, createWebhookSchemaResponse, getSecretForWebhookSchema, getSecretForWebhookSchemaResponse, listWebhooksByProjectSchema, listWebhooksByProjectSchemaResponse, updateWebhookSchema, updateWebhookSchemaResponse } from "@/types/webhook";
 import prisma from "@/db";
 import { TRPCError } from "@trpc/server";
 import { encryptData, generateWebhookSecret, decryptData } from "@/lib/helpers";
@@ -23,6 +23,24 @@ output(createWebhookSchemaResponse)
         throw new TRPCError({
             code: "NOT_FOUND",
             message:" Project does not exist"
+        })
+    }
+
+    // Check if webhook with same URL already exists for this project
+    const existingWebhook = await prisma.webhookEndpoint.findFirst({
+        where:{
+            projectId: projectId,
+            url: url,
+            status: {
+                not: "REVOKED" // Only check non-revoked webhooks
+            }
+        }
+    })
+
+    if(existingWebhook){
+        throw new TRPCError({
+            code: "CONFLICT",
+            message: "A webhook with this URL already exists for this project"
         })
     }
 
@@ -136,12 +154,41 @@ const getSecretForWebhook = protectedProcedure
 )
 
 
+const updateWebhookStatus = protectedProcedure
+.input(updateWebhookSchema)
+.output(updateWebhookSchemaResponse)
+.mutation(
+    async ({input,ctx})=>{
+
+        const {id,status} = input;
+
+        await prisma.webhookEndpoint.update({
+            where:{
+                id:id,
+                project:{
+                    userId:ctx.session.user.id
+                }
+            },
+            data:{
+                status: status
+            }
+        })
+        return {
+            id:id,
+            status:status
+        }
+
+    }
+) 
+
+
 
 
 export const webhookRouter = router({
     create: createWebhook,
     list: listWebhooksForProjectQuery,
-    getSecret:getSecretForWebhook
+    getSecret:getSecretForWebhook,
+    updateStatus:updateWebhookStatus
 })
 
 
