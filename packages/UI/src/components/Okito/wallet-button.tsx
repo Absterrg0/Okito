@@ -2,18 +2,17 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useState } from 'react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { Copy, LogOut, Wallet, ChevronDown } from 'lucide-react';
-import { toast } from 'sonner';
+import {toast} from 'sonner'
 import OkitoModal from './wallet-modal';
-    
 
 export default function OkitoButton() {
     const { publicKey, disconnect, connected } = useWallet();
@@ -54,7 +53,7 @@ export default function OkitoButton() {
                 
                 <OkitoModal 
                     isOpen={isModalOpen} 
-                    onClose={() => setIsModalOpen(false)} 
+                    onClose={() => setIsModalOpen(false)}
                 />
             </>
         );

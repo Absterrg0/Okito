@@ -18,7 +18,7 @@ export interface SignerWallet {
      * The public key of the connected wallet. Your SDK needs this to identify
      * the user and set the fee payer.
      */
-    publicKey: PublicKey 
+    publicKey: PublicKey | null
 
     /**
      * Signs a single transaction. This is a core capability required for

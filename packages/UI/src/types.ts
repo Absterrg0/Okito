@@ -8,7 +8,7 @@ export type OkitoToken = "USDC" | "USDT";
 /**
  * Allowed Solana network environments.
  */
-export type OkitoNetwork = "mainnet-beta" | "devnet";
+export type OkitoNetwork = "mainnet-beta" | "devnet" | "custom";
 
 /**
  * User-defined config structure for `okito.config.ts`
@@ -20,13 +20,13 @@ export type OkitoConfig =
   | {
       network: "mainnet-beta" | "devnet";
       rpcUrl?: never;
-      publicKey: string;
+      destinationKey: string;
       tokens: [OkitoToken] | [OkitoToken, OkitoToken];
     }
   | {
       network: "custom";
       rpcUrl: string;
-      publicKey: string;
+      destinationKey: string;
       tokens: [OkitoToken] | [OkitoToken, OkitoToken];
     };
 
@@ -34,6 +34,6 @@ export type OkitoConfig =
 export type OkitoResolvedConfig = {
   network: OkitoNetwork;
   rpcUrl: string;
-  publicKey: PublicKey;
+  destinationKey: PublicKey;
   tokens: [OkitoToken] | [OkitoToken, OkitoToken];
 };

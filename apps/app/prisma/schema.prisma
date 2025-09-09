@@ -117,27 +117,6 @@ model ApiToken {
   @@map("api_token")
 }
 
-model Payment {
-  id        String @id @default(uuid())
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tokenId   String?
-  token     ApiToken? @relation(fields: [tokenId], references: [id], onDelete: SetNull)
-  amount           BigInt
-  currency         AllowedCurrency
-  recipientAddress String?
-  txHash       String @unique
-  blockNumber  BigInt?
-  status        PaymentStatus @default(PENDING)
-  failureReason String?
-  monitoringStartedAt DateTime @default(now())
-  confirmedAt         DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  events Event[] @relation("PaymentEvent")
-  
-  @@map("payment")
-}
 
 
 
@@ -159,6 +138,30 @@ model WebhookEndpoint {
   @@index([projectId])
 }
 
+model Payment {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tokenId   String?
+  token     ApiToken?         @relation(fields: [tokenId], references: [id], onDelete: SetNull)
+  amount           BigInt
+  currency         AllowedCurrency
+  recipientAddress String?
+  txHash       String?        @unique
+  blockNumber  BigInt?
+  status        PaymentStatus @default(PENDING)
+  failureReason String?
+  monitoringStartedAt DateTime @default(now())
+  confirmedAt         DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  idempotencyKey String? @unique
+  events Event[] @relation("PaymentEvent")
+  
+  @@map("payment")
+}
+
+
 model Event {
   id          String   @id @default(cuid())
   projectId   String
@@ -168,10 +171,7 @@ model Event {
   payment     Payment? @relation(name: "PaymentEvent", fields: [paymentId], references: [id], onDelete: SetNull)
   tokenId     String?
   token       ApiToken? @relation(name: "TokenEvent", fields: [tokenId], references: [id], onDelete: SetNull)
-  subjectId   String?
-  subjectType String?
   metadata   Json?
-  webhookUrl String  
   occurredAt  DateTime @default(now())
   createdAt   DateTime @default(now())
   deliveries  EventDelivery[]
@@ -212,6 +212,7 @@ enum EventType {
   PAYMENT_COMPLETED
   PAYMENT_FAILED
   PAYMENT_PENDING
+  
 }
 
 

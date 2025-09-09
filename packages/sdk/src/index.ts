@@ -138,7 +138,3 @@ export type{
 
 
 
-
-// EXPERIMENTAL
-
-export { pay } from './okito/payment/pay';

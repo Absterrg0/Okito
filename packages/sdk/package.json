@@ -1,6 +1,6 @@
 {
   "name": "@okito/sdk",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Comprehensive Solana SDK for token operations",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -35,11 +35,20 @@
     "@solana/spl-token": "^0.4.13",
     "@solana/spl-token-metadata": "^0.1.6",
     "@solana/wallet-adapter-base": "^0.9.27",
-    "@solana/web3.js": "^1.98.2"
+    "@solana/wallet-adapter-react": "^0.15.39",
+    "@solana/wallet-adapter-react-ui": "^0.9.39",
+    "@solana/web3.js": "^1.98.2",
+    "axios": "^1.11.0",
+    "lucide-react": "^0.543.0",
+    "sonner": "^2.0.7",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
+    "@tanstack/react-query": "^5.85.3",
     "@types/jest": "^29.5.0",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.50.0",

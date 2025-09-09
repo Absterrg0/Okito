@@ -1,13 +1,10 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { toast } from "sonner";
+import {toast} from 'sonner'
 import { OkitoAssets } from "../assets"
-import { useTheme } from "next-themes";
-
-export default function OkitoModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export default function OkitoModal({ isOpen, onClose, onWalletConnected }: { isOpen: boolean; onClose: () => void; onWalletConnected?: () => void }) {
     const { wallets, select } = useWallet();
-    const theme : "light" | "dark" = useTheme().theme as "light" | "dark"; 
     const handleWalletSelect = async (walletName: string) => {
         try {
             const selectedWallet = wallets.find(wallet => wallet.adapter.name === walletName);
@@ -15,6 +12,7 @@ export default function OkitoModal({ isOpen, onClose }: { isOpen: boolean; onClo
                 await select(selectedWallet.adapter.name);
                 toast.success(`${selectedWallet.adapter.name} connected`);
                 onClose();
+                onWalletConnected?.();
             }
         } catch (error: any) {
             toast.error(`Error connecting to ${walletName}: ${error.message}`);
@@ -26,19 +24,19 @@ export default function OkitoModal({ isOpen, onClose }: { isOpen: boolean; onClo
     const popularWallets = [
         {
             name: 'Phantom',
-            icon: <img src={OkitoAssets[theme].phantom} alt="Phantom" width={32} height={32} />,
+            icon: <img src={OkitoAssets.light.phantom} alt="Phantom" width={32} height={32} />,
             description: 'Most popular Solana wallet',
             installed: wallets.find(w => w.adapter.name === 'Phantom')?.readyState === 'Installed'
         },
         {
             name: 'MetaMask',
-            icon: <img src={OkitoAssets[theme].metamask} alt="MetaMask" width={24} height={24} />,
+            icon: <img src={OkitoAssets.light.metamask} alt="MetaMask" width={24} height={24} />,
             description: 'Popular multi-chain wallet',
             installed: wallets.find(w => w.adapter.name === 'MetaMask')?.readyState === 'Installed'
         },
         {
             name: 'Backpack',
-            icon: <img src={OkitoAssets[theme].backpack} alt="Backpack" width={24} height={24} />,
+            icon: <img src={OkitoAssets.light.backpack} alt="Backpack" width={24} height={24} />,
             description: 'Modern Solana wallet',
             installed: wallets.find(w => w.adapter.name === 'Backpack')?.readyState === 'Installed'
         }
@@ -60,7 +58,7 @@ export default function OkitoModal({ isOpen, onClose }: { isOpen: boolean; onClo
                         <div>
                             <h2 className="text-xl font-semibold text-foreground">Connect Wallet</h2>
                             <p className="text-sm text-muted-foreground mt-1">
-                                Choose your preferred wallet to connect to Soloyal
+                                Choose your preferred wallet to pay with crypto
                             </p>
                         </div>
                         <Button
@@ -110,7 +108,7 @@ export default function OkitoModal({ isOpen, onClose }: { isOpen: boolean; onClo
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-6 pt-4 border-t border-gray-200/60 dark:border-border/50">
+                    <div className="mt-6 pt-4 ">
                         <div className="text-center space-y-2">
                             <p className="text-xs text-gray-600 dark:text-muted-foreground">
                                 New to Solana wallets?

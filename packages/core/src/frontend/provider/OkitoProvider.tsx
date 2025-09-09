@@ -1,27 +1,19 @@
 "use client"
 
-import React, { createContext, useMemo } from "react"
+import  { createContext, useMemo} from "react"
+import { useContext } from "react"
 import {
   ConnectionProvider,
   WalletProvider
 } from "@solana/wallet-adapter-react"
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { z } from 'zod'
-import { clusterApiUrl } from '@solana/web3.js'
+export const OkitoConfigSchema = z.object({
+    network:z.enum(["mainnet-beta","devnet"]),
+    rpcUrl:z.url("Invalid RPC URL format"),
+})
 
-export type OkitoToken = "USDC" | "USDT";
-export type OkitoNetwork = "mainnet-beta" | "devnet" | "custom";
-
-export const OkitoConfigSchema = z.discriminatedUnion("network", [
-  z.object({ network: z.literal("mainnet-beta") }),
-  z.object({ network: z.literal("devnet") }),
-  z.object({ network: z.literal("custom"), rpcUrl: z.string().url("Invalid RPC URL format") }),
-]).transform((config: { network: "mainnet-beta" } | { network: "devnet" } | { network: "custom"; rpcUrl: string }) => ({
-  ...config,
-  rpcUrl: config.network === 'custom' ? config.rpcUrl : clusterApiUrl(config.network)
-}));
-
-export type OkitoConfig = z.infer<typeof OkitoConfigSchema>;
+export type OkitoConfig = z.infer<typeof OkitoConfigSchema>
 
 const OkitoConfigContext = createContext<OkitoConfig | null>(null)
 
@@ -33,7 +25,7 @@ export default function OkitoProvider({
   children,
   config,
 }: {
-  children: React.ReactNode
+  children: React.ReactElement
   config: OkitoConfig
 }) {
   const validatedConfig = useMemo(() => {
@@ -63,7 +55,7 @@ export default function OkitoProvider({
  * Hook to access Okito configuration
  */
 export function useOkitoConfig(): OkitoConfig {
-    const ctx = React.useContext(OkitoConfigContext)
+    const ctx = useContext(OkitoConfigContext)
     if (!ctx) throw new Error("useOkitoConfig must be used within an OkitoProvider")
     return ctx
 }
