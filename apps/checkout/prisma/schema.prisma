@@ -1,0 +1,255 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  walletAddress String?
+  verifiedAt    DateTime?
+  sessions      Session[]
+  accounts      Account[]
+  projects      Project[]
+  @@unique([email])
+  @@map("user")
+}
+
+
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+
+
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiTokens ApiToken[]
+  payments  Payment[]
+  events           Event[]
+  webhookEndpoints WebhookEndpoint[]
+  
+  @@map("project")
+  @@unique([name])
+}
+
+
+model ApiToken {
+  id        String @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade) 
+  tokenHash   String @unique // SHA-256 hash of actual token
+  environment TokenEnvironment @default(TEST)
+  allowedDomains String[] // Array of allowed domains
+  lastUsedAt   DateTime?
+  requestCount Int @default(0)
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+  status    TokenStatus @default(ACTIVE)
+  payments Payment[]
+  events   Event[] @relation("TokenEvent")
+  
+  @@map("api_token")
+}
+
+
+
+
+model WebhookEndpoint {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url         String
+  description String?
+  secret      String
+  status      WebhookEndpointStatus @default(ACTIVE)
+  eventTypes  EventType[] // If empty => receive all events for the project
+  lastTimeHit  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deliveries  EventDelivery[]
+  
+  @@map("webhook_endpoint")
+  @@index([projectId])
+}
+
+model Payment {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tokenId   String?
+  token     ApiToken?         @relation(fields: [tokenId], references: [id], onDelete: SetNull)
+  amount           BigInt
+  currency         AllowedCurrency
+  recipientAddress String?
+  txHash       String?        @unique
+  blockNumber  BigInt?
+  status        PaymentStatus @default(PENDING)
+  failureReason String?
+  monitoringStartedAt DateTime @default(now())
+  confirmedAt         DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  idempotencyKey String? @unique
+  events Event[] @relation("PaymentEvent")
+  
+  @@map("payment")
+}
+
+
+model Event {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type        EventType   // e.g. payment.pending, payment.confirmed, token.revoked
+  paymentId   String?
+  payment     Payment? @relation(name: "PaymentEvent", fields: [paymentId], references: [id], onDelete: SetNull)
+  tokenId     String?
+  token       ApiToken? @relation(name: "TokenEvent", fields: [tokenId], references: [id], onDelete: SetNull)
+  metadata   Json?
+  occurredAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  deliveries  EventDelivery[]
+  
+  @@map("event")
+  @@index([projectId, type, createdAt])
+  @@index([paymentId])
+}
+
+
+
+model EventDelivery {
+  id               String          @id @default(cuid())
+  eventId          String
+  event            Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  endpointId       String
+  endpoint         WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  attemptNumber    Int @default(1)
+  deliveryStatus   DeliveryStatus @default(PENDING)
+  httpStatusCode   Int?
+  errorMessage     String?
+  responseBody     String?
+  createdAt        DateTime @default(now())
+  deliveredAt      DateTime?
+  
+  @@map("event_delivery")
+  @@index([eventId])
+  @@index([endpointId])
+}
+
+
+enum AllowedCurrency {
+  USDC
+  USDT
+}
+
+enum EventType {
+  PAYMENT_COMPLETED
+  PAYMENT_FAILED
+  PAYMENT_PENDING
+  
+}
+
+
+enum TokenEnvironment {
+  TEST
+  LIVE
+  
+  @@map("token_environment")
+}
+
+enum TokenStatus {
+  ACTIVE
+  REVOKED
+  
+  @@map("token_status")
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  
+  @@map("payment_status")
+}
+
+enum DeliveryStatus {
+  PENDING
+  DELIVERED
+  FAILED
+  RETRYING
+  
+  @@map("delivery_status")
+}
+
+enum WebhookEndpointStatus {
+  ACTIVE
+  INACTIVE
+  REVOKED
+  @@map("webhook_endpoint_status")
+}
