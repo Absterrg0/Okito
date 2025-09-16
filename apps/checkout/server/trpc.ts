@@ -1,11 +1,12 @@
-import { initTRPC } from '@trpc/server';
-import type { Context } from './context';
+import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson'
+import prisma from '@/db'
+import { getEventSchema } from '@/types/event'
 /**
  * Initialization of tRPC backend
  * Should be done only once per backend!
  */
-const t = initTRPC.context<Context>().create({
+const t = initTRPC.create({
     transformer:superjson
 });
 
@@ -18,5 +19,34 @@ export const publicProcedure = t.procedure;
 
 
 
+export const sessionGuardProcedure = t.procedure
+  .input(getEventSchema)
+  .use(async ({ input, next }) => {
+    const { sessionId } = input;
 
-export const protectedProcedure = t.procedure
+    const event = await prisma.event.findFirst({
+      where: { sessionId },
+      select: { occurredAt: true, sessionId: true },
+    });
+
+    if (!event) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Event not found or invalid session Id provided' });
+    }
+
+    if (event.occurredAt) {
+      const now = new Date();
+      const sessionTime = new Date(event.occurredAt);
+      const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+      if (sessionTime < tenMinutesAgo) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message:
+            'The session ID provided has expired. Please refresh the page and try again.',
+        });
+      }
+    }
+
+    return next();
+  });
+
+export const protectedProcedure = sessionGuardProcedure;
