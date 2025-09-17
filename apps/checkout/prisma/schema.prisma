@@ -85,6 +85,8 @@ model Verification {
 model Project {
   id        String   @id @default(uuid())
   name      String
+  logoUrl   String?
+  description String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    String

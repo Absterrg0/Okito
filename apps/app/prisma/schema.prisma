@@ -85,6 +85,8 @@ model Verification {
 model Project {
   id        String   @id @default(uuid())
   name      String
+  logoUrl   String?
+  description String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    String
@@ -146,7 +148,9 @@ model Payment {
   token     ApiToken?         @relation(fields: [tokenId], references: [id], onDelete: SetNull)
   amount           BigInt
   currency         AllowedCurrency
-  recipientAddress String?
+  recipientAddress String
+  products     Product[]
+
   txHash       String?        @unique
   blockNumber  BigInt?
   status        PaymentStatus @default(PENDING)
@@ -163,10 +167,11 @@ model Payment {
 
 
 model Event {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   type        EventType   // e.g. payment.pending, payment.confirmed, token.revoked
+  sessionId   String   @default(uuid()) @unique
   paymentId   String?
   payment     Payment? @relation(name: "PaymentEvent", fields: [paymentId], references: [id], onDelete: SetNull)
   tokenId     String?
@@ -175,16 +180,31 @@ model Event {
   occurredAt  DateTime @default(now())
   createdAt   DateTime @default(now())
   deliveries  EventDelivery[]
-  
   @@map("event")
   @@index([projectId, type, createdAt])
   @@index([paymentId])
 }
 
 
+model Product{
+  id      String  @id@default(uuid())
+  name    String
+  price   BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  paymentId String
+  payment Payment  @relation(fields: [paymentId],references: [id])
+  @@map("product")
+  @@index([name])
+}
+
+
+
+
+
 
 model EventDelivery {
-  id               String          @id @default(cuid())
+  id               String          @id @default(uuid())
   eventId          String
   event            Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
   endpointId       String

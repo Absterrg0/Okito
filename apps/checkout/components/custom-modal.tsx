@@ -7,7 +7,6 @@ import { useTheme } from "next-themes";
 
 export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { wallets, select } = useWallet();
-    const {theme} = useTheme();
 
     const handleWalletSelect = async (walletName: string) => {
         try {
@@ -22,7 +21,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
         }
     };
 
-    if (!isOpen) return null;
+    if(!isOpen) return null;
 
     const popularWallets = [
         {
@@ -43,7 +42,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
     ];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="h-screen w-screen fixed inset-0 z-50 flex items-center justify-center">
             {/* Backdrop */}
             <div 
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -52,7 +51,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
             
             {/* Modal */}
             <div className="relative w-full max-w-md mx-4">
-                <div className="crypto-glass bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
+                <div className="crypto-base bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -107,7 +106,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-6 pt-4 border-t border-gray-200/60 dark:border-border/50">
+                    <div className="mt-6 pt-4    ">
                         <div className="text-center space-y-2">
                             <p className="text-xs text-gray-600 dark:text-muted-foreground">
                                 New to Solana wallets?

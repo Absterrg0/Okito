@@ -19,8 +19,6 @@ export default function CustomWallet() {
     const { publicKey, disconnect, connected } = useWallet();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const pathname = usePathname();
-    const isVerifyPage = pathname === '/verify';
-
     const handleConnect = () => {
         setIsModalOpen(true);
     };
@@ -91,8 +89,6 @@ export default function CustomWallet() {
                     <Copy className="w-4 h-4" />
                     Copy Address
                 </DropdownMenuItem>
-                {isVerifyPage && (
-                    <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                             onClick={handleDisconnect} 
@@ -102,8 +98,6 @@ export default function CustomWallet() {
                             <LogOut className="w-4 h-4" />
                             Disconnect
                         </DropdownMenuItem>
-                    </>
-                )}
             </DropdownMenuContent>
         </DropdownMenu>
     );

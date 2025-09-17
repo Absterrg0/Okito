@@ -9,9 +9,7 @@ export interface PaymentRequest {
 
 export interface PaymentConfig {
   environment?: 'development' | 'production';
-  network?: 'mainnet-beta' | 'devnet' | 'testnet';
-  theme?: 'light' | 'dark' | 'auto';
-  apiBaseUrl?: string; // Custom API base for user backend
+  apiBaseUrl?: string; 
 }
 
 export interface PaymentResult {
