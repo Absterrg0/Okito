@@ -1,17 +1,17 @@
 'use client'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  FileText,
-  Mail,
-  ShoppingCart,
-  CreditCard,
-  Bell,
-  Package,
-  Truck,
-} from "lucide-react"
+  Home01Icon,
+  DocumentCodeIcon,
+  InboxIcon,
+  SettingsIcon,
+  ShoppingBagIcon,
+  ArchiveIcon,
+  TruckIcon,
+  CreditCardIcon,
+  MailIcon,
+  Notification01Icon,
+} from '@hugeicons/core-free-icons'
 
 import {
   Sidebar,
@@ -27,8 +27,8 @@ import {
 } from "@/components/ui/sidebar"
 import Image from "next/image"  
 import Link from "next/link"
-import { UserProfilePopover } from "./user-profile-popover"
-import ProjectSelector from "./project-selector"
+import { UserProfilePopover } from "@/components/dashboard/user-profile-popover"
+import ProjectSelector from './project-selector'
 import { User } from "better-auth";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -38,58 +38,52 @@ const menuItems = [
   {
     title: "Home",
     url: "/dashboard/home",
-    icon: Home,
+    icon: Home01Icon,
     id: "home",
   },
   {
     title: "Overview",
     url: "/dashboard/overview",
-    icon: FileText,
+    icon: DocumentCodeIcon,
     id: "overview",
   },
   {
     title: "Events",
     url: "/dashboard/events",
-    icon: Inbox,
+    icon: InboxIcon,
     id: "events",
   },
   {
-    title: "Calendar",
-    url: "/dashboard/calendar",
-    icon: Calendar,
-    id: "calendar",
-  },
-  {
-    title: "Search",
-    url: "/dashboard/search",
-    icon: Search,
-    id: "search",
-  },
+    title:"Settings",
+    url: "/dashboard/settings",
+    icon: SettingsIcon,
+    id: "settings",
+  }
 ]
 
 const businessItems = [
   {
     title: "Orders",
     url: "/dashboard/orders",
-    icon: ShoppingCart,
+    icon: ShoppingBagIcon,
     id: "orders",
   },
   {
     title: "Products",
     url: "/dashboard/products",
-    icon: Package,
+    icon: ArchiveIcon,
     id: "products",
   },
   {
     title: "Shipping",
     url: "/dashboard/shipping",
-    icon: Truck,
+    icon: TruckIcon,
     id: "shipping",
   },
   {
     title: "Payments",
     url: "/dashboard/payments",
-    icon: CreditCard,
+    icon: CreditCardIcon,
     id: "payments",
   },
 ]
@@ -98,19 +92,19 @@ const communicationItems = [
   {
     title: "Messages",
     url: "/dashboard/messages",
-    icon: Mail,
+    icon: MailIcon,
     id: "messages",
   },
   {
     title: "Notifications",
     url: "/dashboard/notifications",
-    icon: Bell,
+    icon: Notification01Icon,
     id: "notifications",
   },
   {
     title: "Reports",
     url: "/dashboard/reports",
-    icon: FileText,
+    icon: DocumentCodeIcon,
     id: "reports",
   },
 ]
@@ -175,7 +169,7 @@ export function AppSidebar({user}:{user:User}) {
                           />
                         )}
                         <div className="relative flex items-center gap-2" style={{ zIndex: 1 }}>
-                          <item.icon className="w-4 h-4" />
+                          <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
                           <span>{item.title}</span>
                         </div>
                       </Link>
@@ -204,7 +198,7 @@ export function AppSidebar({user}:{user:User}) {
                           />
                         )}
                         <div className="relative z-10 flex items-center gap-2">
-                          <item.icon className="w-4 h-4" />
+                          <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
                           <span>{item.title}</span>
                         </div>
                       </Link>
@@ -233,7 +227,7 @@ export function AppSidebar({user}:{user:User}) {
                           />
                         )}
                         <div className="relative z-10 flex items-center gap-2">
-                          <item.icon className="w-4 h-4" />
+                          <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
                           <span>{item.title}</span>
                         </div>
                       </Link>

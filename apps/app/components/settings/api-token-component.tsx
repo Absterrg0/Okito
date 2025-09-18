@@ -132,7 +132,7 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
     </Button>
   )
 
-    return     <Card className="crypto-glass-static border-0">
+    return     <Card className=" border-0">
     <CardHeader className="pb-4">
       <div className="flex items-center justify-between">
         <CardTitle className="flex items-center gap-3 text-xl">
@@ -151,7 +151,7 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
         </div>
       </div>
       <p className="text-sm text-muted-foreground">
-        Secure API tokens for authenticating your requests. Keep your production tokens safe and never expose them publicly.
+         Keep your production tokens safe and never expose them publicly.
       </p>
     </CardHeader>
     <CardContent>
@@ -182,9 +182,6 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
                   <SortButton field="lastUsedAt">Last used</SortButton>
                 </TableHead>
                 <TableHead className="font-semibold text-foreground text-center">
-                  <SortButton field="status">Status</SortButton>
-                </TableHead>
-                <TableHead className="font-semibold text-foreground text-center">
                   <SortButton field="requestCount">Requests</SortButton>
                 </TableHead>
                 <TableHead className="w-[1%] whitespace-nowrap text-center font-semibold text-foreground">Actions</TableHead>
@@ -206,17 +203,6 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
                   </TableCell>
                   <TableCell className="text-center">{formatDate(t.createdAt)}</TableCell>
                   <TableCell className="text-center">{t.lastUsedAt ? formatDate(t.lastUsedAt) : '—'}</TableCell>
-                  <TableCell className="text-center">
-                  <Badge 
-                      variant="outline" 
-                      className={t.status === 'ACTIVE' 
-                        ? 'text-green-600 dark:text-green-400 border-green-200 dark:border-green-800' 
-                        : 'text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800'
-                      }
-                    >
-                      {t.status}
-                    </Badge>
-                  </TableCell>
                   <TableCell className="text-center">{t.requestCount}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-1">

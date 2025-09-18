@@ -2,8 +2,9 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun, Monitor } from "lucide-react"
 import { useTheme } from "next-themes"
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Sun01Icon, Moon02Icon, LaptopIcon } from '@hugeicons/core-free-icons'
 import { Button } from "@/components/ui/button"
 
 export function ModeToggle() {
@@ -22,7 +23,7 @@ export function ModeToggle() {
           size="icon"
           className={`h-8 w-8 rounded-none ${active("light") ? 'bg-primary/15 text-primary' : 'hover:bg-muted/60'}`}
         >
-          <Sun className="h-4 w-4" />
+          <HugeiconsIcon icon={Sun01Icon} className="h-4 w-4" />
         </Button>
         <div className="h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
         <Button
@@ -32,7 +33,7 @@ export function ModeToggle() {
           size="icon"
           className={`h-8 w-8 rounded-none ${active("dark") ? 'bg-primary/15 text-primary' : 'hover:bg-muted/60'}`}
         >
-          <Moon className="h-4 w-4" />
+          <HugeiconsIcon icon={Moon02Icon} className="h-4 w-4" />
         </Button>
         <div className="h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
         <Button
@@ -42,7 +43,7 @@ export function ModeToggle() {
           size="icon"
           className={`h-8 w-8 rounded-none ${active("system") ? 'bg-primary/15 text-primary' : 'hover:bg-muted/60'}`}
         >
-          <Monitor className="h-4 w-4" />
+          <HugeiconsIcon icon={LaptopIcon} className="h-4 w-4" />
         </Button>
       </div>
     </div>

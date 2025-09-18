@@ -3,7 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { Copy, Wallet, Key, Webhook, Building2, Eye, EyeOff, Plus, RotateCcw, Trash2, Shield, Pause, Play, ExternalLink, BookOpen, Code2, Zap, Globe } from 'lucide-react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Copy01Icon, Wallet01Icon, BookOpen01Icon, FlashIcon, Link01Icon } from '@hugeicons/core-free-icons'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { useSelectedProjectStore } from '@/store/projectStore'
@@ -67,7 +68,7 @@ export default function OverviewPage() {
         disabled={!session?.user.walletAddress}
         onClick={() => session?.user.walletAddress && copyToClipboard(session.user.walletAddress, 'Wallet address')}
       >
-        <Copy className="w-4 h-4" />
+        <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4" />
       </Button>
     )
   }
@@ -141,7 +142,7 @@ export default function OverviewPage() {
           <Card className="crypto-glass-static border-0">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-lg">
-                <Wallet className="w-5 h-5 text-primary" />
+                <HugeiconsIcon icon={Wallet01Icon} className="w-5 h-5 text-primary" />
                  Locked Wallet 
               </CardTitle>
             </CardHeader>
@@ -169,7 +170,7 @@ export default function OverviewPage() {
               {/* Quick Start */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-primary" />
+                  <HugeiconsIcon icon={FlashIcon} className="w-4 h-4 text-primary" />
                   <h4 className="font-medium">Quick Start</h4>
                 </div>
                 <div className="space-y-2 text-sm">
@@ -185,7 +186,7 @@ export default function OverviewPage() {
                         className="crypto-button-ghost h-6 w-6 p-0 shrink-0" 
                         onClick={() => copyToClipboard(`curl -X POST https://api.okito.dev/payments -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" -d '{"amount":1000,"currency":"USDC"}'`, 'CURL command')}
                       >
-                        <Copy className="w-3 h-3" />
+                        <HugeiconsIcon icon={Copy01Icon} className="w-3 h-3" />
                       </Button>
                     </div>
                   </div>
@@ -197,7 +198,7 @@ export default function OverviewPage() {
               {/* Documentation */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-primary" />
+                  <HugeiconsIcon icon={BookOpen01Icon} className="w-4 h-4 text-primary" />
                   <h4 className="font-medium">Documentation</h4>
                 </div>
                 <div className="p-3 rounded-lg crypto-base flex items-center justify-between">
@@ -205,7 +206,7 @@ export default function OverviewPage() {
                   <Button asChild variant="default" size="sm" className="crypto-button">
                     <a href="https://docs.okito.dev" target="_blank" rel="noreferrer">
                       Open Docs
-                      <ExternalLink className="w-4 h-4 ml-2" />
+                      <HugeiconsIcon icon={Link01Icon} className="w-4 h-4 ml-2" />
                     </a>
                   </Button>
                 </div>

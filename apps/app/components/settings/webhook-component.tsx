@@ -30,7 +30,6 @@ import {
 import { useTableStateStore } from "@/store/tableStateStore"
 import { useWebhookUpdate } from "@/hooks/webhook/useWebhookUpdate"
 import WebhookSecretPopover from "./webhook-secret-popover"
-
 export default function WebhookCreation({project}:{project:ProjectDetails}){
 
     const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -199,7 +198,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
         </Button>
     )
 
-    return <Card className="crypto-glass-static border-0">
+    return <Card className=" border-0">
     <CardHeader className="pb-4">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -371,8 +370,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
                         rel="noopener noreferrer"
                         className="text-xs break-all text-primary hover:text-primary/80   flex items-center gap-1"
                       >
-                        {w.url}
-                        <HugeiconsIcon icon={Link01Icon} className="w-3 h-3 shrink-0" />
+                        {w.url.slice(8, 25)}...
                       </a>
                     </div>
                   </TableCell>
@@ -465,7 +463,51 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
           </Table>
           
           {/* Pagination Controls */}
-         
+          {sortedAndPaginatedWebhooks.totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (currentPage > 1) setCurrentPage(currentPage - 1)
+                      }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: sortedAndPaginatedWebhooks.totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setCurrentPage(page)
+                        }}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (currentPage < sortedAndPaginatedWebhooks.totalPages) setCurrentPage(currentPage + 1)
+                      }}
+                      className={currentPage === sortedAndPaginatedWebhooks.totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       )}
     </CardContent>

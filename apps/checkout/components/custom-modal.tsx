@@ -1,9 +1,8 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Cancel01Icon } from '@hugeicons/core-free-icons'
 import { toast } from "sonner";
-import Image from "next/image";
-import { useTheme } from "next-themes";
 
 export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { wallets, select } = useWallet();
@@ -66,7 +65,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                             onClick={onClose}
                             className="rounded-full hover:bg-black/10"
                         >
-                            <X className="w-4 h-4" />
+                            <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
                         </Button>
                     </div>
 

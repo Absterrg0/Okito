@@ -38,7 +38,7 @@ export default function WebhookSecretPopover({ webhookId }: WebhookSecretPopover
           <div className="p-3 rounded-lg crypto-base border border-amber-200 dark:border-amber-800">
             <div className="flex items-start gap-2">
               <HugeiconsIcon icon={Alert01Icon}  className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-             <div className="space-y-1">
+              <div className="space-y-1">
                 <p className="text-xs text-amber-700 dark:text-amber-300">
                   This secret is used to verify that webhooks are coming from Okito. Store it securely and use it to validate incoming webhook signatures.
                 </p>

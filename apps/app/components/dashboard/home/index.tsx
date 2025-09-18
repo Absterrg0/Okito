@@ -1,14 +1,12 @@
 'use client'
 import { Badge } from "@/components/ui/badge"
-import { 
-  DollarSign,
-  Activity,
-  Coins,
-  Network,
-  BarChart3,
-  RefreshCw,
-  ExternalLink
-} from "lucide-react"
+import { HugeiconsIcon } from '@hugeicons/react'
+import {
+  DollarCircleIcon,
+  ActivityIcon,
+  Coins01Icon,
+  RefreshIcon,
+} from '@hugeicons/core-free-icons'
 import { ChartAreaGradient } from "@/components/ui/charts/area"
 import { ChartBarPlans } from "@/components/ui/charts/bar"
 import { ChartPieDonutText } from "@/components/ui/charts/pi"
@@ -20,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import Environment from "../ui/environment"
-import { ModeToggle } from "../ui/theme-toggle"
+import Environment from "@/components/ui/environment"
+import { ModeToggle } from "@/components/ui/theme-toggle"
 
 // Solana-specific data for the dashboard
 const solanaMetrics = {
@@ -152,17 +150,17 @@ const getStatusColor = (status: string) => {
 const getTransactionTypeIcon = (type: string) => {
   switch (type) {
     case 'payment_success':
-      return <DollarSign className="w-4 h-4" />
+      return <HugeiconsIcon icon={DollarCircleIcon} className="w-4 h-4" />
     case 'token_created':
-      return <Coins className="w-4 h-4" />
+      return <HugeiconsIcon icon={Coins01Icon} className="w-4 h-4" />
     case 'subscription_created':
-      return <RefreshCw className="w-4 h-4" />
+      return <HugeiconsIcon icon={RefreshIcon} className="w-4 h-4" />
     default:
-      return <Activity className="w-4 h-4" />
+      return <HugeiconsIcon icon={ActivityIcon} className="w-4 h-4" />
   }
 }
 
-export default function DashboardPage() {
+export default function HomePage() {
   return (
     <div className="min-h-screen rounded-full bg-background p-8">
       {/* Header */}
@@ -201,7 +199,7 @@ export default function DashboardPage() {
             <div className="crypto-glass border-0 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-sm font-medium text-muted-foreground">Avg Transaction</h4>
-                <DollarSign className="w-5 h-5 text-blue-500" />
+                <HugeiconsIcon icon={DollarCircleIcon} className="w-5 h-5 text-blue-500" />
               </div>
               <p className="text-2xl font-bold text-foreground">{formatCurrency(solanaMetrics.avgTransactionSize)}</p>
             </div>
@@ -209,7 +207,7 @@ export default function DashboardPage() {
             <div className="crypto-glass border-0 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-sm font-medium text-muted-foreground">API Calls Today</h4>
-                <Activity className="w-5 h-5 text-green-500" />
+                <HugeiconsIcon icon={ActivityIcon} className="w-5 h-5 text-green-500" />
               </div>
               <p className="text-2xl font-bold text-foreground">{projectMetrics.apiCalls.toLocaleString()}</p>
             </div>
@@ -217,7 +215,7 @@ export default function DashboardPage() {
             <div className="crypto-glass border-0 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-sm font-medium text-muted-foreground">SOL Volume</h4>
-                <Coins className="w-5 h-5 text-yellow-500" />
+                <HugeiconsIcon icon={Coins01Icon} className="w-5 h-5 text-yellow-500" />
               </div>
               <p className="text-2xl font-bold text-foreground">{formatSol(solanaMetrics.solVolume)}</p>
             </div>
@@ -225,7 +223,7 @@ export default function DashboardPage() {
             <div className="crypto-glass border-0 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-sm font-medium text-muted-foreground">USDC Volume</h4>
-                <DollarSign className="w-5 h-5 text-green-500" />
+                <HugeiconsIcon icon={DollarCircleIcon} className="w-5 h-5 text-green-500" />
               </div>
               <p className="text-2xl font-bold text-foreground">{formatCurrency(solanaMetrics.usdcVolume)}</p>
             </div>
@@ -257,7 +255,7 @@ export default function DashboardPage() {
         <div className="mb-8">
           <h3 className="text-2xl font-semibold text-foreground flex items-center mb-3">
             <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center mr-4">
-              <Activity className="w-5 h-5 text-primary" />
+              <HugeiconsIcon icon={ActivityIcon} className="w-5 h-5 text-primary" />
             </div>
             Recent Transactions
           </h3>

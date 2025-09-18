@@ -1,6 +1,7 @@
-'use client'
+"use client"
 import { useState, useEffect } from "react"
-import { ChevronDown,  Plus, X } from "lucide-react"
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ChartDownIcon, Add01Icon, Cancel01Icon } from '@hugeicons/core-free-icons'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -109,7 +110,7 @@ export default function ProjectSelector() {
                   {selectedProject?.name || 'Select Project'}
                 </span>
               </div>
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              <HugeiconsIcon icon={ChartDownIcon} className="w-4 h-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 
@@ -142,7 +143,7 @@ export default function ProjectSelector() {
               size="icon"
               className="h-10 w-10 crypto-glass border-0 hover:bg-white/5"
             >
-              <Plus className="w-4 h-4" />
+              <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
             </Button>
           </PopoverTrigger>
           <PopoverContent 
@@ -164,7 +165,7 @@ export default function ProjectSelector() {
                   onClick={closeCreatePopover}
                   className="h-6 w-6 hover:bg-white/5"
                 >
-                  <X className="w-3 h-3" />
+                  <HugeiconsIcon icon={Cancel01Icon} className="w-3 h-3" />
                 </Button>
               </div>
               
