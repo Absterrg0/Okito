@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Shield01Icon, EyeIcon, Copy01Icon, Alert01Icon } from "@hugeicons/core-free-icons"
+import { Shield01Icon, EyeIcon, Copy01Icon, Alert01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import { useWebhookSecretFetch } from "@/hooks/webhook/useWebhookSecretFetch"
 import { copyToClipboard } from "@/lib/helpers"
 
@@ -14,10 +14,15 @@ interface WebhookSecretPopoverProps {
 export default function WebhookSecretPopover({ webhookId }: WebhookSecretPopoverProps) {
   const [showSecretValue, setShowSecretValue] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
-  const { data: secretData, isLoading: isLoadingSecret } = useWebhookSecretFetch(webhookId)
+  const { data: secretData, isLoading: isLoadingSecret } = useWebhookSecretFetch(webhookId, isOpen)
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={(open) => {
+      setIsOpen(open)
+      if (!open) {
+        setShowSecretValue(false) // Hide secret when popover closes
+      }
+    }}>
       <PopoverTrigger asChild>
         <Button 
           variant="ghost" 
@@ -59,7 +64,7 @@ export default function WebhookSecretPopover({ webhookId }: WebhookSecretPopover
                   className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
                   onClick={() => setShowSecretValue(!showSecretValue)}
                 >
-                  {showSecretValue ? null : <HugeiconsIcon icon={EyeIcon} className="w-4 h-4" />}
+                  {showSecretValue ? <HugeiconsIcon icon={Cancel01Icon} /> : <HugeiconsIcon icon={EyeIcon} className="w-4 h-4" />}
                 </Button>
               )}
             </div>

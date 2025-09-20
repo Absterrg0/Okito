@@ -132,7 +132,7 @@ export default function ApiTokenCreation({project,setShowTokenDialog,setNewlyCre
     </Button>
   )
 
-    return     <Card className=" border-0">
+    return     <Card className="crypto-glass-static border-0">
     <CardHeader className="pb-4">
       <div className="flex items-center justify-between">
         <CardTitle className="flex items-center gap-3 text-xl">

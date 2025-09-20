@@ -61,51 +61,33 @@ const menuItems = [
   }
 ]
 
-const businessItems = [
+const billingItems = [
   {
-    title: "Orders",
-    url: "/dashboard/orders",
+    title: "Preview",
+    url: "/checkout",
     icon: ShoppingBagIcon,
-    id: "orders",
+    id: "checkout",
   },
   {
-    title: "Products",
-    url: "/dashboard/products",
-    icon: ArchiveIcon,
-    id: "products",
-  },
-  {
-    title: "Shipping",
-    url: "/dashboard/shipping",
+    title: "Subscription",
+    url: "/dashboard/subscription",
     icon: TruckIcon,
-    id: "shipping",
-  },
-  {
-    title: "Payments",
-    url: "/dashboard/payments",
-    icon: CreditCardIcon,
-    id: "payments",
+    id: "subscription",
   },
 ]
 
 const communicationItems = [
   {
-    title: "Messages",
-    url: "/dashboard/messages",
+    title: "Mails",
+    url: "/dashboard/mails",
     icon: MailIcon,
-    id: "messages",
+    id: "mails",
   },
   {
     title: "Notifications",
     url: "/dashboard/notifications",
     icon: Notification01Icon,
     id: "notifications",
-  },
-  {
-    title: "Reports",
-    url: "/dashboard/reports",
-    icon: DocumentCodeIcon,
-    id: "reports",
   },
 ]
 
@@ -184,13 +166,19 @@ export function AppSidebar({user}:{user:User}) {
             <SidebarGroupLabel>Business</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {businessItems.map((item) => (
+                {billingItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       asChild 
                       className={pathname.startsWith(item.url) ? "relative text-foreground" : undefined}
                     >
-                      <Link href={item.url} onClick={handleNavigate(item.url)} className="relative z-0 block w-full">
+                      <Link 
+                        href={item.url} 
+                        onClick={item.id === "checkout" ? undefined : handleNavigate(item.url)} 
+                        className="relative z-0 block w-full"
+                        target={item.id === "checkout" ? "_blank" : undefined}
+                        rel={item.id === "checkout" ? "noopener noreferrer" : undefined}
+                      >
                         {pathname.startsWith(item.url) && (
                           <div 
                             className="absolute inset-0 z-0 w-full h-full rounded-md crypto-input p-0 pointer-events-none" 

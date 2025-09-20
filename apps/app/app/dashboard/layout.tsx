@@ -22,7 +22,9 @@ const user = session?.user as User
 
 
   return (
-        <SessionProvider session={session}>
+    <ViewTransition>
+    
+    <SessionProvider session={session}>
           <SidebarProvider>
             <AppSidebar user={user} />
             <SidebarInset>
@@ -30,5 +32,6 @@ const user = session?.user as User
             </SidebarInset>
           </SidebarProvider>
         </SessionProvider>
+    </ViewTransition>
   );
 }

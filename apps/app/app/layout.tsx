@@ -4,6 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import QueryProvider from "@/components/providers/query-provider";
 import Wallet from "@/components/ui/wallet";
+import {NextSSRPlugin} from '@uploadthing/react/next-ssr-plugin'
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 
 import { Toaster } from "@/components/ui/sonner";
@@ -27,14 +30,18 @@ export default function RootLayout({
       <body 
         className={`${dmSans.className} antialiased`}
       >
+             <NextSSRPlugin
+          routerConfig={extractRouterConfig(ourFileRouter)}
+        />
            <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
           <QueryProvider>
             <Wallet>
+
         {children}
             </Wallet>
           </QueryProvider>

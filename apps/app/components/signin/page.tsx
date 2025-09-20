@@ -1,12 +1,30 @@
 import React from "react"
 import { Badge } from "@/components/ui/badge"
 import { ModeToggle } from "../ui/theme-toggle"
-import { Lock } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { LockIcon, Shield01Icon, FlashIcon, Globe02Icon } from "@hugeicons/core-free-icons"
 import { HexElement } from "./hex-element"
 import { SignInForm } from "./form"
-import { features } from "@/static/data"
 
 export default function SignInPage() {
+  const features = [
+    {
+      icon: Shield01Icon,
+      title: "Secure by Default",
+      description: "Signed webhooks, secret management, and role-based access"
+    },
+    {
+      icon: FlashIcon,
+      title: "Payments & Wallets",
+      description: "Accept SOL, USDC, USDT; create wallets; track events"
+    },
+    {
+      icon: Globe02Icon,
+      title: "Global by Design",
+      description: "Test mode, REST & TypeScript SDKs, and idempotent APIs"
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Simple gradient background */}
@@ -69,7 +87,7 @@ export default function SignInPage() {
             {/* Hero Section */}
             <div className="mb-12">
               <Badge className="mb-6 badge-secure border-0 shadow-lg">
-                <Lock className="w-3 h-3 mr-2" aria-hidden="true" />
+                <HugeiconsIcon icon={LockIcon} size={12} className="mr-2" aria-hidden="true" />
                 Crypto Payments for Developers
               </Badge>
               
@@ -87,7 +105,7 @@ export default function SignInPage() {
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-4 crypto-glass rounded-2xl p-4 transition-opacity duration-200" role="listitem">
                   <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center">
-                    <feature.icon className="w-6 h-6 text-primary" aria-hidden="true" />
+                    <HugeiconsIcon icon={feature.icon} size={24} color="currentColor" className="text-primary" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1 text-foreground">{feature.title}</h3>

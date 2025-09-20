@@ -19,7 +19,7 @@ export default function CustomWallet() {
     const { publicKey, disconnect, connected } = useWallet();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const pathname = usePathname();
-    const isVerifyPage = pathname === '/verify';
+    const isVerifyPage = pathname === '/verify' || '/checkout';
 
     const handleConnect = () => {
         setIsModalOpen(true);

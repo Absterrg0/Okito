@@ -198,7 +198,7 @@ export default function WebhookCreation({project}:{project:ProjectDetails}){
         </Button>
     )
 
-    return <Card className=" border-0">
+    return <Card className="crypto-glass-static border-0">
     <CardHeader className="pb-4">
       <div className="flex items-start justify-between gap-4">
         <div>

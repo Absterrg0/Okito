@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 
-export function useProjectFetchDetails(projectId: string | null | undefined) {
+export function useProjectFetchDetails(projectId: string) {
   return trpc.project.details.useQuery(
     { id: projectId! },
     {

@@ -2,81 +2,504 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Copy01Icon, Wallet01Icon, BookOpen01Icon, FlashIcon, Link01Icon } from '@hugeicons/core-free-icons'
-import { toast } from 'sonner'
-import { useState } from 'react'
+import { 
+  Copy01Icon, 
+  Wallet01Icon, 
+  BookOpen01Icon, 
+  FlashIcon, 
+  Link01Icon, 
+  Key01Icon, 
+  WebhookIcon,
+  Activity01Icon,
+  ArrowUp01Icon as TrendingUp01Icon,
+  ArrowUpRightIcon,
+  CheckmarkCircle01Icon,
+  AlertCircleIcon,
+  Settings01Icon,
+  Globe02Icon as Globe01Icon,
+  Mail01Icon,
+  ChartIcon,
+  PlusSignIcon,
+  PlayIcon,
+  Desk01Icon as MonitorIcon,
+  CodeIcon,
+  BeltIcon as BellIcon,
+  DollarCircleIcon as CurrencyDollarIcon
+} from '@hugeicons/core-free-icons'
 import { useSelectedProjectStore } from '@/store/projectStore'
 import { ModeToggle } from '@/components/ui/theme-toggle'
 import Environment from '@/components/ui/environment'
 import { useSessionContext } from '@/components/providers/session-provider'
-import {useForm} from '@tanstack/react-form'
 import Loader from '@/components/ui/loader'
 import { useProjectFetchDetails } from '@/hooks/projects/useProjectDetailsFetch'
-import { useWebhookMutation } from '@/hooks/webhook/useWebhookMutation'
-import { z } from 'zod'
 import { copyToClipboard } from '@/lib/helpers'
-import { ApiTokenDialog } from './api-token-dialog'
-import { formatDate } from '@/lib/helpers'
-import ApiTokenCreation from './api-token-component'
-import WebhookCreation from './webhook-component'
-
-
-
-
-
+import Link from 'next/link'
+import type { ProjectDetails } from '@/types/project'
 
 export default function OverviewPage() {
   const selectedProject = useSelectedProjectStore(s => s.selectedProject);
-  const { data: project, isLoading } = useProjectFetchDetails(selectedProject?.id);
-  const [newlyCreatedToken, setNewlyCreatedToken] = useState<string | null>(null);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
-  const {mutate:createWebhook,isPending:isCreatingWebhook} = useWebhookMutation(selectedProject?.id)
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const { data: project, isLoading } = useProjectFetchDetails(selectedProject?.id || '');
+  const { session } = useSessionContext();
 
+  // Calculate metrics
+  const getProjectMetrics = (project: ProjectDetails) => {
+    const totalRequests = (project.apiTokens ?? [])
+      .reduce((sum, t) => sum + (t.requestCount ?? 0), 0);
+    
+    const activeApiKeys = (project.apiTokens ?? []).filter(t => t.status === 'ACTIVE').length;
+    const activeWebhooks = (project.webhookEndpoints ?? []).filter(w => w.status === 'ACTIVE').length;
+    
+    const lastApiUse = (project.apiTokens ?? [])
+      .map(t => t.lastUsedAt ? new Date(t.lastUsedAt).getTime() : 0)
+      .reduce((a, b) => Math.max(a, b), 0);
+    
+    const lastWebhookHit = (project.webhookEndpoints ?? [])
+      .map(w => w.lastTimeHit ? new Date(w.lastTimeHit).getTime() : 0)
+      .reduce((a, b) => Math.max(a, b), 0);
 
- 
-
-
-  const closeCreatePopover = () => {
-    setIsCreateOpen(false)
-  
-  }
-
-
-  
-
-
-
-
-
- 
+    return {
+      totalRequests,
+      activeApiKeys,
+      activeWebhooks,
+      lastApiUse,
+      lastWebhookHit,
+      hasActivity: lastApiUse > 0 || lastWebhookHit > 0
+    };
+  };
 
   function WalletAddressDisplay() {
-    const {session} = useSessionContext();
-    return <>{session?.user.walletAddress ? `${session.user.walletAddress.toString().slice(0, 6)}...${session.user.walletAddress.toString().slice(-6)}` : 'Not connected'}</>
+    return <>{session?.user.walletAddress?.slice(0,6)}...{session?.user.walletAddress?.slice(-6)}</>
   }
 
-  function CopyWalletButton() {
-    const {session} = useSessionContext();
+  // Enhanced stats with better visual hierarchy
+  function ProjectStatsGrid({ project }: { project: ProjectDetails }) {
+    const metrics = getProjectMetrics(project);
+    
+    const stats = [
+      {
+        title: "Total Requests",
+        value: metrics.totalRequests.toLocaleString(),
+        icon: Activity01Icon,
+        color: "from-blue-500/20 to-cyan-500/20",
+        iconColor: "text-blue-500"
+      },
+      {
+        title: "Active API Keys",
+        value: metrics.activeApiKeys,
+        icon: Key01Icon,
+        color: "from-green-500/20 to-emerald-500/20",
+        iconColor: "text-green-500"
+      },
+      {
+        title: "Active Webhooks", 
+        value: metrics.activeWebhooks,
+        icon: WebhookIcon,
+        color: "from-purple-500/20 to-violet-500/20",
+        iconColor: "text-purple-500"
+      },
+      {
+        title: "Connected Wallet",
+        value: <WalletAddressDisplay />,
+        icon: Wallet01Icon,
+        color: "from-orange-500/20 to-amber-500/20",
+        iconColor: "text-orange-500"
+      }
+    ];
+
     return (
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 px-2 crypto-button-ghost"
-        disabled={!session?.user.walletAddress}
-        onClick={() => session?.user.walletAddress && copyToClipboard(session.user.walletAddress, 'Wallet address')}
-      >
-        <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4" />
-      </Button>
-    )
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        {stats.map((stat, index) => (
+          <div key={index} className="group">
+            <div className={`crypto-glass-static border-0 rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br ${stat.color}`}>
+              
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`rounded-xl bg-background/10 backdrop-blur-sm ${stat.iconColor}`}>
+                    <HugeiconsIcon icon={stat.icon} className="w-6 h-6" />
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
+                  <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                  {(stat as any).subtitle && (
+                    <p className="text-xs text-muted-foreground/80">{(stat as any).subtitle}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
+  // Redesigned integration status with action cards
+  function IntegrationStatusSection({ project }: { project: ProjectDetails }) {
+    const hasApiKeys = (project.apiTokens ?? []).length > 0;
+    const hasWebhooks = (project.webhookEndpoints ?? []).length > 0;
+    const hasEmails = (project as any).notificationEmails?.length > 0;
+    const hasCurrencies = project.acceptedCurrencies?.length > 0;
 
+    const integrationSteps = [
+      {
+        id: 'api',
+        title: 'API Configuration',
+        description: 'Generate secure API keys to authenticate your payment requests.\nEnable seamless integration with your application backend.',
+        completed: hasApiKeys,
+        icon: Key01Icon,
+        action: 'Configure API',
+        href: '/dashboard/settings'
+      },
+      {
+        id: 'webhook',
+        title: 'Webhook Endpoints',
+        description: 'Set up real-time notifications for payment events and status updates.\nKeep your application synchronized with transaction changes.',
+        completed: hasWebhooks,
+        icon: WebhookIcon,
+        action: 'Setup Webhooks',
+        href: '/dashboard/settings'
+      }
+    ];
 
+    const completedSteps = integrationSteps.filter(step => step.completed).length;
+    const progressPercentage = (completedSteps / integrationSteps.length) * 100;
 
+    return (
+      <div className="space-y-8">
+        {/* Show Test Integration first if 100% complete, otherwise show setup */}
+        {progressPercentage === 100 ? (
+          /* Quick Actions Section - Show first when complete */
+          hasApiKeys && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="crypto-base p-6 rounded-xl">
+              <div className="mb-4">
+                <HugeiconsIcon icon={CodeIcon} className="w-8 h-8 text-blue-500 mb-3" />
+                <h4 className="font-semibold mb-2">Sample Request</h4>
+                <p className="text-xs text-muted-foreground">Copy a test payment request</p>
+              </div>
+              <Button 
+                size="sm" 
+                className="crypto-button w-full"
+                onClick={() => {
+                  const sampleRequest = JSON.stringify({
+                    amount: 1000,
+                    token: project.acceptedCurrencies?.[0] || 'USDC',
+                    network: "mainnet-beta"
+                  }, null, 2);
+                  copyToClipboard(sampleRequest, 'Payment request');
+                }}
+              >
+                <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4 mr-2" />
+                Copy Request
+              </Button>
+            </div>
 
+            {hasWebhooks && (
+              <div className="crypto-base p-6 rounded-xl">
+                <div className="mb-4">
+                  <HugeiconsIcon icon={WebhookIcon} className="w-8 h-8 text-purple-500 mb-3" />
+                  <h4 className="font-semibold mb-2">Test Webhook</h4>
+                  <p className="text-xs text-muted-foreground">Send a test event to your endpoint</p>
+                </div>
+                <Button size="sm" variant="outline" className="crypto-button w-full">
+                  <HugeiconsIcon icon={PlayIcon} className="w-4 h-4 mr-2" />
+                  Send Test
+                </Button>
+              </div>
+            )}
+
+            <div className="crypto-base p-6 rounded-xl">
+              <div className="mb-4">
+                <HugeiconsIcon icon={Activity01Icon} className="w-8 h-8 text-green-500 mb-3" />
+                <h4 className="font-semibold mb-2">View Events</h4>
+                <p className="text-xs text-muted-foreground">Browse payment and transaction events</p>
+              </div>
+              <Button asChild size="sm" variant="outline" className="crypto-button w-full">
+                <Link href="/dashboard/events">
+                  <HugeiconsIcon icon={Activity01Icon} className="w-4 h-4 mr-2" />
+                  View Events
+                </Link>
+              </Button>
+            </div>
+
+            <div className="crypto-base p-6 rounded-xl">
+              <div className="mb-4">
+                <HugeiconsIcon icon={ChartIcon} className="w-8 h-8 text-orange-500 mb-3" />
+                <h4 className="font-semibold mb-2">View Stats</h4>
+                <p className="text-xs text-muted-foreground">Check analytics and performance metrics</p>
+              </div>
+              <Button asChild size="sm" variant="outline" className="crypto-button w-full">
+                <Link href="/dashboard/home">
+                  <HugeiconsIcon icon={ChartIcon} className="w-4 h-4 mr-2" />
+                  View Stats
+                </Link>
+              </Button>
+            </div>
+          </div>
+          )
+        ) : (
+          /* Integration Setup Section - Show when not 100% complete */
+          <div className="crypto-base border-0 rounded-2xl p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">Integration Setup</h3>
+                <p className="text-muted-foreground">
+                  {completedSteps} of {integrationSteps.length} steps completed
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-primary mb-1">{Math.round(progressPercentage)}%</div>
+                <div className="text-sm text-muted-foreground">Complete</div>
+              </div>
+            </div>
+
+            {/* Integration Steps Grid */}
+            <div className="grid grid-cols-1 gap-6">
+              {integrationSteps.map((step) => (
+                <div
+                  key={step.id}
+                className={`group relative p-8 rounded-xl ${
+                  step.completed
+                    ? 'bg-green-500/5'
+                    : 'bg-background/50'
+                }`}
+                >
+                  <div className="flex items-start gap-6">
+                    <div className={`p-4 rounded-xl ${
+                      step.completed 
+                        ? 'bg-green-500/10 text-green-500' 
+                        : 'bg-muted/20 text-muted-foreground'
+                    }`}>
+                      {step.completed ? (
+                        <HugeiconsIcon icon={CheckmarkCircle01Icon} className="w-8 h-8" />
+                      ) : (
+                        <HugeiconsIcon icon={step.icon} className="w-8 h-8" />
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-3">
+                        <h4 className="font-semibold text-lg">{step.title}</h4>
+                        {step.completed && (
+                          <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
+                            Complete
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-4 whitespace-pre-line">
+                        {step.description}
+                      </p>
+                      
+                      {!step.completed && (
+                        <Button asChild size="sm" variant="outline" className="crypto-button">
+                          <Link href={step.href}>
+                            {step.action}
+                            <HugeiconsIcon icon={ArrowUpRightIcon} className="w-4 h-4 ml-2" />
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Quick Actions Section - Show after setup if not 100% complete */}
+        {progressPercentage !== 100 && hasApiKeys && (
+          <div className="crypto-base border-0 rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <HugeiconsIcon icon={PlayIcon} className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">Quick Actions</h3>
+                <p className="text-sm text-muted-foreground">Access key features and test your integration</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="crypto-base p-6 rounded-xl">
+                <div className="mb-4">
+                  <HugeiconsIcon icon={CodeIcon} className="w-8 h-8 text-blue-500 mb-3" />
+                  <h4 className="font-semibold mb-2">Sample Request</h4>
+                  <p className="text-xs text-muted-foreground">Copy a test payment request</p>
+                </div>
+                <Button 
+                  size="sm" 
+                  className="crypto-button w-full"
+                  onClick={() => {
+                    const sampleRequest = JSON.stringify({
+                      amount: 1000,
+                      token: project.acceptedCurrencies?.[0] || 'USDC',
+                      network: "mainnet-beta"
+                    }, null, 2);
+                    copyToClipboard(sampleRequest, 'Payment request');
+                  }}
+                >
+                  <HugeiconsIcon icon={Copy01Icon} className="w-4 h-4 mr-2" />
+                  Copy Request
+                </Button>
+              </div>
+
+              {hasWebhooks && (
+                <div className="crypto-base p-6 rounded-xl">
+                  <div className="mb-4">
+                    <HugeiconsIcon icon={WebhookIcon} className="w-8 h-8 text-purple-500 mb-3" />
+                    <h4 className="font-semibold mb-2">Test Webhook</h4>
+                    <p className="text-xs text-muted-foreground">Send a test event to your endpoint</p>
+                  </div>
+                  <Button size="sm" variant="outline" className="crypto-button w-full">
+                    <HugeiconsIcon icon={PlayIcon} className="w-4 h-4 mr-2" />
+                    Send Test
+                  </Button>
+                </div>
+              )}
+
+              <div className="crypto-base p-6 rounded-xl">
+                <div className="mb-4">
+                  <HugeiconsIcon icon={Activity01Icon} className="w-8 h-8 text-green-500 mb-3" />
+                  <h4 className="font-semibold mb-2">View Events</h4>
+                  <p className="text-xs text-muted-foreground">Browse payment and transaction events</p>
+                </div>
+                <Button asChild size="sm" variant="outline" className="crypto-button w-full">
+                  <Link href="/dashboard/events">
+                    <HugeiconsIcon icon={Activity01Icon} className="w-4 h-4 mr-2" />
+                    View Events
+                  </Link>
+                </Button>
+              </div>
+
+              <div className="crypto-base p-6 rounded-xl">
+                <div className="mb-4">
+                  <HugeiconsIcon icon={ChartIcon} className="w-8 h-8 text-orange-500 mb-3" />
+                  <h4 className="font-semibold mb-2">View Stats</h4>
+                  <p className="text-xs text-muted-foreground">Check analytics and performance metrics</p>
+                </div>
+                <Button asChild size="sm" variant="outline" className="crypto-button w-full">
+                  <Link href="/dashboard/home">
+                    <HugeiconsIcon icon={ChartIcon} className="w-4 h-4 mr-2" />
+                    View Stats
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Cleaner info cards
+  function ProjectInfoCards({ project }: { project: ProjectDetails }) {
+    return (
+      <div className="space-y-6">
+        {/* Currencies & Notifications */}
+        <div className="crypto-base border-0 rounded-2xl p-6">
+          <div className="space-y-6">
+            {/* Accepted Currencies */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-semibold">Accepted Currencies</h4>
+                <Button asChild size="sm" variant="ghost" className="crypto-button">
+                  <Link href="/dashboard/settings">
+                    <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
+              
+              {project.acceptedCurrencies?.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {project.acceptedCurrencies.map((currency: string) => (
+                    <Badge key={currency} variant="secondary" className="crypto-base">
+                      {currency}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 bg-muted/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <HugeiconsIcon icon={PlusSignIcon} className="w-6 h-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">No currencies configured</p>
+                  <Button asChild size="sm" className="crypto-button">
+                    <Link href="/dashboard/settings">Add Currencies</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Notification Emails */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-semibold">Notifications</h4>
+                <Button asChild size="sm" variant="ghost" className="crypto-button">
+                  <Link href="/dashboard/settings">
+                    <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
+              
+              {(project as any).notificationEmails?.length > 0 ? (
+                <div className="space-y-2">
+                  {(project as any).notificationEmails.map((email: string) => (
+                    <div key={email} className="flex items-center gap-3 p-3 rounded-lg crypto-base">
+                      <HugeiconsIcon icon={Mail01Icon} className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">{email}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 bg-muted/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <HugeiconsIcon icon={Mail01Icon} className="w-6 h-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-3">No email notifications</p>
+                  <Button asChild size="sm" className="crypto-button">
+                    <Link href="/dashboard/settings">Add Email</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Resources */}
+        <div className="crypto-base border-0 rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center">
+              <HugeiconsIcon icon={BookOpen01Icon} className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold">Resources</h3>
+          </div>
+          
+          <div className="space-y-3">
+            <Button asChild variant="outline" className="w-full justify-between crypto-button">
+              <a href="https://docs.okito.dev" target="_blank" rel="noreferrer">
+                <div className="flex items-center gap-2">
+                  <HugeiconsIcon icon={BookOpen01Icon} className="w-4 h-4" />
+                  <span>Documentation</span>
+                </div>
+                <HugeiconsIcon icon={ArrowUpRightIcon} className="w-4 h-4" />
+              </a>
+            </Button>
+            
+            <Button asChild variant="outline" className="w-full justify-start crypto-button">
+              <Link href="/dashboard/settings">
+                <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 mr-2" />
+                Project Settings
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -88,14 +511,14 @@ export default function OverviewPage() {
 
   return (
     <div className="min-h-screen rounded-full bg-background p-8">
-      {/* Header (match Dashboard) */}
+      {/* Header */}
       <div className="mb-12 flex justify-between items-start">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-foreground mb-3">
-            {project?.name}
+            {project?.name || 'Project Overview'}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Manage your project's tokens and webhook endpoints
+            Monitor your integration progress and project metrics
           </p>
         </div>
         <div className="gap-4 flex items-center">
@@ -104,125 +527,23 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* Quick Stats Bar */}
-      <div className="mt-12 mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 rounded-lg crypto-glass-static border-0 text-center">
-            <div className="text-2xl font-bold text-primary">{project?.apiTokens.length}</div>
-            <div className="text-sm text-muted-foreground">API Tokens</div>
+      <div className="space-y-12">
+        {/* Stats Grid */}
+        {project && <ProjectStatsGrid project={project} />}
+
+        {/* Main Content Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+          {/* Main Content - Integration & Testing */}
+          <div className="xl:col-span-3">
+            {project && <IntegrationStatusSection project={project} />}
           </div>
-          <div className="p-4 rounded-lg crypto-glass-static border-0 text-center">
-            <div className="text-2xl font-bold text-primary">{project?.webhookEndpoints.length}</div>
-            <div className="text-sm text-muted-foreground">Webhooks</div>
+
+          {/* Sidebar - Project Info */}
+          <div className="xl:col-span-1">
+            {project && <ProjectInfoCards project={project} />}
           </div>
-          <div className="p-4 rounded-lg crypto-glass-static border-0 text-center">
-            <div className="text-2xl font-bold text-primary">{project?.webhookEndpoints.filter(w => w.status === 'ACTIVE').length}</div>
-            <div className="text-sm text-muted-foreground">Active Endpoints</div>
-          </div>
-          <div className="p-4 rounded-lg crypto-glass-static border-0 text-center">
-            <div className="text-2xl font-bold text-primary">—</div>
-            <div className="text-sm text-muted-foreground">Events Today</div>
-          </div>
-        </div>
-
-      {/* Main Content Grid */}
-      <div className="space-y-8 grid grid-cols-1 xl:grid-cols-4 gap-8">
-        {/* Left Column - Main content */}
-        <div className="xl:col-span-3 space-y-8">
-          
-          {/* API Tokens Section */}
-          {project && <ApiTokenCreation project={project} setShowTokenDialog={setShowTokenDialog} setNewlyCreatedToken={setNewlyCreatedToken}></ApiTokenCreation>}
-
-          {project && <WebhookCreation project={project}></WebhookCreation>}
-        </div>
-
-        {/* Right Sidebar */}
-        <div className="space-y-6 xl:sticky xl:top-6 self-start">
-          
-          {/* Wallet Status */}
-          <Card className="crypto-glass-static border-0">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <HugeiconsIcon icon={Wallet01Icon} className="w-5 h-5 text-primary" />
-                 Locked Wallet 
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="p-3 rounded-lg crypto-base flex items-center justify-between">
-                  <code className="text-sm font-medium">
-                    <WalletAddressDisplay />
-                  </code>
-                  <CopyWalletButton />
-                </div>
-              </div>
-              
-              
-            </CardContent>
-          </Card>
-
-          {/* Enhanced Developer Resources */}
-          <Card className="crypto-glass-static border-0">
-            <CardContent className="space-y-4">
-              
-           
-
-           
-              {/* Quick Start */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <HugeiconsIcon icon={FlashIcon} className="w-4 h-4 text-primary" />
-                  <h4 className="font-medium">Quick Start</h4>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="p-3 rounded-lg crypto-base space-y-2">
-                    <div className="text-xs text-muted-foreground">Demo CURL Request</div>
-                    <div className="flex items-center justify-between gap-2">
-                      <code className="text-xs block overflow-hidden text-muted-foreground">
-                        {`curl -X POST https://api.okito.dev/payments -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" -d '{"amount":1000,"currency":"USDC"}'`}
-                      </code>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="crypto-button-ghost h-6 w-6 p-0 shrink-0" 
-                        onClick={() => copyToClipboard(`curl -X POST https://api.okito.dev/payments -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" -d '{"amount":1000,"currency":"USDC"}'`, 'CURL command')}
-                      >
-                        <HugeiconsIcon icon={Copy01Icon} className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Documentation */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <HugeiconsIcon icon={BookOpen01Icon} className="w-4 h-4 text-primary" />
-                  <h4 className="font-medium">Documentation</h4>
-                </div>
-                <div className="p-3 rounded-lg crypto-base flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Full API reference</span>
-                  <Button asChild variant="default" size="sm" className="crypto-button">
-                    <a href="https://docs.okito.dev" target="_blank" rel="noreferrer">
-                      Open Docs
-                      <HugeiconsIcon icon={Link01Icon} className="w-4 h-4 ml-2" />
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
-
-
-      <ApiTokenDialog
-  open={showTokenDialog}
-  onOpenChange={setShowTokenDialog}
-  token={newlyCreatedToken}
-  ></ApiTokenDialog>
-
     </div>
   )
 }

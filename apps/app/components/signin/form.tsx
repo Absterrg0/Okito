@@ -1,7 +1,8 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Chrome, ArrowRight, Shield, Fingerprint, Lock } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ChromeIcon, ArrowRight01Icon, Shield01Icon, FingerPrintIcon, LockIcon } from "@hugeicons/core-free-icons"
 import Image from "next/image"
 import { signIn } from "@/lib/auth-client"
 import GlassButton from "../ui/glass-button"
@@ -47,9 +48,9 @@ export const SignInForm = () => {
               Signing in with Google
             </div>):(
               <div className="flex items-center relative z-10">
-                <Chrome className="w-5 h-5 mr-3" aria-hidden="true" />
+                <HugeiconsIcon icon={ChromeIcon} size={20} className="mr-3" aria-hidden="true" />
                 Continue with Google
-                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+                <HugeiconsIcon icon={ArrowRight01Icon} size={16} className="ml-2" aria-hidden="true" />
               </div>
             )}
             
@@ -59,19 +60,19 @@ export const SignInForm = () => {
           <div className="mt-6 grid grid-cols-3 gap-3" role="group" aria-label="Security features">
             <div className="text-center">
               <div className="w-10 h-10 crypto-glass rounded-xl flex items-center justify-center mx-auto mb-2">
-                <Shield className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+                <HugeiconsIcon icon={Shield01Icon} size={16} color="#059669" aria-hidden="true" />
               </div>
               <p className="text-xs text-muted-foreground font-medium">Secure</p>
             </div>
             <div className="text-center">
               <div className="w-10 h-10 crypto-glass rounded-xl flex items-center justify-center mx-auto mb-2">
-                <Fingerprint className="w-4 h-4 text-blue-600" aria-hidden="true" />
+                <HugeiconsIcon icon={FingerPrintIcon} size={16} color="#2563eb" aria-hidden="true" />
               </div>
               <p className="text-xs text-muted-foreground font-medium">Verified Auth</p>
             </div>
             <div className="text-center">
               <div className="w-10 h-10 crypto-glass rounded-xl flex items-center justify-center mx-auto mb-2">
-                <Lock className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                <HugeiconsIcon icon={LockIcon} size={16} color="#9333ea" aria-hidden="true" />
               </div>
               <p className="text-xs text-muted-foreground font-medium">Key Management</p>
             </div>
