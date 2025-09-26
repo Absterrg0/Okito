@@ -1,6 +1,6 @@
 {
   "name": "@okito/core",
-  "version": "0.1.6",
+  "version": "0.1.9",
   "description": "Solana payment SDK components and utilities",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,11 +8,15 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
-    "./styles": "./dist/styles.css"
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
+    }
   },
   "files": [
     "dist"

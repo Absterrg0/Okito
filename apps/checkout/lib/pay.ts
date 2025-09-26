@@ -50,7 +50,6 @@ import {
     // Get mint info to determine the correct program ID and decimals
     let mintInfo;
     let tokenProgramId = TOKEN_PROGRAM_ID;
-    console.log(mint);
     
     try {
       mintInfo = await getMint(connection, mint, 'confirmed', TOKEN_2022_PROGRAM_ID);

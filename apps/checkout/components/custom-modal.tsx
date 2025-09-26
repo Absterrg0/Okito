@@ -41,7 +41,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
     ];
 
     return (
-        <div className="h-screen w-screen fixed inset-0 z-50 flex items-center justify-center">
+        <div className="h-screen w-screen fixed inset-0 z-[9999] flex items-center justify-center">
             {/* Backdrop */}
             <div 
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm"

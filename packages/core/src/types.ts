@@ -21,10 +21,13 @@ export interface PaymentResult {
 
 import {z} from 'zod'
 export const PaymentInputSchema = z.object({
-    amount:z.number().positive(),
-    token:z.enum(['USDC','USDT']),
+    products:z.array(z.object({
+        id:z.string(),
+        name:z.string(),
+        price:z.number(),
+        metadata:z.record(z.string(),z.any()).optional(),
+    })),
     metadata:z.record(z.string(),z.any()).optional(),
-    network:z.enum(['mainnet-beta','devnet']),
     apiKey:z.string(),
 })
 
@@ -36,14 +39,7 @@ export type PaymentInputSchemaType = z.infer<typeof PaymentInputSchema>
 
 // Response schema for validation
 export const PaymentSessionResponseSchema = z.object({
-    msg: z.string(),
-    paymentId: z.string(),
     sessionId: z.string(),
-    walletAddress: z.string(),
-    tokenMint: z.string(),
-    amount: z.number(),
-    token: z.enum(['USDC', 'USDT']),
-    network: z.enum(['mainnet-beta', 'devnet']),
 });
 
 export type PaymentSessionResponse = z.infer<typeof PaymentSessionResponseSchema>;

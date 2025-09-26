@@ -46,7 +46,6 @@ export const getEventSchemaResponse = eventSchema.omit({
     webhookUrl:true,
     type:true,
     metadata:true,
-    occurredAt:true,
     projectId:true,
     id:true,
 

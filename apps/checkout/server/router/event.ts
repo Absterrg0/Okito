@@ -8,8 +8,9 @@ import prisma from '@/db'
 const getValidEvent = protectedProcedure
 .input(getEventSchema)
 .output(getEventSchemaResponse)
-.mutation( async ({input})=>{
+.query( async ({input})=>{
 
+    
     const {sessionId} = input;
     
     const event = await prisma.event.findFirst({

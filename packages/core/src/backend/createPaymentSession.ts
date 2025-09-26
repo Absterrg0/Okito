@@ -3,20 +3,24 @@ import { PaymentInputSchema, PaymentInputSchemaType, PaymentSessionResponse, Pay
 import { createIdempotencyKey } from '../helpers';
 
 
+const BASE_OKITO_URL = 'https://okito.dev'
 
-export async function createPaymentSession({amount,token,metadata,network,apiKey}:PaymentInputSchemaType){
 
-    const result = PaymentInputSchema.safeParse({amount,token,metadata,network,apiKey})
+
+export async function createPaymentSession({products,apiKey}:PaymentInputSchemaType){
+
+    const result = PaymentInputSchema.safeParse({products,apiKey})
 
     if(!result.success){
         throw new Error("Invalid input")
     }
     const idempotencyKey = createIdempotencyKey();
+    
+    // Set network based on API key
+    const network = apiKey === 'pk_test' ? 'devnet' : 'mainnet-beta';
 
     const payload = {
-        amount,
-        token,
-        metadata,
+        products,
         network,
     }
 
