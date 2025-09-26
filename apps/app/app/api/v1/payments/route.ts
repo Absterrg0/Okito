@@ -6,10 +6,14 @@ import z from "zod";
 import { getMintAddress } from "./helpers";
 
 const inputSchema = z.object({
-    amount: z.number().gt(0, { message: 'amount must be > 0' }),
-    token: z.enum(['USDC','USDT']),
+    products: z.array(z.object({
+        id: z.string(),
+        name: z.string(),
+        price: z.number().gt(0), // unit amount (e.g., 1.23)
+        metadata: z.record(z.string(), z.any()).optional(),
+    })).nonempty({ message: 'products must contain at least one item' }),
     network: z.enum(['mainnet-beta','devnet']).default('mainnet-beta'),
-    metadata: z.json().optional()
+    metadata: z.record(z.string(), z.any()).optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -18,29 +22,18 @@ export async function POST(req: NextRequest) {
     const idempotencyKey = reqHeaders.get('Idempotency-Key');
 
     if (!apiKey) {
-        return NextResponse.json({
-            msg: "API KEY is missing from the headers"
-        }, {
-            status: 401
-        })
+        return NextResponse.json({ sessionId: null })
     }
 
     // Parse and validate request body early
     const body = await req.json();
-    console.log(body);
     const result = await inputSchema.safeParseAsync(body);
     if (!result.success) {
-      // console.log(result.error);
-        return NextResponse.json({
-            msg: "Invalid request body"
-        }, {
-            status: 400
-        })
+        return NextResponse.json({ sessionId: null })
     }
 
-    const { amount, token, network, metadata } = result.data;
+    const { products, network, metadata } = result.data;
     const hashedApiToken = hashValue(apiKey);
-    const mintAddress = getMintAddress(token, network);
 
     // Single transaction to handle authentication, idempotency, and payment creation
     try {
@@ -77,7 +70,8 @@ export async function POST(req: NextRequest) {
                                     select: { walletAddress: true }
                                 }
                             }
-                        }
+                        },
+                        events: true
                     }
                 });
 
@@ -104,14 +98,31 @@ export async function POST(req: NextRequest) {
                 return base;
             })();
 
-            // 4. Create payment with event in single operation
+            // Determine currency from project's acceptedCurrencies (fallback to USDC)
+            const defaultCurrency = (tokenInfo.project.acceptedCurrencies?.[0] ?? 'USDC') as 'USDC' | 'USDT';
+
+            // Sum total amount from products (store as micro units)
+            const totalMicros = products.reduce((acc, p) => acc + Math.round(p.price * 1_000_000), 0);
+            if (!Number.isFinite(totalMicros) || totalMicros <= 0) {
+                throw new Error('INVALID_AMOUNT');
+            }
+
+            // 4. Create payment with products and event in single operation
             const payment = await tx.payment.create({
                 data: {
                     projectId: tokenInfo.projectId,
                     tokenId: tokenInfo.id,
-                    amount: BigInt(Math.round(amount * Math.pow(10, 6))),
-                    currency: token,
+                    amount: BigInt(totalMicros),
+                    currency: defaultCurrency,
                     idempotencyKey: idempotencyKey ?? null,
+                    recipientAddress: tokenInfo.project.user.walletAddress!,
+                    products: {
+                        create: products.map((p) => ({
+                            name: p.name,
+                            price: BigInt(Math.round(p.price * 1_000_000)),
+                            metadata: p.metadata ? (p.metadata as any) : undefined,
+                        })),
+                    },
                     events: {
                         create: {
                             projectId: tokenInfo.projectId,
@@ -120,6 +131,9 @@ export async function POST(req: NextRequest) {
                             metadata: eventMetadata
                         }
                     }
+                },
+                include: {
+                    events: true
                 }
             });
 
@@ -139,29 +153,32 @@ export async function POST(req: NextRequest) {
             };
         });
 
-        // Format response
-        const responseData = {
-            msg: result.isExisting ? "Payment intent reused" : "Payment intent created successfully",
-            paymentId: result.payment.id,
-            sessionId: result.payment.id,
-            walletAddress: result.walletAddress,
-            tokenMint: mintAddress.toBase58(),
-            amount,
-            currency: token,
-            network,
-            status: "PENDING"
-        };
+        // Ensure we have an event with sessionId
+        const event = result.payment.events[0];
+        if (!event?.sessionId) {
+            throw new Error('Failed to create event with sessionId');
+        }
 
-        return NextResponse.json(responseData, { status: 200 });
+        return NextResponse.json({ 
+            sessionId: event.sessionId
+        })
 
     } catch (error: any) {
         // Handle specific errors
         if (error.message === 'INVALID_API_KEY') {
-            return NextResponse.json({
-                msg: "The provided API KEY is invalid or revoked"
-            }, {
-                status: 403
-            });
+            return NextResponse.json({ sessionId: null })
+        }
+
+        if (error.message === 'INVALID_AMOUNT') {
+            return NextResponse.json({ sessionId: null })
+        }
+
+        if (error.message === 'Failed to create event with sessionId') {
+            return NextResponse.json({ sessionId: null })
+        }
+
+        if (error.message === 'Existing payment missing event sessionId') {
+            return NextResponse.json({ sessionId: null })
         }
 
         // Handle unique constraint violations (race condition fallback)
@@ -176,29 +193,22 @@ export async function POST(req: NextRequest) {
                                 select: { walletAddress: true }
                             }
                         }
-                    }
+                    },
+                    events: true
                 }
             });
 
             if (existingPayment) {
-                return NextResponse.json({
-                    msg: "Payment intent reused",
-                    paymentId: existingPayment.id,
-                    sessionId: existingPayment.id,
-                    walletAddress: existingPayment.project.user.walletAddress ?? null,
-                    tokenMint: mintAddress.toBase58(),
-                    amount,
-                    currency: token,
-                    network,
-                    status: "PENDING"
-                }, { status: 200 });
+                const event = existingPayment.events[0];
+                if (!event?.sessionId) {
+                    throw new Error('Existing payment missing event sessionId');
+                }
+                return NextResponse.json({ 
+                    sessionId: event.sessionId
+                })
             }
         }
 
-        return NextResponse.json({
-            msg: "Internal server error"
-        }, {
-            status: 500
-        });
+        return NextResponse.json({ sessionId: null })
     }
 }

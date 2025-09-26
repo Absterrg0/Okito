@@ -1,9 +1,21 @@
 import { protectedProcedure, router } from "../trpc";
 import type { ProtectedContext } from "../context";
-import { createProjectSchemaResponse, createProjectSchema, fetchProjectDetailsSchema, fetchProjectDetailsSchemaResponse, updateProjectDetailsSchema, updateProjectCurrenciesSchemaResponse, updateProjectDetailsSchemaResponse, updateProjectLogoSchema, updateProjectLogoSchemaResponse, updateProjectCurrenciesSchema, updateProjectNotificationEmailSchema, updateProjectNotificationEmailSchemaResponse } from "@/types/project";
+import { 
+    createProjectSchemaResponse,
+    createProjectSchema,
+    fetchProjectDetailsSchema,
+    fetchProjectDetailsSchemaResponse, 
+    updateProjectDetailsSchema, 
+    updateProjectCurrenciesSchemaResponse, 
+    updateProjectDetailsSchemaResponse, 
+    updateProjectLogoSchema, 
+    updateProjectLogoSchemaResponse, 
+    updateProjectCurrenciesSchema, 
+    updateProjectNotificationEmailSchema, 
+    updateProjectNotificationEmailSchemaResponse 
+} from "@/types/project";
 import prisma from "@/db";
 import { TRPCError } from "@trpc/server";
-
 
 
 
@@ -24,6 +36,7 @@ const createProject = protectedProcedure
             notificationEmails:[ctx.session.user.email]
         }
     })
+
 
 
     return {

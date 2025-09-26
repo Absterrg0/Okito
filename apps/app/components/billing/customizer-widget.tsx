@@ -312,15 +312,7 @@ export default function BillingCustomizerWidget({
                   >
                     <HugeiconsIcon icon={copied ? CheckmarkCircle01Icon : Copy01Icon} className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={applyChanges}
-                    className="h-8 w-8 p-0 hover:bg-primary/10"
-                    title="Apply Changes"
-                  >
-                    <HugeiconsIcon icon={RefreshIcon} className="h-4 w-4" />
-                  </Button>
+             
                 </div>
               </div>
             </CardHeader>

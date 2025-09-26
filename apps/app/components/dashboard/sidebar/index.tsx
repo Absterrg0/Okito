@@ -175,17 +175,21 @@ export function AppSidebar({user}:{user:User}) {
                       <Link 
                         href={item.url} 
                         onClick={item.id === "checkout" ? undefined : handleNavigate(item.url)} 
-                        className="relative z-0 block w-full"
+                        className="relative block w-full"
                         target={item.id === "checkout" ? "_blank" : undefined}
                         rel={item.id === "checkout" ? "noopener noreferrer" : undefined}
                       >
                         {pathname.startsWith(item.url) && (
                           <div 
-                            className="absolute inset-0 z-0 w-full h-full rounded-md crypto-input p-0 pointer-events-none" 
-                            style={{ viewTransitionName: 'sidebar-active' }}
+                            className="absolute inset-0 w-full h-full rounded-md crypto-glass-static pointer-events-none" 
+                            style={{ 
+                              viewTransitionName: 'sidebar-active',
+                              padding: '0',
+                              zIndex: 0
+                            }}
                           />
                         )}
-                        <div className="relative z-10 flex items-center gap-2">
+                        <div className="relative flex items-center gap-2" style={{ zIndex: 1 }}>
                           <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
                           <span>{item.title}</span>
                         </div>
@@ -207,14 +211,18 @@ export function AppSidebar({user}:{user:User}) {
                       asChild 
                       className={pathname.startsWith(item.url) ? "relative text-foreground" : undefined}
                     >
-                      <Link href={item.url} onClick={handleNavigate(item.url)} className="relative z-0 block w-full">
+                      <Link href={item.url} onClick={handleNavigate(item.url)} className="relative block w-full">
                         {pathname.startsWith(item.url) && (
                           <div 
-                            className="absolute inset-0 z-0 w-full h-full rounded-md crypto-input p-0 pointer-events-none" 
-                            style={{ viewTransitionName: 'sidebar-active' }}
+                            className="absolute inset-0 w-full h-full rounded-md crypto-glass-static pointer-events-none" 
+                            style={{ 
+                              viewTransitionName: 'sidebar-active',
+                              padding: '0',
+                              zIndex: 0
+                            }}
                           />
                         )}
-                        <div className="relative z-10 flex items-center gap-2">
+                        <div className="relative flex items-center gap-2" style={{ zIndex: 1 }}>
                           <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
                           <span>{item.title}</span>
                         </div>

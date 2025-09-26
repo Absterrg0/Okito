@@ -8,6 +8,7 @@ import {
 import { verifySignature, generateNonce } from "@/lib/solanaUtils";
 import prisma from "@/db";
 import { TRPCError } from "@trpc/server";
+import { createHelius } from 'helius-sdk'
 
 // Lifetime of a nonce in ms (5 minutes here)
 const NONCE_EXPIRY = 5 * 60 * 1000;
@@ -60,6 +61,19 @@ const confirmWallet = protectedProcedure
         verifiedAt: new Date(),
       },
     });
+
+
+    const apiKey = process.env.HELIUS_API_KEY || "";
+
+    const helius = createHelius({apiKey});
+
+    const currentAddresses = await helius.webhooks.get('9cfd6a34-341a-4d08-8284-6a961a0ebfea').then((webhook)=>webhook.accountAddresses);
+
+    helius.webhooks.update('9cfd6a34-341a-4d08-8284-6a961a0ebfea',{
+      accountAddresses:[...currentAddresses,publicKey],
+    })
+    
+
 
     return {
       message: "Wallet linked successfully",
