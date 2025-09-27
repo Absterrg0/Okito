@@ -3,14 +3,13 @@ import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react
 import { clusterApiUrl } from "@solana/web3.js";
 
 export default function Wallet({children}: {children: React.ReactNode}) {
-    const endpoint = clusterApiUrl('devnet')
     
 
     return (
-        <ConnectionProvider endpoint={endpoint}>
+        <ConnectionProvider endpoint={clusterApiUrl('devnet')}>
             <WalletProvider wallets={[]} autoConnect>
                 {children}
             </WalletProvider>
         </ConnectionProvider>
-    )
+      )
 }

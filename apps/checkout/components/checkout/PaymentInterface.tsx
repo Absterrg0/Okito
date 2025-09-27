@@ -307,7 +307,7 @@ export default function PaymentInterface({
                           <div className="w-full bg-primary/10 rounded-full h-1.5 overflow-hidden">
                             <div
                               className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-1000 ease-linear"
-                              style={{ width: `${((5 - countdown) / 5) * 100}%` }}
+                              style={{ width: `${((6 - countdown) / 5) * 100}%` }}
                             ></div>
                           </div>
                         </div>

@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import React from "react"
-import { useWallet, useConnection } from "@solana/wallet-adapter-react"
+  import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { ModeToggle } from "../ui/theme-toggle"
 import useFetchCheckout from "@/hooks/useFetchCheckout"
 import { trpc } from "@/lib/trpc"
@@ -15,7 +15,7 @@ import { toast } from "sonner"
 
 export default function CheckoutPage() {
   const { connected, publicKey, signTransaction } = useWallet()
-  const { connection } = useConnection()
+  const {connection} = useConnection();
   const params = useParams();
   const searchParams = useSearchParams();
 
@@ -25,6 +25,9 @@ export default function CheckoutPage() {
   const callbackUrl = searchParams.get('callback') || (event?.payment as any)?.callbackUrl || ''
   const buildPayment = trpc.transaction.buildPayment.useMutation({
     mutationKey:['transaction.buildPayment',sessionId]
+  });
+  const submitPayment = trpc.transaction.submitPayment.useMutation({
+    mutationKey:['transaction.submitPayment',sessionId]
   });
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle")
   const [txSig, setTxSig] = useState<string | null>(null)
@@ -72,7 +75,7 @@ export default function CheckoutPage() {
       
       // Show loading toast
       toast.loading("Preparing your payment...", { id: 'payment-prep' })
-      const { serializedTx, recentBlockhash, lastValidBlockHeight } = await buildPayment.mutateAsync({
+      const { serializedTx } = await buildPayment.mutateAsync({
         sessionId,
         payerPublicKey: publicKey.toBase58(),
         token: selectedCurrency,
@@ -83,17 +86,18 @@ export default function CheckoutPage() {
       toast.loading("Please confirm the transaction in your wallet...", { id: 'wallet-confirm' })
 
       const tx = VersionedTransaction.deserialize(Buffer.from(serializedTx, 'base64'))
-      const simulatedTransaction = await connection.simulateTransaction(tx)
-      console.log(simulatedTransaction);
       const signedTx = await signTransaction(tx)
       
       // Dismiss wallet toast and show transaction processing
       toast.dismiss('wallet-confirm')
       toast.loading("Processing transaction on blockchain...", { id: 'tx-processing' })
       
-
-      const signature = await connection.sendTransaction(signedTx)
-      await connection.confirmTransaction({ blockhash: recentBlockhash, lastValidBlockHeight, signature }, 'confirmed')
+      // Send signed transaction to backend for submission
+      const signedTransactionBase64 = Buffer.from(signedTx.serialize()).toString('base64')
+      const { signature } = await submitPayment.mutateAsync({
+        sessionId,
+        signedTransaction: signedTransactionBase64,
+      })
       
       // Success
       toast.dismiss('tx-processing')

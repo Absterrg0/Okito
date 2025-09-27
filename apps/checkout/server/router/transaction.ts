@@ -82,9 +82,8 @@ export const transactionRouter = router({
 
         // 3. Setup network and connection
         const network = event.token?.environment === "TEST" ? "devnet" as const : "mainnet-beta" as const;
-        const connection = new Connection(
-          network === "mainnet-beta" ? process.env.MAINNET_RPC_URL! : process.env.DEVNET_RPC_URL!
-        );
+        const rpcUrl = network === "mainnet-beta" ? process.env.MAINNET_RPC_URL! : process.env.DEVNET_RPC_URL!;
+        const connection = new Connection(rpcUrl);
 
         // 4. Calculate amounts
         const subtotal = event.payment.products.reduce((sum, p) => sum + Number(p.price ?? 0) / 1_000_000, 0);
@@ -206,7 +205,7 @@ export const transactionRouter = router({
         }).compileToV0Message();
 
         const transaction = new VersionedTransaction(messageV0);
-        const serializedTx = Buffer.from((transaction as any).serialize({ requireAllSignatures: false, verifySignatures: false })).toString("base64");
+     const serializedTx = Buffer.from((transaction as any).serialize({ requireAllSignatures: false, verifySignatures: false })).toString("base64");
 
         return {
           serializedTx,
@@ -225,6 +224,87 @@ export const transactionRouter = router({
         
         // Handle unknown errors
         throw new Error("Failed to prepare transaction. Please try again or contact support.");
+      }
+    }),
+
+  submitPayment: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.string(),
+        signedTransaction: z.string(), // Base64 encoded signed transaction
+      })
+    )
+    .output(
+      z.object({
+        signature: z.string(),
+        success: z.boolean(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { sessionId, signedTransaction } = input;
+
+      try {
+        // 1. Validate session and event
+        const event = await prisma.event.findFirst({
+          where: { sessionId },
+          include: {
+            payment: { include: { products: true } },
+            token: { select: { environment: true } },
+          },
+        });
+
+        if (!event) {
+          throw new Error("Invalid session. Please refresh and try again.");
+        }
+
+        if (!event.payment) {
+          throw new Error("Payment information not found. Please contact support.");
+        }
+
+        // 2. Validate session expiry
+        const sessionAge = Date.now() - new Date(event.occurredAt).getTime();
+        const sessionExpired = sessionAge > 15 * 60 * 1000; // 15 minutes
+        
+        if (sessionExpired) {
+          throw new Error("Session expired. Please refresh the page and try again.");
+        }
+
+        // 3. Setup network and connection
+        const network = event.token?.environment === "TEST" ? "devnet" as const : "mainnet-beta" as const;
+        const rpcUrl = network === "mainnet-beta" ? process.env.MAINNET_RPC_URL! : process.env.DEVNET_RPC_URL!;
+        const connection = new Connection(rpcUrl);
+
+        // 4. Deserialize and send the signed transaction
+        const signedTx = VersionedTransaction.deserialize(Buffer.from(signedTransaction, 'base64'));
+        
+        // Send transaction to blockchain
+        const signature = await connection.sendTransaction(signedTx);
+        
+        // Get latest blockhash for confirmation
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+        
+        // Confirm transaction
+        await connection.confirmTransaction({
+          blockhash,
+          lastValidBlockHeight,
+          signature
+        }, 'confirmed');
+
+        return {
+          signature,
+          success: true,
+        };
+
+      } catch (error) {
+        console.error("Transaction submission error:", error);
+        
+        // Re-throw known errors with user-friendly messages
+        if (error instanceof Error) {
+          throw error;
+        }
+        
+        // Handle unknown errors
+        throw new Error("Failed to submit transaction. Please try again or contact support.");
       }
     }),
 });
