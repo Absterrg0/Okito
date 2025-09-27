@@ -6570,6 +6570,8 @@ export namespace Prisma {
   export type ProjectMinAggregateOutputType = {
     id: string | null
     name: string | null
+    logoUrl: string | null
+    description: string | null
     createdAt: Date | null
     updatedAt: Date | null
     userId: string | null
@@ -6578,6 +6580,8 @@ export namespace Prisma {
   export type ProjectMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    logoUrl: string | null
+    description: string | null
     createdAt: Date | null
     updatedAt: Date | null
     userId: string | null
@@ -6586,9 +6590,13 @@ export namespace Prisma {
   export type ProjectCountAggregateOutputType = {
     id: number
     name: number
+    logoUrl: number
+    description: number
     createdAt: number
     updatedAt: number
     userId: number
+    acceptedCurrencies: number
+    notificationEmails: number
     _all: number
   }
 
@@ -6596,6 +6604,8 @@ export namespace Prisma {
   export type ProjectMinAggregateInputType = {
     id?: true
     name?: true
+    logoUrl?: true
+    description?: true
     createdAt?: true
     updatedAt?: true
     userId?: true
@@ -6604,6 +6614,8 @@ export namespace Prisma {
   export type ProjectMaxAggregateInputType = {
     id?: true
     name?: true
+    logoUrl?: true
+    description?: true
     createdAt?: true
     updatedAt?: true
     userId?: true
@@ -6612,9 +6624,13 @@ export namespace Prisma {
   export type ProjectCountAggregateInputType = {
     id?: true
     name?: true
+    logoUrl?: true
+    description?: true
     createdAt?: true
     updatedAt?: true
     userId?: true
+    acceptedCurrencies?: true
+    notificationEmails?: true
     _all?: true
   }
 
@@ -6693,9 +6709,13 @@ export namespace Prisma {
   export type ProjectGroupByOutputType = {
     id: string
     name: string
+    logoUrl: string | null
+    description: string | null
     createdAt: Date
     updatedAt: Date
     userId: string
+    acceptedCurrencies: $Enums.AllowedCurrency[]
+    notificationEmails: string[]
     _count: ProjectCountAggregateOutputType | null
     _min: ProjectMinAggregateOutputType | null
     _max: ProjectMaxAggregateOutputType | null
@@ -6718,9 +6738,13 @@ export namespace Prisma {
   export type ProjectSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    logoUrl?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
+    acceptedCurrencies?: boolean
+    notificationEmails?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     apiTokens?: boolean | Project$apiTokensArgs<ExtArgs>
     payments?: boolean | Project$paymentsArgs<ExtArgs>
@@ -6732,30 +6756,42 @@ export namespace Prisma {
   export type ProjectSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    logoUrl?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
+    acceptedCurrencies?: boolean
+    notificationEmails?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    logoUrl?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
+    acceptedCurrencies?: boolean
+    notificationEmails?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectScalar = {
     id?: boolean
     name?: boolean
+    logoUrl?: boolean
+    description?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
+    acceptedCurrencies?: boolean
+    notificationEmails?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "logoUrl" | "description" | "createdAt" | "updatedAt" | "userId" | "acceptedCurrencies" | "notificationEmails", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     apiTokens?: boolean | Project$apiTokensArgs<ExtArgs>
@@ -6783,9 +6819,13 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      logoUrl: string | null
+      description: string | null
       createdAt: Date
       updatedAt: Date
       userId: string
+      acceptedCurrencies: $Enums.AllowedCurrency[]
+      notificationEmails: string[]
     }, ExtArgs["result"]["project"]>
     composites: {}
   }
@@ -7216,9 +7256,13 @@ export namespace Prisma {
   interface ProjectFieldRefs {
     readonly id: FieldRef<"Project", 'String'>
     readonly name: FieldRef<"Project", 'String'>
+    readonly logoUrl: FieldRef<"Project", 'String'>
+    readonly description: FieldRef<"Project", 'String'>
     readonly createdAt: FieldRef<"Project", 'DateTime'>
     readonly updatedAt: FieldRef<"Project", 'DateTime'>
     readonly userId: FieldRef<"Project", 'String'>
+    readonly acceptedCurrencies: FieldRef<"Project", 'AllowedCurrency[]'>
+    readonly notificationEmails: FieldRef<"Project", 'String[]'>
   }
     
 
@@ -12634,6 +12678,7 @@ export namespace Prisma {
     price: number
     createdAt: number
     updatedAt: number
+    metadata: number
     paymentId: number
     _all: number
   }
@@ -12671,6 +12716,7 @@ export namespace Prisma {
     price?: true
     createdAt?: true
     updatedAt?: true
+    metadata?: true
     paymentId?: true
     _all?: true
   }
@@ -12767,6 +12813,7 @@ export namespace Prisma {
     price: bigint
     createdAt: Date
     updatedAt: Date
+    metadata: JsonValue | null
     paymentId: string
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
@@ -12795,6 +12842,7 @@ export namespace Prisma {
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    metadata?: boolean
     paymentId?: boolean
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -12805,6 +12853,7 @@ export namespace Prisma {
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    metadata?: boolean
     paymentId?: boolean
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -12815,6 +12864,7 @@ export namespace Prisma {
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    metadata?: boolean
     paymentId?: boolean
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -12825,10 +12875,11 @@ export namespace Prisma {
     price?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    metadata?: boolean
     paymentId?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "createdAt" | "updatedAt" | "paymentId", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "createdAt" | "updatedAt" | "metadata" | "paymentId", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     payment?: boolean | PaymentDefaultArgs<ExtArgs>
   }
@@ -12850,6 +12901,7 @@ export namespace Prisma {
       price: bigint
       createdAt: Date
       updatedAt: Date
+      metadata: Prisma.JsonValue | null
       paymentId: string
     }, ExtArgs["result"]["product"]>
     composites: {}
@@ -13280,6 +13332,7 @@ export namespace Prisma {
     readonly price: FieldRef<"Product", 'BigInt'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
+    readonly metadata: FieldRef<"Product", 'Json'>
     readonly paymentId: FieldRef<"Product", 'String'>
   }
     
@@ -14941,9 +14994,13 @@ export namespace Prisma {
   export const ProjectScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    logoUrl: 'logoUrl',
+    description: 'description',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    userId: 'userId'
+    userId: 'userId',
+    acceptedCurrencies: 'acceptedCurrencies',
+    notificationEmails: 'notificationEmails'
   };
 
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
@@ -15023,6 +15080,7 @@ export namespace Prisma {
     price: 'price',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    metadata: 'metadata',
     paymentId: 'paymentId'
   };
 
@@ -15127,6 +15185,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AllowedCurrency[]'
+   */
+  export type ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllowedCurrency[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AllowedCurrency'
+   */
+  export type EnumAllowedCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllowedCurrency'>
+    
+
+
+  /**
    * Reference to a field of type 'TokenEnvironment'
    */
   export type EnumTokenEnvironmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TokenEnvironment'>
@@ -15207,20 +15279,6 @@ export namespace Prisma {
    * Reference to a field of type 'BigInt[]'
    */
   export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'AllowedCurrency'
-   */
-  export type EnumAllowedCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllowedCurrency'>
-    
-
-
-  /**
-   * Reference to a field of type 'AllowedCurrency[]'
-   */
-  export type ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllowedCurrency[]'>
     
 
 
@@ -15592,9 +15650,13 @@ export namespace Prisma {
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     id?: StringFilter<"Project"> | string
     name?: StringFilter<"Project"> | string
+    logoUrl?: StringNullableFilter<"Project"> | string | null
+    description?: StringNullableFilter<"Project"> | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     userId?: StringFilter<"Project"> | string
+    acceptedCurrencies?: EnumAllowedCurrencyNullableListFilter<"Project">
+    notificationEmails?: StringNullableListFilter<"Project">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     apiTokens?: ApiTokenListRelationFilter
     payments?: PaymentListRelationFilter
@@ -15605,9 +15667,13 @@ export namespace Prisma {
   export type ProjectOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
+    acceptedCurrencies?: SortOrder
+    notificationEmails?: SortOrder
     user?: UserOrderByWithRelationInput
     apiTokens?: ApiTokenOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
@@ -15621,9 +15687,13 @@ export namespace Prisma {
     AND?: ProjectWhereInput | ProjectWhereInput[]
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
+    logoUrl?: StringNullableFilter<"Project"> | string | null
+    description?: StringNullableFilter<"Project"> | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     userId?: StringFilter<"Project"> | string
+    acceptedCurrencies?: EnumAllowedCurrencyNullableListFilter<"Project">
+    notificationEmails?: StringNullableListFilter<"Project">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     apiTokens?: ApiTokenListRelationFilter
     payments?: PaymentListRelationFilter
@@ -15634,9 +15704,13 @@ export namespace Prisma {
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
+    acceptedCurrencies?: SortOrder
+    notificationEmails?: SortOrder
     _count?: ProjectCountOrderByAggregateInput
     _max?: ProjectMaxOrderByAggregateInput
     _min?: ProjectMinOrderByAggregateInput
@@ -15648,9 +15722,13 @@ export namespace Prisma {
     NOT?: ProjectScalarWhereWithAggregatesInput | ProjectScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Project"> | string
     name?: StringWithAggregatesFilter<"Project"> | string
+    logoUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     userId?: StringWithAggregatesFilter<"Project"> | string
+    acceptedCurrencies?: EnumAllowedCurrencyNullableListFilter<"Project">
+    notificationEmails?: StringNullableListFilter<"Project">
   }
 
   export type ApiTokenWhereInput = {
@@ -16033,6 +16111,7 @@ export namespace Prisma {
     price?: BigIntFilter<"Product"> | bigint | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
+    metadata?: JsonNullableFilter<"Product">
     paymentId?: StringFilter<"Product"> | string
     payment?: XOR<PaymentScalarRelationFilter, PaymentWhereInput>
   }
@@ -16043,6 +16122,7 @@ export namespace Prisma {
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    metadata?: SortOrderInput | SortOrder
     paymentId?: SortOrder
     payment?: PaymentOrderByWithRelationInput
   }
@@ -16056,6 +16136,7 @@ export namespace Prisma {
     price?: BigIntFilter<"Product"> | bigint | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
+    metadata?: JsonNullableFilter<"Product">
     paymentId?: StringFilter<"Product"> | string
     payment?: XOR<PaymentScalarRelationFilter, PaymentWhereInput>
   }, "id">
@@ -16066,6 +16147,7 @@ export namespace Prisma {
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    metadata?: SortOrderInput | SortOrder
     paymentId?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
@@ -16083,6 +16165,7 @@ export namespace Prisma {
     price?: BigIntWithAggregatesFilter<"Product"> | bigint | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    metadata?: JsonNullableWithAggregatesFilter<"Product">
     paymentId?: StringWithAggregatesFilter<"Product"> | string
   }
 
@@ -16520,8 +16603,12 @@ export namespace Prisma {
   export type ProjectCreateInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     user: UserCreateNestedOneWithoutProjectsInput
     apiTokens?: ApiTokenCreateNestedManyWithoutProjectInput
     payments?: PaymentCreateNestedManyWithoutProjectInput
@@ -16532,9 +16619,13 @@ export namespace Prisma {
   export type ProjectUncheckedCreateInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedCreateNestedManyWithoutProjectInput
     payments?: PaymentUncheckedCreateNestedManyWithoutProjectInput
     events?: EventUncheckedCreateNestedManyWithoutProjectInput
@@ -16544,8 +16635,12 @@ export namespace Prisma {
   export type ProjectUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
     apiTokens?: ApiTokenUpdateManyWithoutProjectNestedInput
     payments?: PaymentUpdateManyWithoutProjectNestedInput
@@ -16556,9 +16651,13 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedUpdateManyWithoutProjectNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutProjectNestedInput
     events?: EventUncheckedUpdateManyWithoutProjectNestedInput
@@ -16568,24 +16667,36 @@ export namespace Prisma {
   export type ProjectCreateManyInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
   }
 
   export type ProjectUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
   }
 
   export type ProjectUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
   }
 
   export type ApiTokenCreateInput = {
@@ -17003,6 +17114,7 @@ export namespace Prisma {
     price: bigint | number
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     payment: PaymentCreateNestedOneWithoutProductsInput
   }
 
@@ -17012,6 +17124,7 @@ export namespace Prisma {
     price: bigint | number
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentId: string
   }
 
@@ -17021,6 +17134,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     payment?: PaymentUpdateOneRequiredWithoutProductsNestedInput
   }
 
@@ -17030,6 +17144,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -17039,6 +17154,7 @@ export namespace Prisma {
     price: bigint | number
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentId: string
   }
 
@@ -17048,6 +17164,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -17056,6 +17173,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -17461,6 +17579,22 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumAllowedCurrencyNullableListFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    has?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    hasEvery?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
+    hasSome?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type ApiTokenListRelationFilter = {
     every?: ApiTokenWhereInput
     some?: ApiTokenWhereInput
@@ -17504,14 +17638,20 @@ export namespace Prisma {
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    logoUrl?: SortOrder
+    description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
+    acceptedCurrencies?: SortOrder
+    notificationEmails?: SortOrder
   }
 
   export type ProjectMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    logoUrl?: SortOrder
+    description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -17520,6 +17660,8 @@ export namespace Prisma {
   export type ProjectMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    logoUrl?: SortOrder
+    description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -17530,14 +17672,6 @@ export namespace Prisma {
     in?: $Enums.TokenEnvironment[] | ListEnumTokenEnvironmentFieldRefInput<$PrismaModel>
     notIn?: $Enums.TokenEnvironment[] | ListEnumTokenEnvironmentFieldRefInput<$PrismaModel>
     not?: NestedEnumTokenEnvironmentFilter<$PrismaModel> | $Enums.TokenEnvironment
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -17999,6 +18133,7 @@ export namespace Prisma {
     price?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    metadata?: SortOrder
     paymentId?: SortOrder
   }
 
@@ -18305,6 +18440,14 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccountsInput, UserUpdateWithoutAccountsInput>, UserUncheckedUpdateWithoutAccountsInput>
   }
 
+  export type ProjectCreateacceptedCurrenciesInput = {
+    set: $Enums.AllowedCurrency[]
+  }
+
+  export type ProjectCreatenotificationEmailsInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutProjectsInput = {
     create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
@@ -18365,6 +18508,16 @@ export namespace Prisma {
     connectOrCreate?: WebhookEndpointCreateOrConnectWithoutProjectInput | WebhookEndpointCreateOrConnectWithoutProjectInput[]
     createMany?: WebhookEndpointCreateManyProjectInputEnvelope
     connect?: WebhookEndpointWhereUniqueInput | WebhookEndpointWhereUniqueInput[]
+  }
+
+  export type ProjectUpdateacceptedCurrenciesInput = {
+    set?: $Enums.AllowedCurrency[]
+    push?: $Enums.AllowedCurrency | $Enums.AllowedCurrency[]
+  }
+
+  export type ProjectUpdatenotificationEmailsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
@@ -19433,8 +19586,12 @@ export namespace Prisma {
   export type ProjectCreateWithoutUserInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenCreateNestedManyWithoutProjectInput
     payments?: PaymentCreateNestedManyWithoutProjectInput
     events?: EventCreateNestedManyWithoutProjectInput
@@ -19444,8 +19601,12 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutUserInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedCreateNestedManyWithoutProjectInput
     payments?: PaymentUncheckedCreateNestedManyWithoutProjectInput
     events?: EventUncheckedCreateNestedManyWithoutProjectInput
@@ -19549,9 +19710,13 @@ export namespace Prisma {
     NOT?: ProjectScalarWhereInput | ProjectScalarWhereInput[]
     id?: StringFilter<"Project"> | string
     name?: StringFilter<"Project"> | string
+    logoUrl?: StringNullableFilter<"Project"> | string | null
+    description?: StringNullableFilter<"Project"> | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     userId?: StringFilter<"Project"> | string
+    acceptedCurrencies?: EnumAllowedCurrencyNullableListFilter<"Project">
+    notificationEmails?: StringNullableListFilter<"Project">
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -20061,8 +20226,12 @@ export namespace Prisma {
   export type ProjectCreateWithoutApiTokensInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     user: UserCreateNestedOneWithoutProjectsInput
     payments?: PaymentCreateNestedManyWithoutProjectInput
     events?: EventCreateNestedManyWithoutProjectInput
@@ -20072,9 +20241,13 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutApiTokensInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     payments?: PaymentUncheckedCreateNestedManyWithoutProjectInput
     events?: EventUncheckedCreateNestedManyWithoutProjectInput
     webhookEndpoints?: WebhookEndpointUncheckedCreateNestedManyWithoutProjectInput
@@ -20181,8 +20354,12 @@ export namespace Prisma {
   export type ProjectUpdateWithoutApiTokensInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
     payments?: PaymentUpdateManyWithoutProjectNestedInput
     events?: EventUpdateManyWithoutProjectNestedInput
@@ -20192,9 +20369,13 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutApiTokensInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     payments?: PaymentUncheckedUpdateManyWithoutProjectNestedInput
     events?: EventUncheckedUpdateManyWithoutProjectNestedInput
     webhookEndpoints?: WebhookEndpointUncheckedUpdateManyWithoutProjectNestedInput
@@ -20235,8 +20416,12 @@ export namespace Prisma {
   export type ProjectCreateWithoutWebhookEndpointsInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     user: UserCreateNestedOneWithoutProjectsInput
     apiTokens?: ApiTokenCreateNestedManyWithoutProjectInput
     payments?: PaymentCreateNestedManyWithoutProjectInput
@@ -20246,9 +20431,13 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutWebhookEndpointsInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedCreateNestedManyWithoutProjectInput
     payments?: PaymentUncheckedCreateNestedManyWithoutProjectInput
     events?: EventUncheckedCreateNestedManyWithoutProjectInput
@@ -20307,8 +20496,12 @@ export namespace Prisma {
   export type ProjectUpdateWithoutWebhookEndpointsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
     apiTokens?: ApiTokenUpdateManyWithoutProjectNestedInput
     payments?: PaymentUpdateManyWithoutProjectNestedInput
@@ -20318,9 +20511,13 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutWebhookEndpointsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedUpdateManyWithoutProjectNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutProjectNestedInput
     events?: EventUncheckedUpdateManyWithoutProjectNestedInput
@@ -20361,8 +20558,12 @@ export namespace Prisma {
   export type ProjectCreateWithoutPaymentsInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     user: UserCreateNestedOneWithoutProjectsInput
     apiTokens?: ApiTokenCreateNestedManyWithoutProjectInput
     events?: EventCreateNestedManyWithoutProjectInput
@@ -20372,9 +20573,13 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutPaymentsInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedCreateNestedManyWithoutProjectInput
     events?: EventUncheckedCreateNestedManyWithoutProjectInput
     webhookEndpoints?: WebhookEndpointUncheckedCreateNestedManyWithoutProjectInput
@@ -20424,6 +20629,7 @@ export namespace Prisma {
     price: bigint | number
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ProductUncheckedCreateWithoutPaymentInput = {
@@ -20432,6 +20638,7 @@ export namespace Prisma {
     price: bigint | number
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ProductCreateOrConnectWithoutPaymentInput = {
@@ -20492,8 +20699,12 @@ export namespace Prisma {
   export type ProjectUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
     apiTokens?: ApiTokenUpdateManyWithoutProjectNestedInput
     events?: EventUpdateManyWithoutProjectNestedInput
@@ -20503,9 +20714,13 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedUpdateManyWithoutProjectNestedInput
     events?: EventUncheckedUpdateManyWithoutProjectNestedInput
     webhookEndpoints?: WebhookEndpointUncheckedUpdateManyWithoutProjectNestedInput
@@ -20575,6 +20790,7 @@ export namespace Prisma {
     price?: BigIntFilter<"Product"> | bigint | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
+    metadata?: JsonNullableFilter<"Product">
     paymentId?: StringFilter<"Product"> | string
   }
 
@@ -20597,8 +20813,12 @@ export namespace Prisma {
   export type ProjectCreateWithoutEventsInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     user: UserCreateNestedOneWithoutProjectsInput
     apiTokens?: ApiTokenCreateNestedManyWithoutProjectInput
     payments?: PaymentCreateNestedManyWithoutProjectInput
@@ -20608,9 +20828,13 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutEventsInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedCreateNestedManyWithoutProjectInput
     payments?: PaymentUncheckedCreateNestedManyWithoutProjectInput
     webhookEndpoints?: WebhookEndpointUncheckedCreateNestedManyWithoutProjectInput
@@ -20745,8 +20969,12 @@ export namespace Prisma {
   export type ProjectUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     user?: UserUpdateOneRequiredWithoutProjectsNestedInput
     apiTokens?: ApiTokenUpdateManyWithoutProjectNestedInput
     payments?: PaymentUpdateManyWithoutProjectNestedInput
@@ -20756,9 +20984,13 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedUpdateManyWithoutProjectNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutProjectNestedInput
     webhookEndpoints?: WebhookEndpointUncheckedUpdateManyWithoutProjectNestedInput
@@ -21120,8 +21352,12 @@ export namespace Prisma {
   export type ProjectCreateManyUserInput = {
     id?: string
     name: string
+    logoUrl?: string | null
+    description?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    acceptedCurrencies?: ProjectCreateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectCreatenotificationEmailsInput | string[]
   }
 
   export type SessionUpdateWithoutUserInput = {
@@ -21202,8 +21438,12 @@ export namespace Prisma {
   export type ProjectUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUpdateManyWithoutProjectNestedInput
     payments?: PaymentUpdateManyWithoutProjectNestedInput
     events?: EventUpdateManyWithoutProjectNestedInput
@@ -21213,8 +21453,12 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
     apiTokens?: ApiTokenUncheckedUpdateManyWithoutProjectNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutProjectNestedInput
     events?: EventUncheckedUpdateManyWithoutProjectNestedInput
@@ -21224,8 +21468,12 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedCurrencies?: ProjectUpdateacceptedCurrenciesInput | $Enums.AllowedCurrency[]
+    notificationEmails?: ProjectUpdatenotificationEmailsInput | string[]
   }
 
   export type ApiTokenCreateManyProjectInput = {
@@ -21620,6 +21868,7 @@ export namespace Prisma {
     price: bigint | number
     createdAt?: Date | string
     updatedAt?: Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type EventCreateManyPaymentInput = {
@@ -21639,6 +21888,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ProductUncheckedUpdateWithoutPaymentInput = {
@@ -21647,6 +21897,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ProductUncheckedUpdateManyWithoutPaymentInput = {
@@ -21655,6 +21906,7 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type EventUpdateWithoutPaymentInput = {

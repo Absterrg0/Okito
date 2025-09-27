@@ -53,7 +53,7 @@ export default function CustomWallet() {
                     onClick={handleConnect}
                     variant="default"
                     size="default"
-                    className="crypto-glass bg-primary/10 hover:bg-primary/20 dark:bg-primary/15 dark:hover:bg-primary/25 text-primary border-primary/30 hover:border-primary/50 shadow-primary/10 hover:shadow-primary/20 transition-all duration-300 ease-out relative overflow-hidden"
+                    className="crypto-glass bg-primary/10 hover:bg-primary/20 dark:bg-primary/15 dark:hover:bg-primary/25 text-primary border-primary/30 hover:border-primary/50 shadow-primary/10 hover:shadow-primary/20 transition-all duration-300 ease-out  relative overflow-hidden"
                 >
                     <Wallet className="w-4 h-4" />
                     Connect Wallet
@@ -92,8 +92,7 @@ export default function CustomWallet() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                             onClick={handleDisconnect} 
-                            variant="destructive"
-                            className="cursor-pointer "
+                            className="cursor-pointer text-red-500 hover:text-red-800"
                         >
                             <LogOut className="w-4 h-4" />
                             Disconnect

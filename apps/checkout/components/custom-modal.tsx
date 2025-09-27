@@ -1,11 +1,13 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from '@hugeicons/react'
-import { Cancel01Icon } from '@hugeicons/core-free-icons'
+import { Button } from "./ui/button";
 import { toast } from "sonner";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
 export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { wallets, select } = useWallet();
+    const {theme} = useTheme();
 
     const handleWalletSelect = async (walletName: string) => {
         try {
@@ -20,53 +22,39 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
         }
     };
 
-    if(!isOpen) return null;
-
     const popularWallets = [
         {
             name: 'Phantom',
+            icon: <Image src={theme === 'dark' ? "/phantom-dark.png" : "/phantom.png"} alt="Phantom" width={32} height={32} />,
             description: 'Most popular Solana wallet',
             installed: wallets.find(w => w.adapter.name === 'Phantom')?.readyState === 'Installed'
         },
         {
             name: 'MetaMask',
+            icon: <Image src={theme === 'dark' ? "/metamask-dark.png" : "/metamask.png"} alt="MetaMask" width={24} height={24} />,
             description: 'Popular multi-chain wallet',
             installed: wallets.find(w => w.adapter.name === 'MetaMask')?.readyState === 'Installed'
         },
         {
             name: 'Backpack',
+            icon: <Image src={theme === 'dark' ? "/backpack-dark.png" : "/backpack.png"} alt="Backpack" width={24} height={24} />,
             description: 'Modern Solana wallet',
             installed: wallets.find(w => w.adapter.name === 'Backpack')?.readyState === 'Installed'
         }
     ];
 
     return (
-        <div className="h-screen w-screen fixed inset-0 z-[9999] flex items-center justify-center">
-            {/* Backdrop */}
-            <div 
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={onClose}
-            />
-            
-            {/* Modal */}
-            <div className="relative w-full max-w-md mx-4">
-                <div className="crypto-base bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
+        <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+            <DialogContent className="bg-transparent border-0 p-0 shadow-none">
+                <div className="crypto-glass bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 className="text-xl font-semibold text-foreground">Connect Wallet</h2>
-                            <p className="text-sm text-muted-foreground mt-1">
+                        <DialogTitle className="text-xl font-semibold text-foreground">
+                            Connect Wallet
+                            <span className="block text-sm text-muted-foreground mt-1 font-normal">
                                 Choose your preferred wallet to connect to Soloyal
-                            </p>
-                        </div>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={onClose}
-                            className="rounded-full hover:bg-black/10"
-                        >
-                            <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
-                        </Button>
+                            </span>
+                        </DialogTitle>
                     </div>
 
                     {/* Wallet Options */}
@@ -75,9 +63,10 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                             <Button
                                 key={wallet.name}
                                 variant="outline"
-                                className="w-full h-16 crypto-glass bg-white/90 hover:bg-primary/5 border-gray-200/80 hover:border-primary/20 dark:bg-background/30 dark:hover:bg-primary/15 dark:border-border/50 dark:hover:border-primary/30 text-foreground transition-all duration-300 ease-out relative overflow-hidden flex items-center justify-between p-4 group shadow-sm hover:shadow-md"
+                                className="w-full h-16 crypto-glass bg-white/90 hover:bg-primary/5 border-gray-200/80 hover:border-primary/20 dark:bg-background/30 dark:hover:bg-primary/15 dark:border-border/50 dark:hover:border-primary/30 text-foreground transition-all duration-300 ease-out relative overflow-hidden flex items-center justify-start gap-4 p-4 group shadow-sm hover:shadow-md"
                                 onClick={() => handleWalletSelect(wallet.name)}
                             >
+                                <div className="text-2xl">{wallet.icon}</div>
                                 <div className="flex-1 text-left">
                                     <div className="font-medium text-gray-900 dark:text-foreground group-hover:text-primary transition-colors">
                                         {wallet.name}
@@ -105,8 +94,9 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-6 pt-4    ">
-                        <div className="text-center space-y-2">
+                    <div className="mt-6 pt-4">
+                        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                        <div className="text-center space-y-2 mt-4">
                             <p className="text-xs text-gray-600 dark:text-muted-foreground">
                                 New to Solana wallets?
                             </p>
@@ -123,7 +113,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 }

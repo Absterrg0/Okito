@@ -171,9 +171,13 @@ exports.Prisma.VerificationScalarFieldEnum = {
 exports.Prisma.ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  logoUrl: 'logoUrl',
+  description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId'
+  userId: 'userId',
+  acceptedCurrencies: 'acceptedCurrencies',
+  notificationEmails: 'notificationEmails'
 };
 
 exports.Prisma.ApiTokenScalarFieldEnum = {
@@ -238,6 +242,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   price: 'price',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  metadata: 'metadata',
   paymentId: 'paymentId'
 };
 
@@ -279,6 +284,11 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.AllowedCurrency = exports.$Enums.AllowedCurrency = {
+  USDC: 'USDC',
+  USDT: 'USDT'
+};
+
 exports.TokenEnvironment = exports.$Enums.TokenEnvironment = {
   TEST: 'TEST',
   LIVE: 'LIVE'
@@ -299,11 +309,6 @@ exports.EventType = exports.$Enums.EventType = {
   PAYMENT_COMPLETED: 'PAYMENT_COMPLETED',
   PAYMENT_FAILED: 'PAYMENT_FAILED',
   PAYMENT_PENDING: 'PAYMENT_PENDING'
-};
-
-exports.AllowedCurrency = exports.$Enums.AllowedCurrency = {
-  USDC: 'USDC',
-  USDT: 'USDT'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {

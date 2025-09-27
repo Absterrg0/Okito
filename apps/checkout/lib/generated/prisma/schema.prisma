@@ -78,16 +78,20 @@ model Verification {
 }
 
 model Project {
-  id               String            @id @default(uuid())
-  name             String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  userId           String
-  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  apiTokens        ApiToken[]
-  payments         Payment[]
-  events           Event[]
-  webhookEndpoints WebhookEndpoint[]
+  id                 String            @id @default(uuid())
+  name               String
+  logoUrl            String?
+  description        String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  acceptedCurrencies AllowedCurrency[]
+  notificationEmails String[]
+  apiTokens          ApiToken[]
+  payments           Payment[]
+  events             Event[]
+  webhookEndpoints   WebhookEndpoint[]
 
   @@unique([name])
   @@map("project")
@@ -180,6 +184,7 @@ model Product {
   price     BigInt
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  metadata  Json?
   paymentId String
   payment   Payment  @relation(fields: [paymentId], references: [id])
 

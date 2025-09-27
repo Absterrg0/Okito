@@ -28,7 +28,6 @@ import {
   
   
   export async function pay(
-    connection: Connection,
     wallet: SignerWallet,
     amount: number,
     token: "USDC" | "USDT",
@@ -36,6 +35,8 @@ import {
     sessionId: string,
     network: "mainnet-beta" | "devnet" = "devnet"
   ): Promise<string> {
+
+    const connection = new Connection( network === 'mainnet-beta' ? process.env.MAINNET_RPC_URL! : process.env.DEVNET_RPC_URL!)
     if (!wallet?.publicKey || !wallet.signTransaction) {
       throw new Error("Wallet not connected");
     }
@@ -58,8 +59,10 @@ import {
       try {
         mintInfo = await getMint(connection, mint, 'confirmed', TOKEN_PROGRAM_ID);
         tokenProgramId = TOKEN_PROGRAM_ID;
-      } catch {
-        throw new Error(`Unable to fetch mint info for ${token}`);
+      } catch(e) {
+        console.log(e)
+        // throw new Error(`Unable to fetch mint info for ${token}`);
+        throw new Error(e);
       }
     }
     

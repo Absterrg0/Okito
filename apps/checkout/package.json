@@ -13,6 +13,7 @@
     "@hugeicons/react": "^1.1.1",
     "@okito/sdk": "^1.0.6",
     "@prisma/client": "6.16.2",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@solana/spl-token": "^0.4.14",

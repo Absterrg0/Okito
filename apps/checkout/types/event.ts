@@ -16,11 +16,23 @@ const paymentSchema = z.object({
     recipientAddress:z.string(),
     products:productSchema.array(),
 })
+export const projectSchema = z.object({
+    name: z.string(),
+    description:z.string().nullable(),
+    logoUrl:z.string().nullable(),
+    acceptedCurrencies:z.array(z.enum(['USDC','USDT'])).default([]),
+})
+export const apiTokenSchema = z.object({
+    environment: z.enum(['TEST','LIVE'],{message:"Invalid environment"}).nullable(),
+
+})
 
 const eventSchema = z.object({
     id:z.string(),
     projectId:z.string(),
+    project:projectSchema,
     type:z.enum(['PAYMENT_COMPLETED', 'PAYMENT_FAILED', 'PAYMENT_PENDING']),
+    token:apiTokenSchema,
     metadata:z.any(),
     webhookUrl:z.string(),
     occurredAt:z.date(),
@@ -48,5 +60,6 @@ export const getEventSchemaResponse = eventSchema.omit({
     metadata:true,
     projectId:true,
     id:true,
+    
 
 })

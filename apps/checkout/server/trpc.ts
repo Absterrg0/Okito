@@ -37,7 +37,7 @@ export const sessionGuardProcedure = t.procedure
     if (event.occurredAt) {
       const now = new Date();
       const sessionTime = new Date(event.occurredAt);
-      const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+      const tenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
       if (sessionTime < tenMinutesAgo) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
