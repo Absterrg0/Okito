@@ -1,16 +1,17 @@
 import { PublicKey } from "@solana/web3.js";
+import { NextResponse } from "next/server";
 export function getMintAddress(
     token: string,
     network: 'mainnet-beta' | 'devnet' = 'mainnet-beta'
   ): PublicKey {
     const MINTS: Record<string, Record<string, string>> = {
       "mainnet-beta": {
-        USDC: "EPjFWdd5AufqSSqeM2qN1xzy3dKTtWHv5aC88jydDxAz",
-        USDT: "Es9vMFrzaCERQdaYL8xq8gLsXjE7EqE3sGzA4DMwCsxH",
+        USDC: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        USDT: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
       },
       "devnet": {
-        USDC: "BXXkv6zRCpzzB4K8GzJJwRGCqkAs7u3fTqYWMvYMgPqa",
-        USDT: "C8dV1ujnpVaUYZBLsD1fGkx9pVnUo4LxGC7hB9NRWnfa",
+        USDC: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+        USDT: "2tWC4JAdL4AxEFJySziYJfsAnW2MHKRo98vbAPiRDSk8",
       }
     };
   
@@ -30,4 +31,7 @@ export function getMintAddress(
     );
   }
 }
+
+
+
 

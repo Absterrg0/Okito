@@ -23,6 +23,15 @@ export const OkitoWebhookEventSchema = z.object({
     metadata: z.any().optional(),
     walletAddress: z.string().optional(),
     tokenMint: z.string().optional(),
+    transactionSignature: z.string().optional(),
+    blockNumber: z.number().optional(),
+    confirmedAt: z.string().optional(),
+    products: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      price: z.number(),
+      metadata: z.any().optional(),
+    })).optional(),
   }).passthrough(),
 }).strict()
 

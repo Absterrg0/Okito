@@ -34,8 +34,9 @@ export default function CheckoutPage() {
 
   const products = event?.payment?.products ?? []
   const recipient = event?.payment?.recipientAddress ?? ''
-  const projectAllowedCurrencies = (((event?.project as any)?.allowedCurrencies ?? event?.project?.acceptedCurrencies ?? []) as ("USDC" | "USDT")[])
-  const [selectedCurrency, setSelectedCurrency] = useState<"USDC" | "USDT">(((event?.payment?.currency ?? 'USDC') as "USDC" | "USDT"))
+  const projectAllowedCurrencies = ((event?.project?.acceptedCurrencies ?? []) as ("USDC" | "USDT")[])
+  console.log(projectAllowedCurrencies);
+  const [selectedCurrency, setSelectedCurrency] = useState<"USDC" | "USDT">(((event?.project?.acceptedCurrencies ?? ['USDC', 'USDT'])[0] as "USDC" | "USDT"))
   
   const subtotal = products.reduce((sum, item: any) => {
     const price = Number(item.price ?? 0) / 1_000_000

@@ -39,7 +39,8 @@ export type PaymentInputSchemaType = z.infer<typeof PaymentInputSchema>
 
 // Response schema for validation
 export const PaymentSessionResponseSchema = z.object({
-    sessionId: z.string(),
+    sessionId: z.string().nullable(),
+    error:z.string().nullable()
 });
 
 export type PaymentSessionResponse = z.infer<typeof PaymentSessionResponseSchema>;

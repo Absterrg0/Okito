@@ -10367,7 +10367,7 @@ export namespace Prisma {
     projectId: string
     tokenId: string | null
     amount: bigint
-    currency: $Enums.AllowedCurrency
+    currency: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash: string | null
     blockNumber: bigint | null
@@ -10510,7 +10510,7 @@ export namespace Prisma {
       projectId: string
       tokenId: string | null
       amount: bigint
-      currency: $Enums.AllowedCurrency
+      currency: $Enums.AllowedCurrency | null
       recipientAddress: string
       txHash: string | null
       blockNumber: bigint | null
@@ -15910,7 +15910,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Payment"> | string
     tokenId?: StringNullableFilter<"Payment"> | string | null
     amount?: BigIntFilter<"Payment"> | bigint | number
-    currency?: EnumAllowedCurrencyFilter<"Payment"> | $Enums.AllowedCurrency
+    currency?: EnumAllowedCurrencyNullableFilter<"Payment"> | $Enums.AllowedCurrency | null
     recipientAddress?: StringFilter<"Payment"> | string
     txHash?: StringNullableFilter<"Payment"> | string | null
     blockNumber?: BigIntNullableFilter<"Payment"> | bigint | number | null
@@ -15932,7 +15932,7 @@ export namespace Prisma {
     projectId?: SortOrder
     tokenId?: SortOrderInput | SortOrder
     amount?: SortOrder
-    currency?: SortOrder
+    currency?: SortOrderInput | SortOrder
     recipientAddress?: SortOrder
     txHash?: SortOrderInput | SortOrder
     blockNumber?: SortOrderInput | SortOrder
@@ -15959,7 +15959,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Payment"> | string
     tokenId?: StringNullableFilter<"Payment"> | string | null
     amount?: BigIntFilter<"Payment"> | bigint | number
-    currency?: EnumAllowedCurrencyFilter<"Payment"> | $Enums.AllowedCurrency
+    currency?: EnumAllowedCurrencyNullableFilter<"Payment"> | $Enums.AllowedCurrency | null
     recipientAddress?: StringFilter<"Payment"> | string
     blockNumber?: BigIntNullableFilter<"Payment"> | bigint | number | null
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
@@ -15979,7 +15979,7 @@ export namespace Prisma {
     projectId?: SortOrder
     tokenId?: SortOrderInput | SortOrder
     amount?: SortOrder
-    currency?: SortOrder
+    currency?: SortOrderInput | SortOrder
     recipientAddress?: SortOrder
     txHash?: SortOrderInput | SortOrder
     blockNumber?: SortOrderInput | SortOrder
@@ -16005,7 +16005,7 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"Payment"> | string
     tokenId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     amount?: BigIntWithAggregatesFilter<"Payment"> | bigint | number
-    currency?: EnumAllowedCurrencyWithAggregatesFilter<"Payment"> | $Enums.AllowedCurrency
+    currency?: EnumAllowedCurrencyNullableWithAggregatesFilter<"Payment"> | $Enums.AllowedCurrency | null
     recipientAddress?: StringWithAggregatesFilter<"Payment"> | string
     txHash?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     blockNumber?: BigIntNullableWithAggregatesFilter<"Payment"> | bigint | number | null
@@ -16894,7 +16894,7 @@ export namespace Prisma {
   export type PaymentCreateInput = {
     id?: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -16916,7 +16916,7 @@ export namespace Prisma {
     projectId: string
     tokenId?: string | null
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -16934,7 +16934,7 @@ export namespace Prisma {
   export type PaymentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -16956,7 +16956,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -16976,7 +16976,7 @@ export namespace Prisma {
     projectId: string
     tokenId?: string | null
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -16992,7 +16992,7 @@ export namespace Prisma {
   export type PaymentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -17010,7 +17010,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -17861,11 +17861,11 @@ export namespace Prisma {
     not?: NestedBigIntFilter<$PrismaModel> | bigint | number
   }
 
-  export type EnumAllowedCurrencyFilter<$PrismaModel = never> = {
-    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    not?: NestedEnumAllowedCurrencyFilter<$PrismaModel> | $Enums.AllowedCurrency
+  export type EnumAllowedCurrencyNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAllowedCurrencyNullableFilter<$PrismaModel> | $Enums.AllowedCurrency | null
   }
 
   export type BigIntNullableFilter<$PrismaModel = never> = {
@@ -17981,14 +17981,14 @@ export namespace Prisma {
     _max?: NestedBigIntFilter<$PrismaModel>
   }
 
-  export type EnumAllowedCurrencyWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    not?: NestedEnumAllowedCurrencyWithAggregatesFilter<$PrismaModel> | $Enums.AllowedCurrency
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumAllowedCurrencyFilter<$PrismaModel>
-    _max?: NestedEnumAllowedCurrencyFilter<$PrismaModel>
+  export type EnumAllowedCurrencyNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAllowedCurrencyNullableWithAggregatesFilter<$PrismaModel> | $Enums.AllowedCurrency | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumAllowedCurrencyNullableFilter<$PrismaModel>
+    _max?: NestedEnumAllowedCurrencyNullableFilter<$PrismaModel>
   }
 
   export type BigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -18880,8 +18880,8 @@ export namespace Prisma {
     divide?: bigint | number
   }
 
-  export type EnumAllowedCurrencyFieldUpdateOperationsInput = {
-    set?: $Enums.AllowedCurrency
+  export type NullableEnumAllowedCurrencyFieldUpdateOperationsInput = {
+    set?: $Enums.AllowedCurrency | null
   }
 
   export type NullableBigIntFieldUpdateOperationsInput = {
@@ -19352,11 +19352,11 @@ export namespace Prisma {
     not?: NestedBigIntFilter<$PrismaModel> | bigint | number
   }
 
-  export type NestedEnumAllowedCurrencyFilter<$PrismaModel = never> = {
-    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    not?: NestedEnumAllowedCurrencyFilter<$PrismaModel> | $Enums.AllowedCurrency
+  export type NestedEnumAllowedCurrencyNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAllowedCurrencyNullableFilter<$PrismaModel> | $Enums.AllowedCurrency | null
   }
 
   export type NestedBigIntNullableFilter<$PrismaModel = never> = {
@@ -19393,14 +19393,14 @@ export namespace Prisma {
     _max?: NestedBigIntFilter<$PrismaModel>
   }
 
-  export type NestedEnumAllowedCurrencyWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel>
-    not?: NestedEnumAllowedCurrencyWithAggregatesFilter<$PrismaModel> | $Enums.AllowedCurrency
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumAllowedCurrencyFilter<$PrismaModel>
-    _max?: NestedEnumAllowedCurrencyFilter<$PrismaModel>
+  export type NestedEnumAllowedCurrencyNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowedCurrency | EnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.AllowedCurrency[] | ListEnumAllowedCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumAllowedCurrencyNullableWithAggregatesFilter<$PrismaModel> | $Enums.AllowedCurrency | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumAllowedCurrencyNullableFilter<$PrismaModel>
+    _max?: NestedEnumAllowedCurrencyNullableFilter<$PrismaModel>
   }
 
   export type NestedBigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -19937,7 +19937,7 @@ export namespace Prisma {
   export type PaymentCreateWithoutProjectInput = {
     id?: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -19957,7 +19957,7 @@ export namespace Prisma {
     id?: string
     tokenId?: string | null
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -20147,7 +20147,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Payment"> | string
     tokenId?: StringNullableFilter<"Payment"> | string | null
     amount?: BigIntFilter<"Payment"> | bigint | number
-    currency?: EnumAllowedCurrencyFilter<"Payment"> | $Enums.AllowedCurrency
+    currency?: EnumAllowedCurrencyNullableFilter<"Payment"> | $Enums.AllowedCurrency | null
     recipientAddress?: StringFilter<"Payment"> | string
     txHash?: StringNullableFilter<"Payment"> | string | null
     blockNumber?: BigIntNullableFilter<"Payment"> | bigint | number | null
@@ -20261,7 +20261,7 @@ export namespace Prisma {
   export type PaymentCreateWithoutTokenInput = {
     id?: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -20281,7 +20281,7 @@ export namespace Prisma {
     id?: string
     projectId: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -20848,7 +20848,7 @@ export namespace Prisma {
   export type PaymentCreateWithoutEventsInput = {
     id?: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -20869,7 +20869,7 @@ export namespace Prisma {
     projectId: string
     tokenId?: string | null
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -21010,7 +21010,7 @@ export namespace Prisma {
   export type PaymentUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21031,7 +21031,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21103,7 +21103,7 @@ export namespace Prisma {
   export type PaymentCreateWithoutProductsInput = {
     id?: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -21124,7 +21124,7 @@ export namespace Prisma {
     projectId: string
     tokenId?: string | null
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -21157,7 +21157,7 @@ export namespace Prisma {
   export type PaymentUpdateWithoutProductsInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21178,7 +21178,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21492,7 +21492,7 @@ export namespace Prisma {
     id?: string
     tokenId?: string | null
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -21571,7 +21571,7 @@ export namespace Prisma {
   export type PaymentUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21591,7 +21591,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21610,7 +21610,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21700,7 +21700,7 @@ export namespace Prisma {
     id?: string
     projectId: string
     amount: bigint | number
-    currency: $Enums.AllowedCurrency
+    currency?: $Enums.AllowedCurrency | null
     recipientAddress: string
     txHash?: string | null
     blockNumber?: bigint | number | null
@@ -21727,7 +21727,7 @@ export namespace Prisma {
   export type PaymentUpdateWithoutTokenInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21747,7 +21747,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -21766,7 +21766,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
     amount?: BigIntFieldUpdateOperationsInput | bigint | number
-    currency?: EnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency
+    currency?: NullableEnumAllowedCurrencyFieldUpdateOperationsInput | $Enums.AllowedCurrency | null
     recipientAddress?: StringFieldUpdateOperationsInput | string
     txHash?: NullableStringFieldUpdateOperationsInput | string | null
     blockNumber?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null

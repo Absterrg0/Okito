@@ -1,9 +1,9 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button } from "../ui/button";
-import { X } from "lucide-react";
+import { Button } from "./button";
 import { toast } from "sonner";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { Dialog, DialogContent, DialogTitle } from "./dialog";
 
 export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { wallets, select } = useWallet();
@@ -21,8 +21,6 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
             toast.error(`Error connecting to ${walletName}: ${error.message}`);
         }
     };
-
-    if (!isOpen) return null;
 
     const popularWallets = [
         {
@@ -46,32 +44,17 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
     ];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Backdrop */}
-            <div 
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={onClose}
-            />
-            
-            {/* Modal */}
-            <div className="relative w-full max-w-md mx-4">
+        <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+            <DialogContent className="bg-transparent border-0 p-0 shadow-none">
                 <div className="crypto-glass bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 className="text-xl font-semibold text-foreground">Connect Wallet</h2>
-                            <p className="text-sm text-muted-foreground mt-1">
+                        <DialogTitle className="text-xl font-semibold text-foreground">
+                            Connect Wallet
+                            <span className="block text-sm text-muted-foreground mt-1 font-normal">
                                 Choose your preferred wallet to connect to Soloyal
-                            </p>
-                        </div>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={onClose}
-                            className="rounded-full hover:bg-black/10"
-                        >
-                            <X className="w-4 h-4" />
-                        </Button>
+                            </span>
+                        </DialogTitle>
                     </div>
 
                     {/* Wallet Options */}
@@ -111,8 +94,9 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-6 pt-4 border-t border-gray-200/60 dark:border-border/50">
-                        <div className="text-center space-y-2">
+                    <div className="mt-6 pt-4">
+                        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                        <div className="text-center space-y-2 mt-4">
                             <p className="text-xs text-gray-600 dark:text-muted-foreground">
                                 New to Solana wallets?
                             </p>
@@ -129,7 +113,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 }

@@ -7,6 +7,7 @@ import Wallet from "@/components/ui/wallet";
 import {NextSSRPlugin} from '@uploadthing/react/next-ssr-plugin'
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { PostHogProvider } from "@/components/providers/posthog-provider";
 
 
 import { Toaster } from "@/components/ui/sonner";
@@ -30,15 +31,17 @@ export default function RootLayout({
       <body 
         className={`${dmSans.className} antialiased`}
       >
+        <PostHogProvider>
+
              <NextSSRPlugin
           routerConfig={extractRouterConfig(ourFileRouter)}
-        />
+          />
            <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
-        >
+          >
           <QueryProvider>
             <Wallet>
 
@@ -47,6 +50,7 @@ export default function RootLayout({
           </QueryProvider>
         </ThemeProvider>
         <Toaster />
+          </PostHogProvider>
       </body>
     </html>
   );

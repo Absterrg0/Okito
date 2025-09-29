@@ -149,7 +149,7 @@ model Payment {
   tokenId   String?
   token     ApiToken?         @relation(fields: [tokenId], references: [id], onDelete: SetNull)
   amount           BigInt
-  currency         AllowedCurrency
+  currency         AllowedCurrency?
   recipientAddress String
   products     Product[]
 

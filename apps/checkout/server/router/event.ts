@@ -40,7 +40,7 @@ const getValidEvent = protectedProcedure
             
         }
     })
-    // console.log(event);
+    console.log(event);
 
     if (!event) {
         throw new TRPCError({

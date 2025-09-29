@@ -12,7 +12,6 @@ const paymentSchema = z.object({
     id:z.string(),
     projectId:z.string(),
     amount:z.bigint(),
-    currency:z.enum(['USDC','USDT']),
     recipientAddress:z.string(),
     products:productSchema.array(),
 })

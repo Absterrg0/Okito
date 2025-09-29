@@ -24,7 +24,7 @@ export function getMintAddress(
       // Add more tokens here as needed
     },
     "devnet": {
-      USDC: "BXXkv6zRCpzzB4K8GzJJwRGCqkAs7u3fTqYWMvYMgPqa",
+      USDC: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
       USDT: "C8dV1ujnpVaUYZBLsD1fGkx9pVnUo4LxGC7hB9NRWnfa",
       SOL: "So11111111111111111111111111111111111111112", // Wrapped SOL (same as mainnet)
       DOGE: "7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT", // Example: Dogecoin (Solana SPL, unofficial devnet)

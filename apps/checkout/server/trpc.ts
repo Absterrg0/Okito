@@ -29,7 +29,6 @@ export const sessionGuardProcedure = t.procedure
       select: { occurredAt: true, sessionId: true },
     });
 
-    console.log(sessionId);
     if (!event) {
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Event not found or invalid session Id provided' });
     }
