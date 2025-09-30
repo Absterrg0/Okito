@@ -174,7 +174,7 @@ export default function HomePage() {
         </p>
        </div>
        <div className="gap-4 flex items-center">
-        <Environment></Environment>
+        {/* <Environment></Environment> */}
         <ModeToggle></ModeToggle>
        </div>
       </div>

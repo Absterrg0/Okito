@@ -32,7 +32,7 @@ import ProjectSelector from './project-selector'
 import { User } from "better-auth";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { unstable_ViewTransition as ViewTransition, startTransition, unstable_addTransitionType as addTransitionType } from "react";
+import { unstable_ViewTransition as ViewTransition, startTransition } from "react";
 
 const menuItems = [
   {
@@ -97,10 +97,9 @@ export function AppSidebar({user}:{user:User}) {
 
   const handleNavigate = (url: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    
+    // Use React's startTransition which works with ViewTransition wrapper
     startTransition(() => {
-      try { 
-        addTransitionType("navigation-forward"); 
-      } catch {}
       router.push(url);
     });
   };

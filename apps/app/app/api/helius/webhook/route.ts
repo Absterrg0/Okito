@@ -1,62 +1,11 @@
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/db";
-import bs58 from "bs58";
-import { deliverWebhookToAllEndpoints, WebhookEventPayload } from "@/lib/webhook-delivery";
+import { deliverWebhookToAllEndpoints, WebhookEventPayload } from "@/app/api/helius/webhook/webhook-delivery";
+import { emailService } from "@/lib/email-service";
+import { EmailTemplateType } from "@/lib/email-templates";
+import { getNetworkFromTokenEnvironment,parseMemoDataIntoString } from "./helpers";
 
-const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
-
-// Helper function to determine network based on token environment
-function getNetworkFromTokenEnvironment(tokenEnvironment?: string): string {
-  if (tokenEnvironment === 'TEST') {
-    return 'devnet';
-  } else if (tokenEnvironment === 'LIVE') {
-    return 'mainnet-beta';
-  }
-  // Default fallback - could also check environment variables
-  return process.env.NODE_ENV === 'production' ? 'mainnet-beta' : 'devnet';
-}
-
-interface MemoData {
-  sessionId: string;
-  amount: string;
-  token: string;
-  timestamp: number;
-  projectId: string;
-}
-
-function parseMemoDataIntoString(instruction: any[]): MemoData | null {
-  const memoInstruction = instruction.find((ix) => ix.programId === MEMO_PROGRAM_ID);
-
-  if (!memoInstruction) return null;
-
-  try {
-    let decodedData: string;
-    
-    // Try base58 first (most common for Solana webhook data)
-    try {
-      const decodedBytes = bs58.decode(memoInstruction.data);
-      decodedData = Buffer.from(decodedBytes).toString('utf-8');
-      console.log('Successfully decoded with base58:', decodedData);
-    } catch (base58Error) {
-      console.log('Base58 decode failed, trying base64:', memoInstruction.data);
-      
-      // Fallback to base64
-      try {
-        decodedData = Buffer.from(memoInstruction.data, 'base64').toString('utf-8');
-        console.log('Successfully decoded with base64:', decodedData);
-      } catch (base64Error) {
-        console.error('Both base58 and base64 decode failed:', { base58Error, base64Error });
-        return null;
-      }
-    }
-    
-    return JSON.parse(decodedData) as MemoData;
-  } catch (error) {
-    console.error('Failed to parse memo data:', error);
-    return null;
-  }
-}
 
 
 
@@ -86,10 +35,8 @@ export async function POST(req:NextRequest){
         const webhookData = await req.json();
         console.log('Webhook received:', JSON.stringify(webhookData, null, 2));
 
-        // Process each transaction in the webhook
         for (const transaction of webhookData) {
           try {
-            // Skip failed transactions
             if (transaction.transactionError) {
               console.log('Skipping failed transaction:', transaction.signature);
               continue;
@@ -110,6 +57,16 @@ export async function POST(req:NextRequest){
             }
 
             console.log('Processing payment for session:', memoData.sessionId, 'with memo data:', memoData);
+
+            // Idempotency check: Skip if this transaction has already been processed
+            const existingPayment = await prisma.payment.findFirst({
+              where: { txHash: transaction.signature }
+            });
+
+            if (existingPayment) {
+              console.log('Transaction already processed (idempotency check):', transaction.signature);
+              continue;
+            }
 
             // Find the event by session ID
             const event = await prisma.event.findFirst({
@@ -229,6 +186,33 @@ export async function POST(req:NextRequest){
             } catch (webhookError) {
               console.error('Failed to deliver webhooks:', webhookError);
               // Don't fail the main transaction processing if webhook delivery fails
+            }
+
+            // Send email notification
+            try {
+              await emailService.sendNotification({
+                projectId: updatedEvent.projectId,
+                templateType: EmailTemplateType.SALE_NOTIFICATION,
+                templateProps: {
+                  projectName: updatedEvent.project.name,
+                  customerWalletAddress: updatedEvent.payment.recipientAddress,
+                  amount: Number(updatedEvent.payment.amount) / 1000000, // Convert from micro units
+                  currency: updatedEvent.payment.currency ?? 'USDC',
+                  transactionSignature: transaction.signature,
+                  products: updatedEvent.payment.products?.map(product => ({
+                    name: product.name,
+                    price: Number(product.price) / 1000000, // Convert from micro units
+                    quantity: 1 // You might want to add quantity to your product schema
+                  })) || [],
+                  network: network,
+                  confirmedAt: new Date(transaction.timestamp * 1000).toISOString()
+                }
+              });
+
+         
+            } catch (emailError) {
+              console.error('Failed to send email notification:', emailError);
+              // Don't fail the main transaction processing if email sending fails
             }
 
           } catch (error) {

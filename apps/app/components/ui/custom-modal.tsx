@@ -4,10 +4,13 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Dialog, DialogContent, DialogTitle } from "./dialog";
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const { wallets, select } = useWallet();
-    const {theme} = useTheme();
+    const { theme } = useTheme();
+    const [showAllWallets, setShowAllWallets] = useState(false);
 
     const handleWalletSelect = async (walletName: string) => {
         try {
@@ -15,6 +18,7 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
             if (selectedWallet) {
                 await select(selectedWallet.adapter.name);
                 toast.success(`${selectedWallet.adapter.name} connected`);
+                setShowAllWallets(false);
                 onClose();
             }
         } catch (error: any) {
@@ -22,6 +26,8 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
         }
     };
 
+    const popularWalletNames = ['Phantom', 'MetaMask', 'Backpack'];
+    
     const popularWallets = [
         {
             name: 'Phantom',
@@ -43,10 +49,20 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
         }
     ];
 
+    // Get all other wallets that aren't in the popular list
+    const otherWallets = wallets.filter(
+        wallet => !popularWalletNames.includes(wallet.adapter.name)
+    );
+
+    const handleClose = () => {
+        setShowAllWallets(false);
+        onClose();
+    };
+
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
             <DialogContent className="bg-transparent border-0 p-0 shadow-none">
-                <div className="crypto-glass bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
+                <div className="crypto-glass-static bg-white/95 dark:bg-card/95 backdrop-blur-xl border-border/30 dark:border-border/50 rounded-3xl p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
                         <DialogTitle className="text-xl font-semibold text-foreground">
@@ -58,7 +74,8 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                     </div>
 
                     {/* Wallet Options */}
-                    <div className="space-y-3">
+                    <div className="space-y-3 ">
+                        {/* Popular Wallets */}
                         {popularWallets.map((wallet) => (
                             <Button
                                 key={wallet.name}
@@ -91,27 +108,58 @@ export default function CustomWalletModal({ isOpen, onClose }: { isOpen: boolean
                                 </div>
                             </Button>
                         ))}
+                    <div className="h-px   bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                    
+
+                        {/* More Wallets Toggle */}
+                        {otherWallets.length > 0 && (
+                            <>
+                                <Button
+                                    variant="ghost"
+                                    className="w-full h-12 crypto-button  text-sm text-muted-foreground hover:text-primary transition-colors"
+                                    onClick={() => setShowAllWallets(!showAllWallets)}
+                                >
+                                    {showAllWallets ? (
+                                        <>
+                                            Show Less
+                                            <ChevronUp className="w-4 h-4" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            More Wallets ({otherWallets.length})
+                                            <ChevronDown className="w-4 h-4" />
+                                        </>
+                                    )}
+                                </Button>
+
+
+                                {/* All Other Wallets */}
+                                {showAllWallets && (
+                                    <div className="grid grid-cols-2 gap-2 pt-2">
+                                        {otherWallets.map((wallet) => {
+                                            return (
+                                                <Button
+                                                    key={wallet.adapter.name}
+                                                    variant="ghost"
+                                                    className="h-12 crypto-button rounded-lg  flex items-center justify-between gap-2 px-3 group"
+                                                    onClick={() => handleWalletSelect(wallet.adapter.name)}
+                                                >
+                                                    <div className="flex-1 text-left truncate">
+                                                        <div className="font-medium text-sm  text-center text-foreground group-hover:text-primary transition-colors truncate">
+                                                            {wallet.adapter.name}
+                                                        </div>
+                                                    </div>
+                                             
+                                                </Button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
 
-                    {/* Footer */}
-                    <div className="mt-6 pt-4">
-                        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-                        <div className="text-center space-y-2 mt-4">
-                            <p className="text-xs text-gray-600 dark:text-muted-foreground">
-                                New to Solana wallets?
-                            </p>
-                            <div className="flex justify-center gap-4 text-xs">
-                                <a 
-                                    href="https://phantom.app" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="text-primary hover:underline"
-                                >
-                                    Get Phantom
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+           
                 </div>
             </DialogContent>
         </Dialog>

@@ -11,12 +11,12 @@ export default function SignInPage() {
     {
       icon: Shield01Icon,
       title: "Secure by Default",
-      description: "Signed webhooks, secret management, and role-based access"
+      description: "Signed webhooks, secret management"
     },
     {
       icon: FlashIcon,
       title: "Payments & Wallets",
-      description: "Accept SOL, USDC, USDT; create wallets; track events"
+      description: "Accept USDC, USDT; track events"
     },
     {
       icon: Globe02Icon,
@@ -87,8 +87,7 @@ export default function SignInPage() {
             {/* Hero Section */}
             <div className="mb-12">
               <Badge className="mb-6 badge-secure border-0 shadow-lg">
-                <HugeiconsIcon icon={LockIcon} size={12} className="mr-2" aria-hidden="true" />
-                Crypto Payments for Developers
+                Solana Payments made Easy
               </Badge>
               
               <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight text-foreground">

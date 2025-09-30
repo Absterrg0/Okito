@@ -103,14 +103,13 @@ export default function ProjectSelector() {
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline" 
-              className="flex-1 justify-between h-10 crypto-glass border-0 hover:bg-white/5"
+              className="flex-1 justify-between h-10 crypto-glass  border-0 hover:bg-white/5"
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium truncate">
                   {selectedProject?.name || 'Select Project'}
                 </span>
               </div>
-              <HugeiconsIcon icon={ChartDownIcon} className="w-4 h-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 

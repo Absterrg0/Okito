@@ -85,7 +85,7 @@ export default function CustomWallet() {
             </DropdownMenuTrigger>
             <DropdownMenuContent 
                 align="end" 
-                className="w-48 crypto-glass bg-popover/95 backdrop-blur-xl border-border/50"
+                className="w-48 crypto-glass-static bg-popover/95 backdrop-blur-xl border-border/50"
             >
                 <DropdownMenuItem onClick={copyAddress} className="cursor-pointer">
                     <Copy className="w-4 h-4" />
@@ -96,8 +96,7 @@ export default function CustomWallet() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                             onClick={handleDisconnect} 
-                            variant="destructive"
-                            className="cursor-pointer "
+                            className="cursor-pointer text-red-600 "
                         >
                             <LogOut className="w-4 h-4" />
                             Disconnect

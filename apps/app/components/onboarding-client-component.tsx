@@ -64,7 +64,7 @@ export default function OnboardingPage() {
           </div>
 
           {/* Main Card */}
-          <Card className="crypto-glass border-0 relative overflow-hidden">
+          <Card className="crypto-glass-static border-0 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3 opacity-50" aria-hidden="true" />
             
             <CardHeader className="text-center pb-6 relative z-10">
@@ -110,7 +110,7 @@ export default function OnboardingPage() {
                 <Button 
                   onClick={handleCreateProject}
                   disabled={isCreating || !projectName.trim()}
-                  className="w-full crypto-glass-static border-0 shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="w-full crypto-glass cursor-pointer border-0 shadow-lg hover:shadow-xl transition-all duration-200"
                   size="lg"
                 >
                   {isCreating ? (

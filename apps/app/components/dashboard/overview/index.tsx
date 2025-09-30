@@ -522,7 +522,7 @@ export default function OverviewPage() {
           </p>
         </div>
         <div className="gap-4 flex items-center">
-          <Environment />
+          {/* <Environment /> */}
           <ModeToggle />
         </div>
       </div>

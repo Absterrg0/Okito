@@ -46,7 +46,7 @@
   --ring: #004d40;
   --chart-1: #004d40;
   --chart-2: #3b82f6;
-  --chart-3: #8b5cf6;
+  --chart-3: #14b8a6;
   --chart-4: #f59e0b;
   --chart-5: #10b981;
   --sidebar: #f8f9fa;
@@ -95,7 +95,7 @@
   --ring: #22c55e;
   --chart-1: #22c55e;
   --chart-2: #60a5fa;
-  --chart-3: #a78bfa;
+  --chart-3: #5eead4;
   --chart-4: #fbbf24;
   --chart-5: #2dd4bf;
   --sidebar: #17171b;
@@ -200,20 +200,20 @@ body {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(128px);
   -webkit-backdrop-filter: blur(128px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: var(--radius);
   box-shadow: 
-    0 8px 16px rgba(99, 102, 241, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .crypto-glass:hover {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.18);
   box-shadow: 
-    0 10px 36px rgba(99, 102, 241, 0.1),
+    0 10px 36px rgba(0, 0, 0, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
     inset 0 -1px 0 rgba(255, 255, 255, 0.45);
   transform: translateY(-2px);
@@ -221,13 +221,13 @@ body {
 
 /* Static variant without hover effects */
 .crypto-glass-static {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: var(--radius);
   box-shadow: 
-    0 8px 32px rgba(99, 102, 241, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -235,13 +235,13 @@ body {
 
 /* New crypto-base class - card-like with minimal glassmorphism */
 .crypto-base {
-  background: rgba(255, 255, 255, 0.99);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: var(--radius);
   box-shadow: 
-    0 4px 12px rgba(99, 102, 241, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
@@ -303,19 +303,19 @@ body {
 
 /* Gradient Text */
 .gradient-text-updated {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #9333ea);
+  background: linear-gradient(135deg, #047857, #059669, #10b981);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 1px 2px rgba(99, 102, 241, 0.15));
+  filter: drop-shadow(0 1px 2px rgba(5, 150, 105, 0.15));
 }
 
 .dark .gradient-text-updated {
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa, #c084fc);
+  background: linear-gradient(135deg, #34d399, #6ee7b7, #a7f3d0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3));
+  filter: drop-shadow(0 2px 4px rgba(52, 211, 153, 0.3));
 }
 
 /* Animations */
@@ -331,13 +331,13 @@ body {
 }
 
 @keyframes crypto-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(124, 59, 237, 0.05), 0 0 16px rgba(124, 59, 237, 0.03); }
-  50% { box-shadow: 0 0 12px rgba(124, 59, 237, 0.08), 0 0 24px rgba(124, 59, 237, 0.05); }
+  0%, 100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.05), 0 0 16px rgba(16, 185, 129, 0.03); }
+  50% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.08), 0 0 24px rgba(16, 185, 129, 0.05); }
 }
 
 @keyframes crypto-pulse-dark {
-  0%, 100% { box-shadow: 0 0 8px rgba(108, 40, 217, 0.08), 0 0 16px rgba(108, 40, 217, 0.04); }
-  50% { box-shadow: 0 0 12px rgba(108, 40, 217, 0.12), 0 0 24px rgba(108, 40, 217, 0.06); }
+  0%, 100% { box-shadow: 0 0 8px rgba(5, 150, 105, 0.08), 0 0 16px rgba(5, 150, 105, 0.04); }
+  50% { box-shadow: 0 0 12px rgba(5, 150, 105, 0.12), 0 0 24px rgba(5, 150, 105, 0.06); }
 }
 
 @keyframes float {
@@ -377,16 +377,16 @@ body {
 
 /* Input Styles */
 .crypto-input {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.14);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
   /* Remove transitions to avoid border/outline flashing */
   transition: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.75);
   outline: none;
   color: hsl(var(--foreground));
   position: relative;
@@ -394,18 +394,18 @@ body {
 }
 
 .crypto-input:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(100, 116, 139, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.99);
+  border-color: rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 .crypto-input:focus {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.24);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08), 0 6px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-.crypto-input::placeholder { color: rgba(100, 116, 139, 0.6); }
+.crypto-input::placeholder { color: rgba(0, 0, 0, 0.45); }
 
 .dark .crypto-input {
   background: rgba(15, 15, 17, 0.9);
@@ -433,64 +433,64 @@ body {
 .crypto-checkbox {
   width: 1.125rem;
   height: 1.125rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.16);
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  accent-color: rgba(99, 102, 241, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  accent-color: rgba(20, 184, 166, 0.9);
 }
 
 .crypto-checkbox:hover {
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.22);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .crypto-checkbox:focus {
   outline: none;
-  border-color: rgba(99, 102, 241, 0.6);
+  border-color: rgba(0, 0, 0, 0.26);
   box-shadow: 
-    0 0 0 2px rgba(99, 102, 241, 0.2),
-    0 2px 4px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    0 0 0 2px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 .dark .crypto-checkbox {
   background: rgba(26, 26, 31, 0.9);
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  accent-color: rgba(138, 148, 255, 0.9);
+  accent-color: rgba(94, 234, 212, 0.9);
 }
 
 .dark .crypto-checkbox:hover {
-  border-color: rgba(138, 148, 255, 0.4);
+  border-color: rgba(94, 234, 212, 0.4);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .dark .crypto-checkbox:focus {
-  border-color: rgba(138, 148, 255, 0.6);
+  border-color: rgba(94, 234, 212, 0.6);
   box-shadow: 
-    0 0 0 2px rgba(138, 148, 255, 0.2),
+    0 0 0 2px rgba(94, 234, 212, 0.2),
     0 2px 4px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* Tooltip Styles */
 .crypto-tooltip {
-  background: rgba(30, 30, 35, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
   max-width: 250px;
   font-size: 0.75rem;
   line-height: 1.2;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.85);
   z-index: 50;
   animation: tooltip-fade-in 0.15s ease-out;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .crypto-tooltip[data-side="top"]::before,
@@ -509,19 +509,19 @@ body {
 .crypto-info-icon {
   width: 0.75rem;
   height: 0.75rem;
-  color: rgba(99, 102, 241, 0.5);
+  color: rgba(20, 184, 166, 0.5);
   transition: all 0.2s ease;
   cursor: help;
   flex-shrink: 0;
 }
 
 .crypto-info-icon:hover {
-  color: rgba(99, 102, 241, 0.7);
+  color: rgba(20, 184, 166, 0.7);
   transform: scale(1.05);
 }
 
-.dark .crypto-info-icon { color: rgba(138, 148, 255, 0.6); }
-.dark .crypto-info-icon:hover { color: rgba(138, 148, 255, 0.8); }
+.dark .crypto-info-icon { color: rgba(94, 234, 212, 0.6); }
+.dark .crypto-info-icon:hover { color: rgba(94, 234, 212, 0.8); }
 
 /* Button Enhancement */
 .crypto-glass button, 
@@ -590,37 +590,47 @@ button.crypto-glass-static:disabled:hover,
   border-color: inherit;
 }
 
-/* New utility: crypto-button for consistent button styling */
+/* New utility: crypto-button for consistent borderless button styling */
 .crypto-button {
   position: relative;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.7);
   color: hsl(var(--foreground));
   border-radius: 0.75rem;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.10),
+    inset 0 1px 1px rgba(255, 255, 255, 0.85);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .crypto-button:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.14),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 .dark .crypto-button {
   background: rgba(255, 255, 255, 0.06);
   color: hsl(var(--foreground));
-  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 .dark .crypto-button:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
 }
 .crypto-button:disabled {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0.5;
 }
 .dark .crypto-button:disabled {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0.5;
 }
 
 /* Utilities */

@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { decryptData } from './helpers';
+import { decryptData } from '../../../../lib/helpers';
 import prisma from '@/db';
 
 export interface WebhookEventPayload {
@@ -139,7 +139,7 @@ export async function deliverWebhookToAllEndpoints(
       status: 'ACTIVE',
       OR: [
         { eventTypes: { isEmpty: true } }, // Empty array means receive all events
-        { eventTypes: { has: dbEventType as any } }, // Specific event type
+        { eventTypes: { has: dbEventType } }, // Specific event type
       ],
     },
   });

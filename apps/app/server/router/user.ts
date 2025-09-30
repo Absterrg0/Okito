@@ -64,14 +64,41 @@ const confirmWallet = protectedProcedure
 
 
     const apiKey = process.env.HELIUS_API_KEY || "";
+    const helius = createHelius({ apiKey });
 
-    const helius = createHelius({apiKey});
+    try {
+      const currentAddressesDev = await helius.webhooks
+        .get(process.env.WEBHOOK_DEV_ID!)
+        .then((webhook) => webhook.accountAddresses || []);
 
-    const currentAddresses = await helius.webhooks.get('9cfd6a34-341a-4d08-8284-6a961a0ebfea').then((webhook)=>webhook.accountAddresses);
+      if (!currentAddressesDev.includes(publicKey)) {
+        const nextAddressesDev = [...currentAddressesDev, publicKey];
+        await helius.webhooks.update(process.env.WEBHOOK_DEV_ID!, {
+          accountAddresses: nextAddressesDev,
+          transactionTypes:['TRANSFER','TRANSFER_PAYMENT'],
+          webhookType:'enhanced',
+          webhookURL:process.env.WEBHOOK_DEV_URL
+        });
+      }
 
-    helius.webhooks.update('9cfd6a34-341a-4d08-8284-6a961a0ebfea',{
-      accountAddresses:[...currentAddresses,publicKey],
-    })
+      const currentAddressesMain = await helius.webhooks
+        .get(process.env.WEBHOOK_MAIN_ID!)
+        .then((webhook) => webhook.accountAddresses || []);
+
+      if (!currentAddressesMain.includes(publicKey)) {
+        const nextAddressesMain = [...currentAddressesMain, publicKey];
+        await helius.webhooks.update(process.env.WEBHOOK_MAIN_ID!, {
+          accountAddresses: nextAddressesMain,
+          transactionTypes:['TRANSFER','TRANSFER_PAYMENT'],
+          webhookType:'enhanced',
+          webhookURL:process.env.WEBHOOK_MAIN_URL
+        });
+      }
+
+    } catch (err) {
+      // Log but do not fail user verification if webhook update fails
+      console.error("Helius webhook update failed:", err);
+    }
     
 
 

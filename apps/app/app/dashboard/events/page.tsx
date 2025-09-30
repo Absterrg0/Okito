@@ -114,7 +114,7 @@ export default function EventsPage() {
           <p className="text-lg text-muted-foreground">All webhook deliveries and transaction events for your project</p>
         </div>
         <div className="gap-2 flex items-center">
-          <Environment />
+          {/* <Environment /> */}
           <ModeToggle />
         </div>
       </div>

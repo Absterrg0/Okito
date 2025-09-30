@@ -26,7 +26,7 @@ export const SignInForm = () => {
       }
     
     return (
-        <Card className="crypto-glass border-0 shadow-2xl relative overflow-hidden">
+        <Card className="crypto-glass-static border-0 shadow-2xl relative overflow-hidden">
         {/* Card background - simplified */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3 opacity-50" aria-hidden="true" />
         
@@ -34,7 +34,7 @@ export const SignInForm = () => {
           <div className="mx-auto mb-6">
             <h2 className="text-2xl font-semibold text-primary/80 tracking-wide">Welcome</h2>
           </div>
-          <CardTitle className="text-3xl font-bold mb-3 text-foreground tracking-tight">Sign in to Okito</CardTitle>
+          <CardTitle className="text-3xl font-bold mb-3 text-foreground tracking-tight">Sign in</CardTitle>
           <div className="space-y-2">
             <p className="text-muted-foreground font-medium">Access your developer dashboard</p>
             <p className="text-sm text-muted-foreground/80 leading-relaxed">Manage projects, keys, events, and webhooks</p>
@@ -74,7 +74,7 @@ export const SignInForm = () => {
               <div className="w-10 h-10 crypto-glass rounded-xl flex items-center justify-center mx-auto mb-2">
                 <HugeiconsIcon icon={LockIcon} size={16} color="#9333ea" aria-hidden="true" />
               </div>
-              <p className="text-xs text-muted-foreground font-medium">Key Management</p>
+              <p className="text-xs text-muted-foreground font-medium">Great DX</p>
             </div>
           </div>
 
