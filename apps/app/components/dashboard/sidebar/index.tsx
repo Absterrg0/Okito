@@ -33,6 +33,7 @@ import { User } from "better-auth";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { unstable_ViewTransition as ViewTransition, startTransition } from "react";
+import { GradientBg } from '@/components/ui/gradient-bg'
 
 const menuItems = [
   {
@@ -145,7 +146,8 @@ export function AppSidebar({user}:{user:User}) {
                             style={{ 
                               viewTransitionName: 'sidebar-active',
                               padding: '0',
-                              zIndex: 0
+                              zIndex: 0,
+                              opacity: 0.9
                             }}
                           />
                         )}
@@ -184,7 +186,8 @@ export function AppSidebar({user}:{user:User}) {
                             style={{ 
                               viewTransitionName: 'sidebar-active',
                               padding: '0',
-                              zIndex: 0
+                              zIndex: 0,
+                              opacity: 0.6
                             }}
                           />
                         )}
@@ -217,7 +220,8 @@ export function AppSidebar({user}:{user:User}) {
                             style={{ 
                               viewTransitionName: 'sidebar-active',
                               padding: '0',
-                              zIndex: 0
+                              zIndex: 0,
+                              opacity: 0.6
                             }}
                           />
                         )}
@@ -234,7 +238,8 @@ export function AppSidebar({user}:{user:User}) {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="border-t border-sidebar-border p-4">
+        <SidebarFooter className="p-4 space-y-2">
+          <GradientBg></GradientBg>
           <UserProfilePopover user={user} />
         </SidebarFooter>
           </ViewTransition>

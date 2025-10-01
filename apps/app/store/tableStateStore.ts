@@ -14,6 +14,9 @@ interface TableState {
   webhookCurrentPage: number
   webhookSortField: SortField
   webhookSortDirection: SortDirection
+  
+  // Event table state
+  eventCurrentPage: number
 }
 
 interface TableStateActions {
@@ -28,6 +31,9 @@ interface TableStateActions {
   setWebhookSortField: (field: SortField) => void
   setWebhookSortDirection: (direction: SortDirection) => void
   handleWebhookSort: (field: SortField) => void
+  
+  // Event actions
+  setEventCurrentPage: (page: number) => void
 }
 
 const initialState: TableState = {
@@ -40,6 +46,9 @@ const initialState: TableState = {
   webhookCurrentPage: 1,
   webhookSortField: 'createdAt',
   webhookSortDirection: 'desc',
+  
+  // Event defaults
+  eventCurrentPage: 1,
 }
 
 export const useTableStateStore = create<TableState & TableStateActions>()(
@@ -86,6 +95,9 @@ export const useTableStateStore = create<TableState & TableStateActions>()(
           })
         }
       },
+      
+      // Event actions
+      setEventCurrentPage: (page: number) => set({ eventCurrentPage: page }),
     }),
     {
       name: 'table-state-storage', // unique name for localStorage key
@@ -97,6 +109,7 @@ export const useTableStateStore = create<TableState & TableStateActions>()(
         webhookCurrentPage: state.webhookCurrentPage,
         webhookSortField: state.webhookSortField,
         webhookSortDirection: state.webhookSortDirection,
+        eventCurrentPage: state.eventCurrentPage,
       }),
     }
   )

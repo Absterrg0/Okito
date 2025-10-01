@@ -42,7 +42,6 @@ export default function UserSettings() {
           </p>
         </div>
         <div className="gap-3 flex items-center">
-          <Environment />
           <ModeToggle />
         </div>
       </div>

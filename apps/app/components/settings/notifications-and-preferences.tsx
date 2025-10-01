@@ -32,37 +32,44 @@ export default function NotificationAndPreferences(props:NotificationAndPreferen
     const updateCurrencyMutation = useProjectCurrencyUpdate(selectedProject?.id)
     const updateNotificationMutation = useNotificationMutation(selectedProject?.id)
 
+    // Derived email error (no local state)
+    const emailSchema = z.string().email("Please enter a valid email address")
+    const normalizedEmail = newEmail.trim().toLowerCase()
+    const emailResult = normalizedEmail
+      ? emailSchema.safeParse(normalizedEmail)
+      : null
+    const emailError = normalizedEmail
+      ? (!emailResult!.success
+          ? emailResult!.error.issues[0].message
+          : props.notificationEmails.includes(normalizedEmail)
+            ? "This email is already added"
+            : "")
+      : ""
+
     const handleCurrencyToggle = (currency: AllowedCurrency) => {
       setSelectedCurrencies(prev => {
         const isSelected = prev.includes(currency)
-        
+
         if (isSelected) {
-          // If trying to deselect, ensure at least 1 remains
-          if (prev.length === 1) return prev
+          if (prev.length === 1) {
+            return prev
+          }
           return prev.filter(c => c !== currency)
         } else {
-          // If trying to select, ensure max 2
-          if (prev.length >= 2) return prev
+          if (prev.length >= 2) {
+            return prev
+          }
           return [...prev, currency]
         }
       })
     }
 
     const addEmail = () => {
-     
-      const email = z.email().safeParse(newEmail.trim().toLowerCase())
-      if (!email.success){
-        toast.error("Invalid email")
-        return
-      } 
-      if (props.notificationEmails.includes(email.data)) {
-        toast.error("Email already exists")
-        return
-      }
-      
+      if (!normalizedEmail || emailError) return
+
       if (!selectedProject?.id) return
-      
-      const updatedEmails = [...props.notificationEmails, email.data]
+
+      const updatedEmails = [...props.notificationEmails, normalizedEmail]
       updateNotificationMutation.mutate({
         id: selectedProject.id,
         notificationEmails: updatedEmails
@@ -133,6 +140,8 @@ export default function NotificationAndPreferences(props:NotificationAndPreferen
                 </div>
               </div>
               
+         
+
               <div className="grid grid-cols-2 gap-4">
                 {(['USDC','USDT'] as AllowedCurrency[]).map((currency) => {
                   const isSelected = selectedCurrencies.includes(currency)
@@ -178,14 +187,17 @@ export default function NotificationAndPreferences(props:NotificationAndPreferen
 
             {/* Delivery emails */}
             <div className="space-y-3">
-              <div>
+              <div className="flex items-center gap-2">
                 <Label htmlFor="new-email" className="text-sm font-medium">Delivery Emails</Label>
+                {emailError && (
+                  <span className="text-xs text-destructive">({emailError})</span>
+                )}
               </div>
               <div className="flex gap-2">
                 <Input
                   id="new-email"
                   value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
+                  onChange={(e) => { setNewEmail(e.target.value) }}
                   placeholder="email@example.com"
                   className="crypto-base flex-1"
                   type="email"
@@ -199,6 +211,7 @@ export default function NotificationAndPreferences(props:NotificationAndPreferen
                     Add
                      </Button>
               </div>
+              
               {props.notificationEmails.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {props.notificationEmails.map((email) => (

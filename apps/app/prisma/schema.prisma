@@ -172,14 +172,13 @@ model Event {
   id          String   @id @default(uuid())
   projectId   String
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  type        EventType   // e.g. payment.pending, payment.confirmed, token.revoked
+  type        EventType   // e.g. payment
   sessionId   String   @default(uuid()) @unique
   paymentId   String?
   payment     Payment? @relation(name: "PaymentEvent", fields: [paymentId], references: [id], onDelete: SetNull)
   tokenId     String?
   token       ApiToken? @relation(name: "TokenEvent", fields: [tokenId], references: [id], onDelete: SetNull)
   metadata   Json?
-  occurredAt  DateTime @default(now())
   createdAt   DateTime @default(now())
   deliveries  EventDelivery[]
   @@map("event")
@@ -232,9 +231,7 @@ enum AllowedCurrency {
 }
 
 enum EventType {
-  PAYMENT_COMPLETED
-  PAYMENT_FAILED
-  PAYMENT_PENDING
+  PAYMENT
   
 }
 

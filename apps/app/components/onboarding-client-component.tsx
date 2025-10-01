@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import { BuildingIcon,ArrowRightIcon,ArrowClockwiseIcon } from "@phosphor-icons/react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { CityIcon, ArrowRight01Icon, RefreshIcon } from "@hugeicons/core-free-icons"
 import { toast } from "sonner"
 import {useCreateProjectMutation} from "@/hooks/projects/useProjectMutation"
 import { generateRandomName } from "@/lib/helpers"
@@ -98,7 +99,7 @@ export default function OnboardingPage() {
                       onClick={handleGenerateNewName}
                       className="crypto-glass border-0"
                     >
-                      <ArrowClockwiseIcon  className="w-4 h-4" />
+                      <HugeiconsIcon icon={RefreshIcon}  className="w-4 h-4" />
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground text-center">
@@ -120,9 +121,9 @@ export default function OnboardingPage() {
                     </div>
                   ) : (
                     <div className="flex items-center text-foreground">
-                      <BuildingIcon className="w-4 h-4 mr-2" aria-hidden="true" />
+                      <HugeiconsIcon icon={CityIcon} className="w-4 h-4 mr-2" aria-hidden="true" />
                       Create Project
-                      <ArrowRightIcon className="w-4 h-4 ml-2" aria-hidden="true" />
+                      <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 ml-2" aria-hidden="true" />
                     </div>
                   )}
                 </Button>

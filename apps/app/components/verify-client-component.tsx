@@ -7,9 +7,9 @@ import { toast } from 'sonner'
 import { useVerifyWallet } from '@/hooks/useVerifyWallet'
 import Loader from '@/components/ui/loader'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { InfoIcon } from '@phosphor-icons/react'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { Alert01Icon, Wallet01Icon } from '@hugeicons/core-free-icons'
 import CustomWalletModal from '@/components/ui/custom-modal'
-import { Wallet } from 'lucide-react'
 import { useState } from 'react'
 
 
@@ -72,7 +72,7 @@ export default  function VerifyWalletPage() {
                       size="default"
                       className="w-full crypto-glass bg-primary/10 hover:bg-primary/20 dark:bg-primary/15 dark:hover:bg-primary/25 text-primary border-primary/30 hover:border-primary/50 shadow-primary/10 hover:shadow-primary/20 transition-all duration-300 ease-out relative overflow-hidden"
                     >
-                      <Wallet className="w-4 h-4" />
+                      <HugeiconsIcon icon={Wallet01Icon} className="w-4 h-4" />
                       Connect Wallet
                     </Button>
                   </div>
@@ -103,7 +103,7 @@ export default  function VerifyWalletPage() {
                     {(!publicKey || !signMessage) && (
                       <TooltipContent className="max-w-xs bg-foreground ">
                         <div className="flex items-center  gap-2">
-                          <InfoIcon className="w-4 h-4 text-blue-500" />
+                          <HugeiconsIcon icon={Alert01Icon} className="w-4 h-4 text-blue-500" />
                           <div className="text-sm">
                             {!publicKey ? "No wallet address detected" :
                              !signMessage ? "Your wallet doesn't support message signing. Try switching to a compatible wallet (e.g. Phantom)." :

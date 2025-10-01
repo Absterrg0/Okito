@@ -80,7 +80,6 @@ async function paymentHandler(req: NextRequest) {
                         base.user = metadata;
                     }
                 }
-                if (idempotencyKey) base.idempotencyKey = idempotencyKey;
                 return base;
             })();
             
@@ -108,7 +107,7 @@ async function paymentHandler(req: NextRequest) {
                     events: {
                         create: {
                             projectId: tokenInfo.projectId,
-                            type: "PAYMENT_PENDING",
+                            type: "PAYMENT",
                             tokenId: tokenInfo.id,
                             metadata: eventMetadata
                         }

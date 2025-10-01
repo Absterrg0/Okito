@@ -39,7 +39,7 @@
   --muted-foreground: #495057;
   --accent: #dee2e6;
   --accent-foreground: #212529;
-  --destructive: #c92a2a;
+  --destructive: #ffffff;
   --destructive-foreground: #fff5f5;
   --border: #dee2e6;
   --input: #ced4da;
@@ -88,7 +88,7 @@
   --muted-foreground: #a1a1aa;
   --accent: #18181b;
   --accent-foreground: #fafafa;
-  --destructive: #7f1d1d;
+  --destructive: #f11919;
   --destructive-foreground: #fafafa;
   --border: #27272a;
   --input: #27272a;
@@ -666,5 +666,26 @@ button.crypto-glass-static:disabled:hover,
   .crypto-glass,
   .crypto-glass-static {
     transition: none;
+    
   }
+}
+
+/* View Transitions: Sidebar active highlight animation */
+::view-transition-group(sidebar-active) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(sidebar-active),
+::view-transition-new(sidebar-active) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.3;
+  mix-blend-mode: normal;
+}
+
+/* Ensure text stays above during animation */
+[data-sidebar] a > div:last-child {
+  position: relative;
+  z-index: 10;
 }
