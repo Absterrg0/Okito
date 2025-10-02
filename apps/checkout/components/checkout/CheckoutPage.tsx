@@ -33,7 +33,6 @@ export default function CheckoutPage() {
   const [txSig, setTxSig] = useState<string | null>(null)
 
   const products = event?.payment?.products ?? []
-  const recipient = event?.payment?.recipientAddress ?? ''
   const projectAllowedCurrencies = ((event?.project?.acceptedCurrencies ?? []) as ("USDC" | "USDT")[])
   console.log(projectAllowedCurrencies);
   const [selectedCurrency, setSelectedCurrency] = useState<"USDC" | "USDT">(((event?.project?.acceptedCurrencies ?? ['USDC', 'USDT'])[0] as "USDC" | "USDT"))
@@ -58,7 +57,7 @@ export default function CheckoutPage() {
   }
 
   const handlePay = async () => {
-    if (!sessionId || !connected || !publicKey || !signTransaction || !recipient) {
+    if (!sessionId || !connected || !publicKey || !signTransaction) {
       toast.error("Please connect your wallet to continue")
       return
     }
@@ -153,7 +152,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95">
       <Header 
         project={event?.project}
-        occurredAt={event?.occurredAt}
+        occurredAt={event?.createdAt}
       />
 
       <main className="min-h-[calc(100vh-120px)] flex items-center justify-center">

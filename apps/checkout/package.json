@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@okito/db":"workspace:*",
     "@hugeicons/core-free-icons": "^1.0.17",
     "@hugeicons/react": "^1.1.1",
     "@okito/sdk": "^1.0.6",

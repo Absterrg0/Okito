@@ -73,7 +73,7 @@ export const transactionRouter = router({
         }
 
         // 2. Validate session expiry
-        const sessionAge = Date.now() - new Date(event.occurredAt).getTime();
+        const sessionAge = Date.now() - new Date(event.createdAt).getTime();
         const sessionExpired = sessionAge > 15 * 60 * 1000; // 15 minutes
         
         if (sessionExpired) {
@@ -262,7 +262,7 @@ export const transactionRouter = router({
         }
 
         // 2. Validate session expiry
-        const sessionAge = Date.now() - new Date(event.occurredAt).getTime();
+        const sessionAge = Date.now() - new Date(event.createdAt).getTime();
         const sessionExpired = sessionAge > 15 * 60 * 1000; // 15 minutes
         
         if (sessionExpired) {

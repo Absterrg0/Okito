@@ -232,7 +232,6 @@ exports.Prisma.EventScalarFieldEnum = {
   paymentId: 'paymentId',
   tokenId: 'tokenId',
   metadata: 'metadata',
-  occurredAt: 'occurredAt',
   createdAt: 'createdAt'
 };
 
@@ -306,9 +305,7 @@ exports.WebhookEndpointStatus = exports.$Enums.WebhookEndpointStatus = {
 };
 
 exports.EventType = exports.$Enums.EventType = {
-  PAYMENT_COMPLETED: 'PAYMENT_COMPLETED',
-  PAYMENT_FAILED: 'PAYMENT_FAILED',
-  PAYMENT_PENDING: 'PAYMENT_PENDING'
+  PAYMENT: 'PAYMENT'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {

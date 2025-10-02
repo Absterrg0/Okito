@@ -26,16 +26,16 @@ export const sessionGuardProcedure = t.procedure
 
     const event = await prisma.event.findFirst({
       where: { sessionId },
-      select: { occurredAt: true, sessionId: true },
+      select: { createdAt: true, sessionId: true },
     });
 
     if (!event) {
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Event not found or invalid session Id provided' });
     }
 
-    if (event.occurredAt) {
+    if (event.createdAt) {
       const now = new Date();
-      const sessionTime = new Date(event.occurredAt);
+      const sessionTime = new Date(event.createdAt);
       const tenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
       if (sessionTime < tenMinutesAgo) {
         throw new TRPCError({

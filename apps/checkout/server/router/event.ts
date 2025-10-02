@@ -15,13 +15,19 @@ const getValidEvent = protectedProcedure
     const {sessionId} = input;
     
     const event = await prisma.event.findFirst({
-        where: {
-            sessionId
-        },
-        include:{
+        where: { sessionId },
+        select:{
+            id: true,
+            projectId: true,
+            createdAt: true,
+            sessionId: true,
+            type: true,
+            metadata: true,
+            paymentId: true,
             payment:{
-                include:{
-                    products:true
+                select:{
+                    products:true,
+                    status:true
                 }
             },
             project:{
@@ -37,7 +43,6 @@ const getValidEvent = protectedProcedure
                     environment:true
                 }
             }
-            
         }
     })
     console.log(event);
@@ -49,7 +54,7 @@ const getValidEvent = protectedProcedure
         })
     }
 
-    if(event.type!= 'PAYMENT_PENDING'){
+    if(event.payment?.status!= 'PENDING'){
         throw new TRPCError({
             message:"Session has expired or used already",
             code:'CONFLICT'
@@ -58,10 +63,7 @@ const getValidEvent = protectedProcedure
 
     return {
         ...event,
-        token:{
-            environment: event.token?.environment ?? null
-        }
-    } as any;
+    };
     
 })
 

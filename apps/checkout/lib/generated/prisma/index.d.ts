@@ -82,9 +82,7 @@ export type AllowedCurrency = (typeof AllowedCurrency)[keyof typeof AllowedCurre
 
 
 export const EventType: {
-  PAYMENT_COMPLETED: 'PAYMENT_COMPLETED',
-  PAYMENT_FAILED: 'PAYMENT_FAILED',
-  PAYMENT_PENDING: 'PAYMENT_PENDING'
+  PAYMENT: 'PAYMENT'
 };
 
 export type EventType = (typeof EventType)[keyof typeof EventType]
@@ -11461,7 +11459,6 @@ export namespace Prisma {
     sessionId: string | null
     paymentId: string | null
     tokenId: string | null
-    occurredAt: Date | null
     createdAt: Date | null
   }
 
@@ -11472,7 +11469,6 @@ export namespace Prisma {
     sessionId: string | null
     paymentId: string | null
     tokenId: string | null
-    occurredAt: Date | null
     createdAt: Date | null
   }
 
@@ -11484,7 +11480,6 @@ export namespace Prisma {
     paymentId: number
     tokenId: number
     metadata: number
-    occurredAt: number
     createdAt: number
     _all: number
   }
@@ -11497,7 +11492,6 @@ export namespace Prisma {
     sessionId?: true
     paymentId?: true
     tokenId?: true
-    occurredAt?: true
     createdAt?: true
   }
 
@@ -11508,7 +11502,6 @@ export namespace Prisma {
     sessionId?: true
     paymentId?: true
     tokenId?: true
-    occurredAt?: true
     createdAt?: true
   }
 
@@ -11520,7 +11513,6 @@ export namespace Prisma {
     paymentId?: true
     tokenId?: true
     metadata?: true
-    occurredAt?: true
     createdAt?: true
     _all?: true
   }
@@ -11605,7 +11597,6 @@ export namespace Prisma {
     paymentId: string | null
     tokenId: string | null
     metadata: JsonValue | null
-    occurredAt: Date
     createdAt: Date
     _count: EventCountAggregateOutputType | null
     _min: EventMinAggregateOutputType | null
@@ -11634,7 +11625,6 @@ export namespace Prisma {
     paymentId?: boolean
     tokenId?: boolean
     metadata?: boolean
-    occurredAt?: boolean
     createdAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     payment?: boolean | Event$paymentArgs<ExtArgs>
@@ -11651,7 +11641,6 @@ export namespace Prisma {
     paymentId?: boolean
     tokenId?: boolean
     metadata?: boolean
-    occurredAt?: boolean
     createdAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     payment?: boolean | Event$paymentArgs<ExtArgs>
@@ -11666,7 +11655,6 @@ export namespace Prisma {
     paymentId?: boolean
     tokenId?: boolean
     metadata?: boolean
-    occurredAt?: boolean
     createdAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     payment?: boolean | Event$paymentArgs<ExtArgs>
@@ -11681,11 +11669,10 @@ export namespace Prisma {
     paymentId?: boolean
     tokenId?: boolean
     metadata?: boolean
-    occurredAt?: boolean
     createdAt?: boolean
   }
 
-  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "type" | "sessionId" | "paymentId" | "tokenId" | "metadata" | "occurredAt" | "createdAt", ExtArgs["result"]["event"]>
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "type" | "sessionId" | "paymentId" | "tokenId" | "metadata" | "createdAt", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     payment?: boolean | Event$paymentArgs<ExtArgs>
@@ -11720,7 +11707,6 @@ export namespace Prisma {
       paymentId: string | null
       tokenId: string | null
       metadata: Prisma.JsonValue | null
-      occurredAt: Date
       createdAt: Date
     }, ExtArgs["result"]["event"]>
     composites: {}
@@ -12156,7 +12142,6 @@ export namespace Prisma {
     readonly paymentId: FieldRef<"Event", 'String'>
     readonly tokenId: FieldRef<"Event", 'String'>
     readonly metadata: FieldRef<"Event", 'Json'>
-    readonly occurredAt: FieldRef<"Event", 'DateTime'>
     readonly createdAt: FieldRef<"Event", 'DateTime'>
   }
     
@@ -15067,7 +15052,6 @@ export namespace Prisma {
     paymentId: 'paymentId',
     tokenId: 'tokenId',
     metadata: 'metadata',
-    occurredAt: 'occurredAt',
     createdAt: 'createdAt'
   };
 
@@ -16029,7 +16013,6 @@ export namespace Prisma {
     paymentId?: StringNullableFilter<"Event"> | string | null
     tokenId?: StringNullableFilter<"Event"> | string | null
     metadata?: JsonNullableFilter<"Event">
-    occurredAt?: DateTimeFilter<"Event"> | Date | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
@@ -16045,7 +16028,6 @@ export namespace Prisma {
     paymentId?: SortOrderInput | SortOrder
     tokenId?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
-    occurredAt?: SortOrder
     createdAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
     payment?: PaymentOrderByWithRelationInput
@@ -16064,7 +16046,6 @@ export namespace Prisma {
     paymentId?: StringNullableFilter<"Event"> | string | null
     tokenId?: StringNullableFilter<"Event"> | string | null
     metadata?: JsonNullableFilter<"Event">
-    occurredAt?: DateTimeFilter<"Event"> | Date | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
@@ -16080,7 +16061,6 @@ export namespace Prisma {
     paymentId?: SortOrderInput | SortOrder
     tokenId?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
-    occurredAt?: SortOrder
     createdAt?: SortOrder
     _count?: EventCountOrderByAggregateInput
     _max?: EventMaxOrderByAggregateInput
@@ -16098,7 +16078,6 @@ export namespace Prisma {
     paymentId?: StringNullableWithAggregatesFilter<"Event"> | string | null
     tokenId?: StringNullableWithAggregatesFilter<"Event"> | string | null
     metadata?: JsonNullableWithAggregatesFilter<"Event">
-    occurredAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
   }
 
@@ -17028,7 +17007,6 @@ export namespace Prisma {
     type: $Enums.EventType
     sessionId?: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutEventsInput
     payment?: PaymentCreateNestedOneWithoutEventsInput
@@ -17044,7 +17022,6 @@ export namespace Prisma {
     paymentId?: string | null
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     deliveries?: EventDeliveryUncheckedCreateNestedManyWithoutEventInput
   }
@@ -17054,7 +17031,6 @@ export namespace Prisma {
     type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
     sessionId?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutEventsNestedInput
     payment?: PaymentUpdateOneWithoutEventsNestedInput
@@ -17070,7 +17046,6 @@ export namespace Prisma {
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deliveries?: EventDeliveryUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -17083,7 +17058,6 @@ export namespace Prisma {
     paymentId?: string | null
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
   }
 
@@ -17092,7 +17066,6 @@ export namespace Prisma {
     type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
     sessionId?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17104,7 +17077,6 @@ export namespace Prisma {
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18060,7 +18032,6 @@ export namespace Prisma {
     paymentId?: SortOrder
     tokenId?: SortOrder
     metadata?: SortOrder
-    occurredAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18071,7 +18042,6 @@ export namespace Prisma {
     sessionId?: SortOrder
     paymentId?: SortOrder
     tokenId?: SortOrder
-    occurredAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18082,7 +18052,6 @@ export namespace Prisma {
     sessionId?: SortOrder
     paymentId?: SortOrder
     tokenId?: SortOrder
-    occurredAt?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19987,7 +19956,6 @@ export namespace Prisma {
     type: $Enums.EventType
     sessionId?: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     payment?: PaymentCreateNestedOneWithoutEventsInput
     token?: ApiTokenCreateNestedOneWithoutEventsInput
@@ -20001,7 +19969,6 @@ export namespace Prisma {
     paymentId?: string | null
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     deliveries?: EventDeliveryUncheckedCreateNestedManyWithoutEventInput
   }
@@ -20187,7 +20154,6 @@ export namespace Prisma {
     paymentId?: StringNullableFilter<"Event"> | string | null
     tokenId?: StringNullableFilter<"Event"> | string | null
     metadata?: JsonNullableFilter<"Event">
-    occurredAt?: DateTimeFilter<"Event"> | Date | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
   }
 
@@ -20311,7 +20277,6 @@ export namespace Prisma {
     type: $Enums.EventType
     sessionId?: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutEventsInput
     payment?: PaymentCreateNestedOneWithoutEventsInput
@@ -20325,7 +20290,6 @@ export namespace Prisma {
     sessionId?: string
     paymentId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     deliveries?: EventDeliveryUncheckedCreateNestedManyWithoutEventInput
   }
@@ -20656,7 +20620,6 @@ export namespace Prisma {
     type: $Enums.EventType
     sessionId?: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutEventsInput
     token?: ApiTokenCreateNestedOneWithoutEventsInput
@@ -20670,7 +20633,6 @@ export namespace Prisma {
     sessionId?: string
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     deliveries?: EventDeliveryUncheckedCreateNestedManyWithoutEventInput
   }
@@ -21197,7 +21159,6 @@ export namespace Prisma {
     type: $Enums.EventType
     sessionId?: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
     project: ProjectCreateNestedOneWithoutEventsInput
     payment?: PaymentCreateNestedOneWithoutEventsInput
@@ -21212,7 +21173,6 @@ export namespace Prisma {
     paymentId?: string | null
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
   }
 
@@ -21268,7 +21228,6 @@ export namespace Prisma {
     type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
     sessionId?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutEventsNestedInput
     payment?: PaymentUpdateOneWithoutEventsNestedInput
@@ -21283,7 +21242,6 @@ export namespace Prisma {
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21512,7 +21470,6 @@ export namespace Prisma {
     paymentId?: string | null
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
   }
 
@@ -21628,7 +21585,6 @@ export namespace Prisma {
     type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
     sessionId?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUpdateOneWithoutEventsNestedInput
     token?: ApiTokenUpdateOneWithoutEventsNestedInput
@@ -21642,7 +21598,6 @@ export namespace Prisma {
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deliveries?: EventDeliveryUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -21654,7 +21609,6 @@ export namespace Prisma {
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21720,7 +21674,6 @@ export namespace Prisma {
     sessionId?: string
     paymentId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
   }
 
@@ -21784,7 +21737,6 @@ export namespace Prisma {
     type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
     sessionId?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutEventsNestedInput
     payment?: PaymentUpdateOneWithoutEventsNestedInput
@@ -21798,7 +21750,6 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deliveries?: EventDeliveryUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -21810,7 +21761,6 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21878,7 +21828,6 @@ export namespace Prisma {
     sessionId?: string
     tokenId?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: Date | string
     createdAt?: Date | string
   }
 
@@ -21914,7 +21863,6 @@ export namespace Prisma {
     type?: EnumEventTypeFieldUpdateOperationsInput | $Enums.EventType
     sessionId?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutEventsNestedInput
     token?: ApiTokenUpdateOneWithoutEventsNestedInput
@@ -21928,7 +21876,6 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deliveries?: EventDeliveryUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -21940,7 +21887,6 @@ export namespace Prisma {
     sessionId?: StringFieldUpdateOperationsInput | string
     tokenId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    occurredAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
